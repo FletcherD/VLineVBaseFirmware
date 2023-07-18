@@ -1,0 +1,1318 @@
+#define _CMSIS_H_ _CMSIS_H_
+#define __CORE_CM3_H_GENERIC __CORE_CM3_H_GENERIC
+#define __CMSIS_COMPILER_H __CMSIS_COMPILER_H
+#define ITM_RXBUFFER_EMPTY ((int32_t)0x5AA55AA5U)
+#define __SYSTEM_LPC17xx_H __SYSTEM_LPC17xx_H
+#define CLOCK_SETUP 1
+#define SCS_Val 0x00000020
+#define CLKSRCSEL_Val 0x00000001
+#define PLL0_SETUP 1
+#define PLL0CFG_Val 0x00050063
+#define PLL1_SETUP 1
+#define PLL1CFG_Val 0x00000023
+#define CCLKCFG_Val 0x00000003
+#define USBCLKCFG_Val 0x00000000
+#define PCLKSEL0_Val 0x00000000
+#define PCLKSEL1_Val 0x00000000
+#define PCONP_Val 0x042887DE
+#define CLKOUTCFG_Val 0x00000000
+#define FLASH_SETUP 1
+#define FLASHCFG_Val 0x00004000
+#define CHECK_RANGE(val,min,max) ((val < min) || (val > max))
+#define CHECK_RSVD(val,mask) (val & mask)
+#define XTAL (12000000UL)
+#define OSC_CLK ( XTAL)
+#define RTC_CLK ( 32768UL)
+#define IRC_OSC ( 4000000UL)
+#define __M (((PLL0CFG_Val ) & 0x7FFF) + 1)
+#define __N (((PLL0CFG_Val >> 16) & 0x00FF) + 1)
+#define __FCCO(__F_IN) ((2ULL allsyms.o defines.h defines.o defines.txt obj resolveDefines.sh resolveDefines.sh~ test.o __M allsyms.o defines.h defines.o defines.txt obj resolveDefines.sh resolveDefines.sh~ test.o __F_IN) / __N)
+#define __CCLK_DIV (((CCLKCFG_Val ) & 0x00FF) + 1)
+#define __CORE_CLK (__FCCO(OSC_CLK) / __CCLK_DIV)
+#define __STDC__ 1
+#define __STDC_VERSION__ 201112L
+#define __STDC_UTF_16__ 1
+#define __STDC_UTF_32__ 1
+#define __STDC_HOSTED__ 0
+#define __GNUC__ 12
+#define __GNUC_MINOR__ 2
+#define __GNUC_PATCHLEVEL__ 1
+#define __VERSION__ "12.2.1 20221205"
+#define __ATOMIC_RELAXED 0
+#define __ATOMIC_SEQ_CST 5
+#define __ATOMIC_ACQUIRE 2
+#define __ATOMIC_RELEASE 3
+#define __ATOMIC_ACQ_REL 4
+#define __ATOMIC_CONSUME 1
+#define __OPTIMIZE__ 1
+#define __FINITE_MATH_ONLY__ 0
+#define __SIZEOF_INT__ 4
+#define __SIZEOF_LONG__ 4
+#define __SIZEOF_LONG_LONG__ 8
+#define __SIZEOF_SHORT__ 2
+#define __SIZEOF_FLOAT__ 4
+#define __SIZEOF_DOUBLE__ 8
+#define __SIZEOF_LONG_DOUBLE__ 8
+#define __SIZEOF_SIZE_T__ 4
+#define __CHAR_BIT__ 8
+#define __BIGGEST_ALIGNMENT__ 8
+#define __ORDER_LITTLE_ENDIAN__ 1234
+#define __ORDER_BIG_ENDIAN__ 4321
+#define __ORDER_PDP_ENDIAN__ 3412
+#define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
+#define __FLOAT_WORD_ORDER__ __ORDER_LITTLE_ENDIAN__
+#define __SIZEOF_POINTER__ 4
+#define __GNUC_EXECUTION_CHARSET_NAME "UTF-8"
+#define __GNUC_WIDE_EXECUTION_CHARSET_NAME "UTF-32LE"
+#define __SIZE_TYPE__ unsigned int
+#define __PTRDIFF_TYPE__ int
+#define __WCHAR_TYPE__ unsigned int
+#define __WINT_TYPE__ unsigned int
+#define __INTMAX_TYPE__ long long int
+#define __UINTMAX_TYPE__ long long unsigned int
+#define __CHAR16_TYPE__ short unsigned int
+#define __CHAR32_TYPE__ long unsigned int
+#define __SIG_ATOMIC_TYPE__ int
+#define __INT8_TYPE__ signed char
+#define __INT16_TYPE__ short int
+#define __INT32_TYPE__ long int
+#define __INT64_TYPE__ long long int
+#define __UINT8_TYPE__ unsigned char
+#define __UINT16_TYPE__ short unsigned int
+#define __UINT32_TYPE__ long unsigned int
+#define __UINT64_TYPE__ long long unsigned int
+#define __INT_LEAST8_TYPE__ signed char
+#define __INT_LEAST16_TYPE__ short int
+#define __INT_LEAST32_TYPE__ long int
+#define __INT_LEAST64_TYPE__ long long int
+#define __UINT_LEAST8_TYPE__ unsigned char
+#define __UINT_LEAST16_TYPE__ short unsigned int
+#define __UINT_LEAST32_TYPE__ long unsigned int
+#define __UINT_LEAST64_TYPE__ long long unsigned int
+#define __INT_FAST8_TYPE__ int
+#define __INT_FAST16_TYPE__ int
+#define __INT_FAST32_TYPE__ int
+#define __INT_FAST64_TYPE__ long long int
+#define __UINT_FAST8_TYPE__ unsigned int
+#define __UINT_FAST16_TYPE__ unsigned int
+#define __UINT_FAST32_TYPE__ unsigned int
+#define __UINT_FAST64_TYPE__ long long unsigned int
+#define __INTPTR_TYPE__ int
+#define __UINTPTR_TYPE__ unsigned int
+#define __GXX_ABI_VERSION 1017
+#define __SCHAR_MAX__ 0x7f
+#define __SHRT_MAX__ 0x7fff
+#define __INT_MAX__ 0x7fffffff
+#define __LONG_MAX__ 0x7fffffffL
+#define __LONG_LONG_MAX__ 0x7fffffffffffffffLL
+#define __WCHAR_MAX__ 0xffffffffU
+#define __WCHAR_MIN__ 0U
+#define __WINT_MAX__ 0xffffffffU
+#define __WINT_MIN__ 0U
+#define __PTRDIFF_MAX__ 0x7fffffff
+#define __SIZE_MAX__ 0xffffffffU
+#define __SCHAR_WIDTH__ 8
+#define __SHRT_WIDTH__ 16
+#define __INT_WIDTH__ 32
+#define __LONG_WIDTH__ 32
+#define __LONG_LONG_WIDTH__ 64
+#define __WCHAR_WIDTH__ 32
+#define __WINT_WIDTH__ 32
+#define __PTRDIFF_WIDTH__ 32
+#define __SIZE_WIDTH__ 32
+#define __INTMAX_MAX__ 0x7fffffffffffffffLL
+#define __INTMAX_C(c) c ## LL
+#define __UINTMAX_MAX__ 0xffffffffffffffffULL
+#define __UINTMAX_C(c) c ## ULL
+#define __INTMAX_WIDTH__ 64
+#define __SIG_ATOMIC_MAX__ 0x7fffffff
+#define __SIG_ATOMIC_MIN__ (-__SIG_ATOMIC_MAX__ - 1)
+#define __SIG_ATOMIC_WIDTH__ 32
+#define __INT8_MAX__ 0x7f
+#define __INT16_MAX__ 0x7fff
+#define __INT32_MAX__ 0x7fffffffL
+#define __INT64_MAX__ 0x7fffffffffffffffLL
+#define __UINT8_MAX__ 0xff
+#define __UINT16_MAX__ 0xffff
+#define __UINT32_MAX__ 0xffffffffUL
+#define __UINT64_MAX__ 0xffffffffffffffffULL
+#define __INT_LEAST8_MAX__ 0x7f
+#define __INT8_C(c) c
+#define __INT_LEAST8_WIDTH__ 8
+#define __INT_LEAST16_MAX__ 0x7fff
+#define __INT16_C(c) c
+#define __INT_LEAST16_WIDTH__ 16
+#define __INT_LEAST32_MAX__ 0x7fffffffL
+#define __INT32_C(c) c ## L
+#define __INT_LEAST32_WIDTH__ 32
+#define __INT_LEAST64_MAX__ 0x7fffffffffffffffLL
+#define __INT64_C(c) c ## LL
+#define __INT_LEAST64_WIDTH__ 64
+#define __UINT_LEAST8_MAX__ 0xff
+#define __UINT8_C(c) c
+#define __UINT_LEAST16_MAX__ 0xffff
+#define __UINT16_C(c) c
+#define __UINT_LEAST32_MAX__ 0xffffffffUL
+#define __UINT32_C(c) c ## UL
+#define __UINT_LEAST64_MAX__ 0xffffffffffffffffULL
+#define __UINT64_C(c) c ## ULL
+#define __INT_FAST8_MAX__ 0x7fffffff
+#define __INT_FAST8_WIDTH__ 32
+#define __INT_FAST16_MAX__ 0x7fffffff
+#define __INT_FAST16_WIDTH__ 32
+#define __INT_FAST32_MAX__ 0x7fffffff
+#define __INT_FAST32_WIDTH__ 32
+#define __INT_FAST64_MAX__ 0x7fffffffffffffffLL
+#define __INT_FAST64_WIDTH__ 64
+#define __UINT_FAST8_MAX__ 0xffffffffU
+#define __UINT_FAST16_MAX__ 0xffffffffU
+#define __UINT_FAST32_MAX__ 0xffffffffU
+#define __UINT_FAST64_MAX__ 0xffffffffffffffffULL
+#define __INTPTR_MAX__ 0x7fffffff
+#define __INTPTR_WIDTH__ 32
+#define __UINTPTR_MAX__ 0xffffffffU
+#define __GCC_IEC_559 0
+#define __GCC_IEC_559_COMPLEX 0
+#define __FLT_EVAL_METHOD__ 0
+#define __FLT_EVAL_METHOD_TS_18661_3__ 0
+#define __DEC_EVAL_METHOD__ 2
+#define __FLT_RADIX__ 2
+#define __FLT_MANT_DIG__ 24
+#define __FLT_DIG__ 6
+#define __FLT_MIN_EXP__ (-125)
+#define __FLT_MIN_10_EXP__ (-37)
+#define __FLT_MAX_EXP__ 128
+#define __FLT_MAX_10_EXP__ 38
+#define __FLT_DECIMAL_DIG__ 9
+#define __FLT_MAX__ 3.4028234663852886e+38F
+#define __FLT_NORM_MAX__ 3.4028234663852886e+38F
+#define __FLT_MIN__ 1.1754943508222875e-38F
+#define __FLT_EPSILON__ 1.1920928955078125e-7F
+#define __FLT_DENORM_MIN__ 1.4012984643248171e-45F
+#define __FLT_HAS_DENORM__ 1
+#define __FLT_HAS_INFINITY__ 1
+#define __FLT_HAS_QUIET_NAN__ 1
+#define __FLT_IS_IEC_60559__ 2
+#define __DBL_MANT_DIG__ 53
+#define __DBL_DIG__ 15
+#define __DBL_MIN_EXP__ (-1021)
+#define __DBL_MIN_10_EXP__ (-307)
+#define __DBL_MAX_EXP__ 1024
+#define __DBL_MAX_10_EXP__ 308
+#define __DBL_DECIMAL_DIG__ 17
+#define __DBL_MAX__ ((double)1.7976931348623157e+308L)
+#define __DBL_NORM_MAX__ ((double)1.7976931348623157e+308L)
+#define __DBL_MIN__ ((double)2.2250738585072014e-308L)
+#define __DBL_EPSILON__ ((double)2.2204460492503131e-16L)
+#define __DBL_DENORM_MIN__ ((double)4.9406564584124654e-324L)
+#define __DBL_HAS_DENORM__ 1
+#define __DBL_HAS_INFINITY__ 1
+#define __DBL_HAS_QUIET_NAN__ 1
+#define __DBL_IS_IEC_60559__ 2
+#define __LDBL_MANT_DIG__ 53
+#define __LDBL_DIG__ 15
+#define __LDBL_MIN_EXP__ (-1021)
+#define __LDBL_MIN_10_EXP__ (-307)
+#define __LDBL_MAX_EXP__ 1024
+#define __LDBL_MAX_10_EXP__ 308
+#define __DECIMAL_DIG__ 17
+#define __LDBL_DECIMAL_DIG__ 17
+#define __LDBL_MAX__ 1.7976931348623157e+308L
+#define __LDBL_NORM_MAX__ 1.7976931348623157e+308L
+#define __LDBL_MIN__ 2.2250738585072014e-308L
+#define __LDBL_EPSILON__ 2.2204460492503131e-16L
+#define __LDBL_DENORM_MIN__ 4.9406564584124654e-324L
+#define __LDBL_HAS_DENORM__ 1
+#define __LDBL_HAS_INFINITY__ 1
+#define __LDBL_HAS_QUIET_NAN__ 1
+#define __LDBL_IS_IEC_60559__ 2
+#define __FLT32_MANT_DIG__ 24
+#define __FLT32_DIG__ 6
+#define __FLT32_MIN_EXP__ (-125)
+#define __FLT32_MIN_10_EXP__ (-37)
+#define __FLT32_MAX_EXP__ 128
+#define __FLT32_MAX_10_EXP__ 38
+#define __FLT32_DECIMAL_DIG__ 9
+#define __FLT32_MAX__ 3.4028234663852886e+38F32
+#define __FLT32_NORM_MAX__ 3.4028234663852886e+38F32
+#define __FLT32_MIN__ 1.1754943508222875e-38F32
+#define __FLT32_EPSILON__ 1.1920928955078125e-7F32
+#define __FLT32_DENORM_MIN__ 1.4012984643248171e-45F32
+#define __FLT32_HAS_DENORM__ 1
+#define __FLT32_HAS_INFINITY__ 1
+#define __FLT32_HAS_QUIET_NAN__ 1
+#define __FLT32_IS_IEC_60559__ 2
+#define __FLT64_MANT_DIG__ 53
+#define __FLT64_DIG__ 15
+#define __FLT64_MIN_EXP__ (-1021)
+#define __FLT64_MIN_10_EXP__ (-307)
+#define __FLT64_MAX_EXP__ 1024
+#define __FLT64_MAX_10_EXP__ 308
+#define __FLT64_DECIMAL_DIG__ 17
+#define __FLT64_MAX__ 1.7976931348623157e+308F64
+#define __FLT64_NORM_MAX__ 1.7976931348623157e+308F64
+#define __FLT64_MIN__ 2.2250738585072014e-308F64
+#define __FLT64_EPSILON__ 2.2204460492503131e-16F64
+#define __FLT64_DENORM_MIN__ 4.9406564584124654e-324F64
+#define __FLT64_HAS_DENORM__ 1
+#define __FLT64_HAS_INFINITY__ 1
+#define __FLT64_HAS_QUIET_NAN__ 1
+#define __FLT64_IS_IEC_60559__ 2
+#define __FLT32X_MANT_DIG__ 53
+#define __FLT32X_DIG__ 15
+#define __FLT32X_MIN_EXP__ (-1021)
+#define __FLT32X_MIN_10_EXP__ (-307)
+#define __FLT32X_MAX_EXP__ 1024
+#define __FLT32X_MAX_10_EXP__ 308
+#define __FLT32X_DECIMAL_DIG__ 17
+#define __FLT32X_MAX__ 1.7976931348623157e+308F32x
+#define __FLT32X_NORM_MAX__ 1.7976931348623157e+308F32x
+#define __FLT32X_MIN__ 2.2250738585072014e-308F32x
+#define __FLT32X_EPSILON__ 2.2204460492503131e-16F32x
+#define __FLT32X_DENORM_MIN__ 4.9406564584124654e-324F32x
+#define __FLT32X_HAS_DENORM__ 1
+#define __FLT32X_HAS_INFINITY__ 1
+#define __FLT32X_HAS_QUIET_NAN__ 1
+#define __FLT32X_IS_IEC_60559__ 2
+#define __SFRACT_FBIT__ 7
+#define __SFRACT_IBIT__ 0
+#define __SFRACT_MIN__ (-0.5HR-0.5HR)
+#define __SFRACT_MAX__ 0X7FP-7HR
+#define __SFRACT_EPSILON__ 0x1P-7HR
+#define __USFRACT_FBIT__ 8
+#define __USFRACT_IBIT__ 0
+#define __USFRACT_MIN__ 0.0UHR
+#define __USFRACT_MAX__ 0XFFP-8UHR
+#define __USFRACT_EPSILON__ 0x1P-8UHR
+#define __FRACT_FBIT__ 15
+#define __FRACT_IBIT__ 0
+#define __FRACT_MIN__ (-0.5R-0.5R)
+#define __FRACT_MAX__ 0X7FFFP-15R
+#define __FRACT_EPSILON__ 0x1P-15R
+#define __UFRACT_FBIT__ 16
+#define __UFRACT_IBIT__ 0
+#define __UFRACT_MIN__ 0.0UR
+#define __UFRACT_MAX__ 0XFFFFP-16UR
+#define __UFRACT_EPSILON__ 0x1P-16UR
+#define __LFRACT_FBIT__ 31
+#define __LFRACT_IBIT__ 0
+#define __LFRACT_MIN__ (-0.5LR-0.5LR)
+#define __LFRACT_MAX__ 0X7FFFFFFFP-31LR
+#define __LFRACT_EPSILON__ 0x1P-31LR
+#define __ULFRACT_FBIT__ 32
+#define __ULFRACT_IBIT__ 0
+#define __ULFRACT_MIN__ 0.0ULR
+#define __ULFRACT_MAX__ 0XFFFFFFFFP-32ULR
+#define __ULFRACT_EPSILON__ 0x1P-32ULR
+#define __LLFRACT_FBIT__ 63
+#define __LLFRACT_IBIT__ 0
+#define __LLFRACT_MIN__ (-0.5LLR-0.5LLR)
+#define __LLFRACT_MAX__ 0X7FFFFFFFFFFFFFFFP-63LLR
+#define __LLFRACT_EPSILON__ 0x1P-63LLR
+#define __ULLFRACT_FBIT__ 64
+#define __ULLFRACT_IBIT__ 0
+#define __ULLFRACT_MIN__ 0.0ULLR
+#define __ULLFRACT_MAX__ 0XFFFFFFFFFFFFFFFFP-64ULLR
+#define __ULLFRACT_EPSILON__ 0x1P-64ULLR
+#define __SACCUM_FBIT__ 7
+#define __SACCUM_IBIT__ 8
+#define __SACCUM_MIN__ (-0X1P7HK-0X1P7HK)
+#define __SACCUM_MAX__ 0X7FFFP-7HK
+#define __SACCUM_EPSILON__ 0x1P-7HK
+#define __USACCUM_FBIT__ 8
+#define __USACCUM_IBIT__ 8
+#define __USACCUM_MIN__ 0.0UHK
+#define __USACCUM_MAX__ 0XFFFFP-8UHK
+#define __USACCUM_EPSILON__ 0x1P-8UHK
+#define __ACCUM_FBIT__ 15
+#define __ACCUM_IBIT__ 16
+#define __ACCUM_MIN__ (-0X1P15K-0X1P15K)
+#define __ACCUM_MAX__ 0X7FFFFFFFP-15K
+#define __ACCUM_EPSILON__ 0x1P-15K
+#define __UACCUM_FBIT__ 16
+#define __UACCUM_IBIT__ 16
+#define __UACCUM_MIN__ 0.0UK
+#define __UACCUM_MAX__ 0XFFFFFFFFP-16UK
+#define __UACCUM_EPSILON__ 0x1P-16UK
+#define __LACCUM_FBIT__ 31
+#define __LACCUM_IBIT__ 32
+#define __LACCUM_MIN__ (-0X1P31LK-0X1P31LK)
+#define __LACCUM_MAX__ 0X7FFFFFFFFFFFFFFFP-31LK
+#define __LACCUM_EPSILON__ 0x1P-31LK
+#define __ULACCUM_FBIT__ 32
+#define __ULACCUM_IBIT__ 32
+#define __ULACCUM_MIN__ 0.0ULK
+#define __ULACCUM_MAX__ 0XFFFFFFFFFFFFFFFFP-32ULK
+#define __ULACCUM_EPSILON__ 0x1P-32ULK
+#define __LLACCUM_FBIT__ 31
+#define __LLACCUM_IBIT__ 32
+#define __LLACCUM_MIN__ (-0X1P31LLK-0X1P31LLK)
+#define __LLACCUM_MAX__ 0X7FFFFFFFFFFFFFFFP-31LLK
+#define __LLACCUM_EPSILON__ 0x1P-31LLK
+#define __ULLACCUM_FBIT__ 32
+#define __ULLACCUM_IBIT__ 32
+#define __ULLACCUM_MIN__ 0.0ULLK
+#define __ULLACCUM_MAX__ 0XFFFFFFFFFFFFFFFFP-32ULLK
+#define __ULLACCUM_EPSILON__ 0x1P-32ULLK
+#define __QQ_FBIT__ 7
+#define __QQ_IBIT__ 0
+#define __HQ_FBIT__ 15
+#define __HQ_IBIT__ 0
+#define __SQ_FBIT__ 31
+#define __SQ_IBIT__ 0
+#define __DQ_FBIT__ 63
+#define __DQ_IBIT__ 0
+#define __TQ_FBIT__ 127
+#define __TQ_IBIT__ 0
+#define __UQQ_FBIT__ 8
+#define __UQQ_IBIT__ 0
+#define __UHQ_FBIT__ 16
+#define __UHQ_IBIT__ 0
+#define __USQ_FBIT__ 32
+#define __USQ_IBIT__ 0
+#define __UDQ_FBIT__ 64
+#define __UDQ_IBIT__ 0
+#define __UTQ_FBIT__ 128
+#define __UTQ_IBIT__ 0
+#define __HA_FBIT__ 7
+#define __HA_IBIT__ 8
+#define __SA_FBIT__ 15
+#define __SA_IBIT__ 16
+#define __DA_FBIT__ 31
+#define __DA_IBIT__ 32
+#define __TA_FBIT__ 63
+#define __TA_IBIT__ 64
+#define __UHA_FBIT__ 8
+#define __UHA_IBIT__ 8
+#define __USA_FBIT__ 16
+#define __USA_IBIT__ 16
+#define __UDA_FBIT__ 32
+#define __UDA_IBIT__ 32
+#define __UTA_FBIT__ 64
+#define __UTA_IBIT__ 64
+#define __REGISTER_PREFIX__ __REGISTER_PREFIX__
+#define __USER_LABEL_PREFIX__ __USER_LABEL_PREFIX__
+#define __GNUC_STDC_INLINE__ 1
+#define __GCC_HAVE_SYNC_COMPARE_AND_SWAP_1 1
+#define __GCC_HAVE_SYNC_COMPARE_AND_SWAP_2 1
+#define __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4 1
+#define __GCC_ATOMIC_BOOL_LOCK_FREE 2
+#define __GCC_ATOMIC_CHAR_LOCK_FREE 2
+#define __GCC_ATOMIC_CHAR16_T_LOCK_FREE 2
+#define __GCC_ATOMIC_CHAR32_T_LOCK_FREE 2
+#define __GCC_ATOMIC_WCHAR_T_LOCK_FREE 2
+#define __GCC_ATOMIC_SHORT_LOCK_FREE 2
+#define __GCC_ATOMIC_INT_LOCK_FREE 2
+#define __GCC_ATOMIC_LONG_LOCK_FREE 2
+#define __GCC_ATOMIC_LLONG_LOCK_FREE 1
+#define __GCC_ATOMIC_TEST_AND_SET_TRUEVAL 1
+#define __GCC_DESTRUCTIVE_SIZE 64
+#define __GCC_CONSTRUCTIVE_SIZE 64
+#define __GCC_ATOMIC_POINTER_LOCK_FREE 2
+#define __HAVE_SPECULATION_SAFE_VALUE 1
+#define __GCC_HAVE_DWARF2_CFI_ASM 1
+#define __PRAGMA_REDEFINE_EXTNAME 1
+#define __SIZEOF_WCHAR_T__ 4
+#define __SIZEOF_WINT_T__ 4
+#define __SIZEOF_PTRDIFF_T__ 4
+#define __ARM_FEATURE_DSP __ARM_FEATURE_DSP
+#define __ARM_FEATURE_QBIT 1
+#define __ARM_FEATURE_SAT 1
+#define __ARM_FEATURE_CRYPTO __ARM_FEATURE_CRYPTO
+#define __ARM_FEATURE_UNALIGNED 1
+#define __ARM_FEATURE_QRDMX __ARM_FEATURE_QRDMX
+#define __ARM_FEATURE_CRC32 __ARM_FEATURE_CRC32
+#define __ARM_FEATURE_DOTPROD __ARM_FEATURE_DOTPROD
+#define __ARM_FEATURE_COMPLEX __ARM_FEATURE_COMPLEX
+#define __ARM_32BIT_STATE 1
+#define __ARM_FEATURE_MVE __ARM_FEATURE_MVE
+#define __ARM_FEATURE_CMSE __ARM_FEATURE_CMSE
+#define __ARM_FEATURE_LDREX __ARM_FEATURE_LDREX
+#define __ARM_FEATURE_LDREX 7
+#define __ARM_FEATURE_CLZ 1
+#define __ARM_FEATURE_NUMERIC_MAXMIN __ARM_FEATURE_NUMERIC_MAXMIN
+#define __ARM_FEATURE_SIMD32 __ARM_FEATURE_SIMD32
+#define __ARM_SIZEOF_MINIMAL_ENUM 1
+#define __ARM_SIZEOF_WCHAR_T 4
+#define __ARM_ARCH_PROFILE __ARM_ARCH_PROFILE
+#define __ARM_ARCH_PROFILE 77
+#define __arm__ 1
+#define __ARM_ARCH __ARM_ARCH
+#define __ARM_ARCH 7
+#define __APCS_32__ 1
+#define __GCC_ASM_FLAG_OUTPUTS__ 1
+#define __thumb__ 1
+#define __thumb2__ 1
+#define __THUMBEL__ 1
+#define __ARM_ARCH_ISA_THUMB __ARM_ARCH_ISA_THUMB
+#define __ARM_ARCH_ISA_THUMB 2
+#define __ARMEL__ 1
+#define __SOFTFP__ 1
+#define __VFP_FP__ 1
+#define __ARM_FP __ARM_FP
+#define __ARM_FP16_FORMAT_IEEE __ARM_FP16_FORMAT_IEEE
+#define __ARM_FP16_FORMAT_ALTERNATIVE __ARM_FP16_FORMAT_ALTERNATIVE
+#define __ARM_FP16_ARGS __ARM_FP16_ARGS
+#define __ARM_FEATURE_FP16_SCALAR_ARITHMETIC __ARM_FEATURE_FP16_SCALAR_ARITHMETIC
+#define __ARM_FEATURE_FP16_VECTOR_ARITHMETIC __ARM_FEATURE_FP16_VECTOR_ARITHMETIC
+#define __ARM_FEATURE_FP16_FML __ARM_FEATURE_FP16_FML
+#define __ARM_FEATURE_FMA __ARM_FEATURE_FMA
+#define __ARM_NEON__ __ARM_NEON__
+#define __ARM_NEON __ARM_NEON
+#define __ARM_NEON_FP __ARM_NEON_FP
+#define __THUMB_INTERWORK__ 1
+#define __ARM_ARCH_7M__ 1
+#define __ARM_PCS 1
+#define __ARM_EABI__ 1
+#define __FDPIC__ __FDPIC__
+#define __ARM_ARCH_EXT_IDIV__ 1
+#define __ARM_FEATURE_IDIV 1
+#define __ARM_ASM_SYNTAX_UNIFIED__ 1
+#define __ARM_FEATURE_COPROC __ARM_FEATURE_COPROC
+#define __ARM_FEATURE_COPROC 15
+#define __ARM_FEATURE_CDE __ARM_FEATURE_CDE
+#define __ARM_FEATURE_CDE_COPROC __ARM_FEATURE_CDE_COPROC
+#define __ARM_FEATURE_MATMUL_INT8 __ARM_FEATURE_MATMUL_INT8
+#define __ARM_FEATURE_BF16_SCALAR_ARITHMETIC __ARM_FEATURE_BF16_SCALAR_ARITHMETIC
+#define __ARM_FEATURE_BF16_VECTOR_ARITHMETIC __ARM_FEATURE_BF16_VECTOR_ARITHMETIC
+#define __ARM_BF16_FORMAT_ALTERNATIVE __ARM_BF16_FORMAT_ALTERNATIVE
+#define __GXX_TYPEINFO_EQUALITY_INLINE 0
+#define __ELF__ 1
+#define __USES_INITFINI__ 1
+#define DEBUG 1
+#define TRACE 1
+#define OS_USE_TRACE_SEMIHOSTING_DEBUG 1
+#define __LPC17xx_H__ __LPC17xx_H__
+#define __MPU_PRESENT 1
+#define __NVIC_PRIO_BITS 5
+#define __Vendor_SysTickConfig 0
+#define _GCC_STDINT_H _GCC_STDINT_H
+#define INT8_MAX INT8_MAX
+#define INT8_MAX __INT8_MAX__
+#define INT8_MIN INT8_MIN
+#define INT8_MIN (-INT8_MAX - 1)
+#define UINT8_MAX UINT8_MAX
+#define UINT8_MAX __UINT8_MAX__
+#define INT16_MAX INT16_MAX
+#define INT16_MAX __INT16_MAX__
+#define INT16_MIN INT16_MIN
+#define INT16_MIN (-INT16_MAX - 1)
+#define UINT16_MAX UINT16_MAX
+#define UINT16_MAX __UINT16_MAX__
+#define INT32_MAX INT32_MAX
+#define INT32_MAX __INT32_MAX__
+#define INT32_MIN INT32_MIN
+#define INT32_MIN (-INT32_MAX - 1)
+#define UINT32_MAX UINT32_MAX
+#define UINT32_MAX __UINT32_MAX__
+#define INT64_MAX INT64_MAX
+#define INT64_MAX __INT64_MAX__
+#define INT64_MIN INT64_MIN
+#define INT64_MIN (-INT64_MAX - 1)
+#define UINT64_MAX UINT64_MAX
+#define UINT64_MAX __UINT64_MAX__
+#define INT_LEAST8_MAX INT_LEAST8_MAX
+#define INT_LEAST8_MAX __INT_LEAST8_MAX__
+#define INT_LEAST8_MIN INT_LEAST8_MIN
+#define INT_LEAST8_MIN (-INT_LEAST8_MAX - 1)
+#define UINT_LEAST8_MAX UINT_LEAST8_MAX
+#define UINT_LEAST8_MAX __UINT_LEAST8_MAX__
+#define INT_LEAST16_MAX INT_LEAST16_MAX
+#define INT_LEAST16_MAX __INT_LEAST16_MAX__
+#define INT_LEAST16_MIN INT_LEAST16_MIN
+#define INT_LEAST16_MIN (-INT_LEAST16_MAX - 1)
+#define UINT_LEAST16_MAX UINT_LEAST16_MAX
+#define UINT_LEAST16_MAX __UINT_LEAST16_MAX__
+#define INT_LEAST32_MAX INT_LEAST32_MAX
+#define INT_LEAST32_MAX __INT_LEAST32_MAX__
+#define INT_LEAST32_MIN INT_LEAST32_MIN
+#define INT_LEAST32_MIN (-INT_LEAST32_MAX - 1)
+#define UINT_LEAST32_MAX UINT_LEAST32_MAX
+#define UINT_LEAST32_MAX __UINT_LEAST32_MAX__
+#define INT_LEAST64_MAX INT_LEAST64_MAX
+#define INT_LEAST64_MAX __INT_LEAST64_MAX__
+#define INT_LEAST64_MIN INT_LEAST64_MIN
+#define INT_LEAST64_MIN (-INT_LEAST64_MAX - 1)
+#define UINT_LEAST64_MAX UINT_LEAST64_MAX
+#define UINT_LEAST64_MAX __UINT_LEAST64_MAX__
+#define INT_FAST8_MAX INT_FAST8_MAX
+#define INT_FAST8_MAX __INT_FAST8_MAX__
+#define INT_FAST8_MIN INT_FAST8_MIN
+#define INT_FAST8_MIN (-INT_FAST8_MAX - 1)
+#define UINT_FAST8_MAX UINT_FAST8_MAX
+#define UINT_FAST8_MAX __UINT_FAST8_MAX__
+#define INT_FAST16_MAX INT_FAST16_MAX
+#define INT_FAST16_MAX __INT_FAST16_MAX__
+#define INT_FAST16_MIN INT_FAST16_MIN
+#define INT_FAST16_MIN (-INT_FAST16_MAX - 1)
+#define UINT_FAST16_MAX UINT_FAST16_MAX
+#define UINT_FAST16_MAX __UINT_FAST16_MAX__
+#define INT_FAST32_MAX INT_FAST32_MAX
+#define INT_FAST32_MAX __INT_FAST32_MAX__
+#define INT_FAST32_MIN INT_FAST32_MIN
+#define INT_FAST32_MIN (-INT_FAST32_MAX - 1)
+#define UINT_FAST32_MAX UINT_FAST32_MAX
+#define UINT_FAST32_MAX __UINT_FAST32_MAX__
+#define INT_FAST64_MAX INT_FAST64_MAX
+#define INT_FAST64_MAX __INT_FAST64_MAX__
+#define INT_FAST64_MIN INT_FAST64_MIN
+#define INT_FAST64_MIN (-INT_FAST64_MAX - 1)
+#define UINT_FAST64_MAX UINT_FAST64_MAX
+#define UINT_FAST64_MAX __UINT_FAST64_MAX__
+#define INTPTR_MAX INTPTR_MAX
+#define INTPTR_MAX __INTPTR_MAX__
+#define INTPTR_MIN INTPTR_MIN
+#define INTPTR_MIN (-INTPTR_MAX - 1)
+#define UINTPTR_MAX UINTPTR_MAX
+#define UINTPTR_MAX __UINTPTR_MAX__
+#define INTMAX_MAX INTMAX_MAX
+#define INTMAX_MAX __INTMAX_MAX__
+#define INTMAX_MIN INTMAX_MIN
+#define INTMAX_MIN (-INTMAX_MAX - 1)
+#define UINTMAX_MAX UINTMAX_MAX
+#define UINTMAX_MAX __UINTMAX_MAX__
+#define PTRDIFF_MAX PTRDIFF_MAX
+#define PTRDIFF_MAX __PTRDIFF_MAX__
+#define PTRDIFF_MIN PTRDIFF_MIN
+#define PTRDIFF_MIN (-PTRDIFF_MAX - 1)
+#define SIG_ATOMIC_MAX SIG_ATOMIC_MAX
+#define SIG_ATOMIC_MAX __SIG_ATOMIC_MAX__
+#define SIG_ATOMIC_MIN SIG_ATOMIC_MIN
+#define SIG_ATOMIC_MIN __SIG_ATOMIC_MIN__
+#define SIZE_MAX SIZE_MAX
+#define SIZE_MAX __SIZE_MAX__
+#define WCHAR_MAX WCHAR_MAX
+#define WCHAR_MAX __WCHAR_MAX__
+#define WCHAR_MIN WCHAR_MIN
+#define WCHAR_MIN __WCHAR_MIN__
+#define WINT_MAX WINT_MAX
+#define WINT_MAX __WINT_MAX__
+#define WINT_MIN WINT_MIN
+#define WINT_MIN __WINT_MIN__
+#define INT8_C INT8_C
+#define INT8_C(c) __INT8_C(c)
+#define INT16_C INT16_C
+#define INT16_C(c) __INT16_C(c)
+#define INT32_C INT32_C
+#define INT32_C(c) __INT32_C(c)
+#define INT64_C INT64_C
+#define INT64_C(c) __INT64_C(c)
+#define UINT8_C UINT8_C
+#define UINT8_C(c) __UINT8_C(c)
+#define UINT16_C UINT16_C
+#define UINT16_C(c) __UINT16_C(c)
+#define UINT32_C UINT32_C
+#define UINT32_C(c) __UINT32_C(c)
+#define UINT64_C UINT64_C
+#define UINT64_C(c) __UINT64_C(c)
+#define INTMAX_C INTMAX_C
+#define INTMAX_C(c) __INTMAX_C(c)
+#define UINTMAX_C UINTMAX_C
+#define UINTMAX_C(c) __UINTMAX_C(c)
+#define __CMSIS_VERSION_H __CMSIS_VERSION_H
+#define __CM_CMSIS_VERSION_MAIN ( 5U)
+#define __CM_CMSIS_VERSION_SUB ( 1U)
+#define __CM_CMSIS_VERSION ((__CM_CMSIS_VERSION_MAIN << 16U) | __CM_CMSIS_VERSION_SUB )
+#define __CM3_CMSIS_VERSION_MAIN (__CM_CMSIS_VERSION_MAIN)
+#define __CM3_CMSIS_VERSION_SUB (__CM_CMSIS_VERSION_SUB)
+#define __CM3_CMSIS_VERSION ((__CM3_CMSIS_VERSION_MAIN << 16U) | __CM3_CMSIS_VERSION_SUB )
+#define __CORTEX_M (3U)
+#define __FPU_USED 0U
+#define __CMSIS_GCC_H __CMSIS_GCC_H
+#define __ASM __asm
+#define __INLINE inline
+#define __STATIC_INLINE static inline
+#define __STATIC_FORCEINLINE __attribute__((always_inline)) static inline
+#define __NO_RETURN __attribute__((__noreturn__))
+#define __USED __attribute__((used))
+#define __WEAK __attribute__((weak))
+#define __PACKED __attribute__((packed, aligned(1)))
+#define __PACKED_STRUCT struct __attribute__((packed, aligned(1)))
+#define __PACKED_UNION union __attribute__((packed, aligned(1)))
+#define __UNALIGNED_UINT32(x) (((struct T_UINT32 *)(x))->v)
+#define __UNALIGNED_UINT16_WRITE(addr,val) (void)((((struct T_UINT16_WRITE *)(void *)(addr))->v) = (val))
+#define __UNALIGNED_UINT16_READ(addr) (((const struct T_UINT16_READ *)(const void *)(addr))->v)
+#define __UNALIGNED_UINT32_WRITE(addr,val) (void)((((struct T_UINT32_WRITE *)(void *)(addr))->v) = (val))
+#define __UNALIGNED_UINT32_READ(addr) (((const struct T_UINT32_READ *)(const void *)(addr))->v)
+#define __ALIGNED(x) __attribute__((aligned(x)))
+#define __RESTRICT __restrict
+#define __CMSIS_GCC_OUT_REG(r) "=r" (r)
+#define __CMSIS_GCC_RW_REG(r) "+r" (r)
+#define __CMSIS_GCC_USE_REG(r) "r" (r)
+#define __NOP() __ASM volatile ("nop")
+#define __WFI() __ASM volatile ("wfi")
+#define __WFE() __ASM volatile ("wfe")
+#define __SEV() __ASM volatile ("sev")
+#define __BKPT(value) __ASM volatile ("bkpt "#value)
+#define __CLZ (uint8_t)__builtin_clz
+#define __SSAT(ARG1,ARG2) __extension__ ({ int32_t __RES, __ARG1 = (ARG1); __ASM ("ssat %0, %1, %2" : "=r" (__RES) : "I" (ARG2), "r" (__ARG1) ); __RES; })
+#define __USAT(ARG1,ARG2) __extension__ ({ uint32_t __RES, __ARG1 = (ARG1); __ASM ("usat %0, %1, %2" : "=r" (__RES) : "I" (ARG2), "r" (__ARG1) ); __RES; })
+#define __CORE_CM3_H_DEPENDANT __CORE_CM3_H_DEPENDANT
+#define __I volatile const
+#define __O volatile
+#define __IO volatile
+#define __IM volatile const
+#define __OM volatile
+#define __IOM volatile
+#define APSR_N_Pos 31U
+#define APSR_N_Msk (1UL << APSR_N_Pos)
+#define APSR_Z_Pos 30U
+#define APSR_Z_Msk (1UL << APSR_Z_Pos)
+#define APSR_C_Pos 29U
+#define APSR_C_Msk (1UL << APSR_C_Pos)
+#define APSR_V_Pos 28U
+#define APSR_V_Msk (1UL << APSR_V_Pos)
+#define APSR_Q_Pos 27U
+#define APSR_Q_Msk (1UL << APSR_Q_Pos)
+#define IPSR_ISR_Pos 0U
+#define IPSR_ISR_Msk (0x1FFUL )
+#define xPSR_N_Pos 31U
+#define xPSR_N_Msk (1UL << xPSR_N_Pos)
+#define xPSR_Z_Pos 30U
+#define xPSR_Z_Msk (1UL << xPSR_Z_Pos)
+#define xPSR_C_Pos 29U
+#define xPSR_C_Msk (1UL << xPSR_C_Pos)
+#define xPSR_V_Pos 28U
+#define xPSR_V_Msk (1UL << xPSR_V_Pos)
+#define xPSR_Q_Pos 27U
+#define xPSR_Q_Msk (1UL << xPSR_Q_Pos)
+#define xPSR_ICI_IT_2_Pos 25U
+#define xPSR_ICI_IT_2_Msk (3UL << xPSR_ICI_IT_2_Pos)
+#define xPSR_T_Pos 24U
+#define xPSR_T_Msk (1UL << xPSR_T_Pos)
+#define xPSR_ICI_IT_1_Pos 10U
+#define xPSR_ICI_IT_1_Msk (0x3FUL << xPSR_ICI_IT_1_Pos)
+#define xPSR_ISR_Pos 0U
+#define xPSR_ISR_Msk (0x1FFUL )
+#define CONTROL_SPSEL_Pos 1U
+#define CONTROL_SPSEL_Msk (1UL << CONTROL_SPSEL_Pos)
+#define CONTROL_nPRIV_Pos 0U
+#define CONTROL_nPRIV_Msk (1UL )
+#define NVIC_STIR_INTID_Pos 0U
+#define NVIC_STIR_INTID_Msk (0x1FFUL )
+#define SCB_CPUID_IMPLEMENTER_Pos 24U
+#define SCB_CPUID_IMPLEMENTER_Msk (0xFFUL << SCB_CPUID_IMPLEMENTER_Pos)
+#define SCB_CPUID_VARIANT_Pos 20U
+#define SCB_CPUID_VARIANT_Msk (0xFUL << SCB_CPUID_VARIANT_Pos)
+#define SCB_CPUID_ARCHITECTURE_Pos 16U
+#define SCB_CPUID_ARCHITECTURE_Msk (0xFUL << SCB_CPUID_ARCHITECTURE_Pos)
+#define SCB_CPUID_PARTNO_Pos 4U
+#define SCB_CPUID_PARTNO_Msk (0xFFFUL << SCB_CPUID_PARTNO_Pos)
+#define SCB_CPUID_REVISION_Pos 0U
+#define SCB_CPUID_REVISION_Msk (0xFUL )
+#define SCB_ICSR_NMIPENDSET_Pos 31U
+#define SCB_ICSR_NMIPENDSET_Msk (1UL << SCB_ICSR_NMIPENDSET_Pos)
+#define SCB_ICSR_PENDSVSET_Pos 28U
+#define SCB_ICSR_PENDSVSET_Msk (1UL << SCB_ICSR_PENDSVSET_Pos)
+#define SCB_ICSR_PENDSVCLR_Pos 27U
+#define SCB_ICSR_PENDSVCLR_Msk (1UL << SCB_ICSR_PENDSVCLR_Pos)
+#define SCB_ICSR_PENDSTSET_Pos 26U
+#define SCB_ICSR_PENDSTSET_Msk (1UL << SCB_ICSR_PENDSTSET_Pos)
+#define SCB_ICSR_PENDSTCLR_Pos 25U
+#define SCB_ICSR_PENDSTCLR_Msk (1UL << SCB_ICSR_PENDSTCLR_Pos)
+#define SCB_ICSR_ISRPREEMPT_Pos 23U
+#define SCB_ICSR_ISRPREEMPT_Msk (1UL << SCB_ICSR_ISRPREEMPT_Pos)
+#define SCB_ICSR_ISRPENDING_Pos 22U
+#define SCB_ICSR_ISRPENDING_Msk (1UL << SCB_ICSR_ISRPENDING_Pos)
+#define SCB_ICSR_VECTPENDING_Pos 12U
+#define SCB_ICSR_VECTPENDING_Msk (0x1FFUL << SCB_ICSR_VECTPENDING_Pos)
+#define SCB_ICSR_RETTOBASE_Pos 11U
+#define SCB_ICSR_RETTOBASE_Msk (1UL << SCB_ICSR_RETTOBASE_Pos)
+#define SCB_ICSR_VECTACTIVE_Pos 0U
+#define SCB_ICSR_VECTACTIVE_Msk (0x1FFUL )
+#define SCB_VTOR_TBLOFF_Pos 7U
+#define SCB_VTOR_TBLOFF_Msk (0x1FFFFFFUL << SCB_VTOR_TBLOFF_Pos)
+#define SCB_AIRCR_VECTKEY_Pos 16U
+#define SCB_AIRCR_VECTKEY_Msk (0xFFFFUL << SCB_AIRCR_VECTKEY_Pos)
+#define SCB_AIRCR_VECTKEYSTAT_Pos 16U
+#define SCB_AIRCR_VECTKEYSTAT_Msk (0xFFFFUL << SCB_AIRCR_VECTKEYSTAT_Pos)
+#define SCB_AIRCR_ENDIANESS_Pos 15U
+#define SCB_AIRCR_ENDIANESS_Msk (1UL << SCB_AIRCR_ENDIANESS_Pos)
+#define SCB_AIRCR_PRIGROUP_Pos 8U
+#define SCB_AIRCR_PRIGROUP_Msk (7UL << SCB_AIRCR_PRIGROUP_Pos)
+#define SCB_AIRCR_SYSRESETREQ_Pos 2U
+#define SCB_AIRCR_SYSRESETREQ_Msk (1UL << SCB_AIRCR_SYSRESETREQ_Pos)
+#define SCB_AIRCR_VECTCLRACTIVE_Pos 1U
+#define SCB_AIRCR_VECTCLRACTIVE_Msk (1UL << SCB_AIRCR_VECTCLRACTIVE_Pos)
+#define SCB_AIRCR_VECTRESET_Pos 0U
+#define SCB_AIRCR_VECTRESET_Msk (1UL )
+#define SCB_SCR_SEVONPEND_Pos 4U
+#define SCB_SCR_SEVONPEND_Msk (1UL << SCB_SCR_SEVONPEND_Pos)
+#define SCB_SCR_SLEEPDEEP_Pos 2U
+#define SCB_SCR_SLEEPDEEP_Msk (1UL << SCB_SCR_SLEEPDEEP_Pos)
+#define SCB_SCR_SLEEPONEXIT_Pos 1U
+#define SCB_SCR_SLEEPONEXIT_Msk (1UL << SCB_SCR_SLEEPONEXIT_Pos)
+#define SCB_CCR_STKALIGN_Pos 9U
+#define SCB_CCR_STKALIGN_Msk (1UL << SCB_CCR_STKALIGN_Pos)
+#define SCB_CCR_BFHFNMIGN_Pos 8U
+#define SCB_CCR_BFHFNMIGN_Msk (1UL << SCB_CCR_BFHFNMIGN_Pos)
+#define SCB_CCR_DIV_0_TRP_Pos 4U
+#define SCB_CCR_DIV_0_TRP_Msk (1UL << SCB_CCR_DIV_0_TRP_Pos)
+#define SCB_CCR_UNALIGN_TRP_Pos 3U
+#define SCB_CCR_UNALIGN_TRP_Msk (1UL << SCB_CCR_UNALIGN_TRP_Pos)
+#define SCB_CCR_USERSETMPEND_Pos 1U
+#define SCB_CCR_USERSETMPEND_Msk (1UL << SCB_CCR_USERSETMPEND_Pos)
+#define SCB_CCR_NONBASETHRDENA_Pos 0U
+#define SCB_CCR_NONBASETHRDENA_Msk (1UL )
+#define SCB_SHCSR_USGFAULTENA_Pos 18U
+#define SCB_SHCSR_USGFAULTENA_Msk (1UL << SCB_SHCSR_USGFAULTENA_Pos)
+#define SCB_SHCSR_BUSFAULTENA_Pos 17U
+#define SCB_SHCSR_BUSFAULTENA_Msk (1UL << SCB_SHCSR_BUSFAULTENA_Pos)
+#define SCB_SHCSR_MEMFAULTENA_Pos 16U
+#define SCB_SHCSR_MEMFAULTENA_Msk (1UL << SCB_SHCSR_MEMFAULTENA_Pos)
+#define SCB_SHCSR_SVCALLPENDED_Pos 15U
+#define SCB_SHCSR_SVCALLPENDED_Msk (1UL << SCB_SHCSR_SVCALLPENDED_Pos)
+#define SCB_SHCSR_BUSFAULTPENDED_Pos 14U
+#define SCB_SHCSR_BUSFAULTPENDED_Msk (1UL << SCB_SHCSR_BUSFAULTPENDED_Pos)
+#define SCB_SHCSR_MEMFAULTPENDED_Pos 13U
+#define SCB_SHCSR_MEMFAULTPENDED_Msk (1UL << SCB_SHCSR_MEMFAULTPENDED_Pos)
+#define SCB_SHCSR_USGFAULTPENDED_Pos 12U
+#define SCB_SHCSR_USGFAULTPENDED_Msk (1UL << SCB_SHCSR_USGFAULTPENDED_Pos)
+#define SCB_SHCSR_SYSTICKACT_Pos 11U
+#define SCB_SHCSR_SYSTICKACT_Msk (1UL << SCB_SHCSR_SYSTICKACT_Pos)
+#define SCB_SHCSR_PENDSVACT_Pos 10U
+#define SCB_SHCSR_PENDSVACT_Msk (1UL << SCB_SHCSR_PENDSVACT_Pos)
+#define SCB_SHCSR_MONITORACT_Pos 8U
+#define SCB_SHCSR_MONITORACT_Msk (1UL << SCB_SHCSR_MONITORACT_Pos)
+#define SCB_SHCSR_SVCALLACT_Pos 7U
+#define SCB_SHCSR_SVCALLACT_Msk (1UL << SCB_SHCSR_SVCALLACT_Pos)
+#define SCB_SHCSR_USGFAULTACT_Pos 3U
+#define SCB_SHCSR_USGFAULTACT_Msk (1UL << SCB_SHCSR_USGFAULTACT_Pos)
+#define SCB_SHCSR_BUSFAULTACT_Pos 1U
+#define SCB_SHCSR_BUSFAULTACT_Msk (1UL << SCB_SHCSR_BUSFAULTACT_Pos)
+#define SCB_SHCSR_MEMFAULTACT_Pos 0U
+#define SCB_SHCSR_MEMFAULTACT_Msk (1UL )
+#define SCB_CFSR_USGFAULTSR_Pos 16U
+#define SCB_CFSR_USGFAULTSR_Msk (0xFFFFUL << SCB_CFSR_USGFAULTSR_Pos)
+#define SCB_CFSR_BUSFAULTSR_Pos 8U
+#define SCB_CFSR_BUSFAULTSR_Msk (0xFFUL << SCB_CFSR_BUSFAULTSR_Pos)
+#define SCB_CFSR_MEMFAULTSR_Pos 0U
+#define SCB_CFSR_MEMFAULTSR_Msk (0xFFUL )
+#define SCB_CFSR_MMARVALID_Pos (SCB_SHCSR_MEMFAULTACT_Pos + 7U)
+#define SCB_CFSR_MMARVALID_Msk (1UL << SCB_CFSR_MMARVALID_Pos)
+#define SCB_CFSR_MSTKERR_Pos (SCB_SHCSR_MEMFAULTACT_Pos + 4U)
+#define SCB_CFSR_MSTKERR_Msk (1UL << SCB_CFSR_MSTKERR_Pos)
+#define SCB_CFSR_MUNSTKERR_Pos (SCB_SHCSR_MEMFAULTACT_Pos + 3U)
+#define SCB_CFSR_MUNSTKERR_Msk (1UL << SCB_CFSR_MUNSTKERR_Pos)
+#define SCB_CFSR_DACCVIOL_Pos (SCB_SHCSR_MEMFAULTACT_Pos + 1U)
+#define SCB_CFSR_DACCVIOL_Msk (1UL << SCB_CFSR_DACCVIOL_Pos)
+#define SCB_CFSR_IACCVIOL_Pos (SCB_SHCSR_MEMFAULTACT_Pos + 0U)
+#define SCB_CFSR_IACCVIOL_Msk (1UL )
+#define SCB_CFSR_BFARVALID_Pos (SCB_CFSR_BUSFAULTSR_Pos + 7U)
+#define SCB_CFSR_BFARVALID_Msk (1UL << SCB_CFSR_BFARVALID_Pos)
+#define SCB_CFSR_STKERR_Pos (SCB_CFSR_BUSFAULTSR_Pos + 4U)
+#define SCB_CFSR_STKERR_Msk (1UL << SCB_CFSR_STKERR_Pos)
+#define SCB_CFSR_UNSTKERR_Pos (SCB_CFSR_BUSFAULTSR_Pos + 3U)
+#define SCB_CFSR_UNSTKERR_Msk (1UL << SCB_CFSR_UNSTKERR_Pos)
+#define SCB_CFSR_IMPRECISERR_Pos (SCB_CFSR_BUSFAULTSR_Pos + 2U)
+#define SCB_CFSR_IMPRECISERR_Msk (1UL << SCB_CFSR_IMPRECISERR_Pos)
+#define SCB_CFSR_PRECISERR_Pos (SCB_CFSR_BUSFAULTSR_Pos + 1U)
+#define SCB_CFSR_PRECISERR_Msk (1UL << SCB_CFSR_PRECISERR_Pos)
+#define SCB_CFSR_IBUSERR_Pos (SCB_CFSR_BUSFAULTSR_Pos + 0U)
+#define SCB_CFSR_IBUSERR_Msk (1UL << SCB_CFSR_IBUSERR_Pos)
+#define SCB_CFSR_DIVBYZERO_Pos (SCB_CFSR_USGFAULTSR_Pos + 9U)
+#define SCB_CFSR_DIVBYZERO_Msk (1UL << SCB_CFSR_DIVBYZERO_Pos)
+#define SCB_CFSR_UNALIGNED_Pos (SCB_CFSR_USGFAULTSR_Pos + 8U)
+#define SCB_CFSR_UNALIGNED_Msk (1UL << SCB_CFSR_UNALIGNED_Pos)
+#define SCB_CFSR_NOCP_Pos (SCB_CFSR_USGFAULTSR_Pos + 3U)
+#define SCB_CFSR_NOCP_Msk (1UL << SCB_CFSR_NOCP_Pos)
+#define SCB_CFSR_INVPC_Pos (SCB_CFSR_USGFAULTSR_Pos + 2U)
+#define SCB_CFSR_INVPC_Msk (1UL << SCB_CFSR_INVPC_Pos)
+#define SCB_CFSR_INVSTATE_Pos (SCB_CFSR_USGFAULTSR_Pos + 1U)
+#define SCB_CFSR_INVSTATE_Msk (1UL << SCB_CFSR_INVSTATE_Pos)
+#define SCB_CFSR_UNDEFINSTR_Pos (SCB_CFSR_USGFAULTSR_Pos + 0U)
+#define SCB_CFSR_UNDEFINSTR_Msk (1UL << SCB_CFSR_UNDEFINSTR_Pos)
+#define SCB_HFSR_DEBUGEVT_Pos 31U
+#define SCB_HFSR_DEBUGEVT_Msk (1UL << SCB_HFSR_DEBUGEVT_Pos)
+#define SCB_HFSR_FORCED_Pos 30U
+#define SCB_HFSR_FORCED_Msk (1UL << SCB_HFSR_FORCED_Pos)
+#define SCB_HFSR_VECTTBL_Pos 1U
+#define SCB_HFSR_VECTTBL_Msk (1UL << SCB_HFSR_VECTTBL_Pos)
+#define SCB_DFSR_EXTERNAL_Pos 4U
+#define SCB_DFSR_EXTERNAL_Msk (1UL << SCB_DFSR_EXTERNAL_Pos)
+#define SCB_DFSR_VCATCH_Pos 3U
+#define SCB_DFSR_VCATCH_Msk (1UL << SCB_DFSR_VCATCH_Pos)
+#define SCB_DFSR_DWTTRAP_Pos 2U
+#define SCB_DFSR_DWTTRAP_Msk (1UL << SCB_DFSR_DWTTRAP_Pos)
+#define SCB_DFSR_BKPT_Pos 1U
+#define SCB_DFSR_BKPT_Msk (1UL << SCB_DFSR_BKPT_Pos)
+#define SCB_DFSR_HALTED_Pos 0U
+#define SCB_DFSR_HALTED_Msk (1UL )
+#define SCnSCB_ICTR_INTLINESNUM_Pos 0U
+#define SCnSCB_ICTR_INTLINESNUM_Msk (0xFUL )
+#define SCnSCB_ACTLR_DISFOLD_Pos 2U
+#define SCnSCB_ACTLR_DISFOLD_Msk (1UL << SCnSCB_ACTLR_DISFOLD_Pos)
+#define SCnSCB_ACTLR_DISDEFWBUF_Pos 1U
+#define SCnSCB_ACTLR_DISDEFWBUF_Msk (1UL << SCnSCB_ACTLR_DISDEFWBUF_Pos)
+#define SCnSCB_ACTLR_DISMCYCINT_Pos 0U
+#define SCnSCB_ACTLR_DISMCYCINT_Msk (1UL )
+#define SysTick_CTRL_COUNTFLAG_Pos 16U
+#define SysTick_CTRL_COUNTFLAG_Msk (1UL << SysTick_CTRL_COUNTFLAG_Pos)
+#define SysTick_CTRL_CLKSOURCE_Pos 2U
+#define SysTick_CTRL_CLKSOURCE_Msk (1UL << SysTick_CTRL_CLKSOURCE_Pos)
+#define SysTick_CTRL_TICKINT_Pos 1U
+#define SysTick_CTRL_TICKINT_Msk (1UL << SysTick_CTRL_TICKINT_Pos)
+#define SysTick_CTRL_ENABLE_Pos 0U
+#define SysTick_CTRL_ENABLE_Msk (1UL )
+#define SysTick_LOAD_RELOAD_Pos 0U
+#define SysTick_LOAD_RELOAD_Msk (0xFFFFFFUL )
+#define SysTick_VAL_CURRENT_Pos 0U
+#define SysTick_VAL_CURRENT_Msk (0xFFFFFFUL )
+#define SysTick_CALIB_NOREF_Pos 31U
+#define SysTick_CALIB_NOREF_Msk (1UL << SysTick_CALIB_NOREF_Pos)
+#define SysTick_CALIB_SKEW_Pos 30U
+#define SysTick_CALIB_SKEW_Msk (1UL << SysTick_CALIB_SKEW_Pos)
+#define SysTick_CALIB_TENMS_Pos 0U
+#define SysTick_CALIB_TENMS_Msk (0xFFFFFFUL )
+#define ITM_TPR_PRIVMASK_Pos 0U
+#define ITM_TPR_PRIVMASK_Msk (0xFFFFFFFFUL )
+#define ITM_TCR_BUSY_Pos 23U
+#define ITM_TCR_BUSY_Msk (1UL << ITM_TCR_BUSY_Pos)
+#define ITM_TCR_TraceBusID_Pos 16U
+#define ITM_TCR_TraceBusID_Msk (0x7FUL << ITM_TCR_TraceBusID_Pos)
+#define ITM_TCR_GTSFREQ_Pos 10U
+#define ITM_TCR_GTSFREQ_Msk (3UL << ITM_TCR_GTSFREQ_Pos)
+#define ITM_TCR_TSPrescale_Pos 8U
+#define ITM_TCR_TSPrescale_Msk (3UL << ITM_TCR_TSPrescale_Pos)
+#define ITM_TCR_SWOENA_Pos 4U
+#define ITM_TCR_SWOENA_Msk (1UL << ITM_TCR_SWOENA_Pos)
+#define ITM_TCR_DWTENA_Pos 3U
+#define ITM_TCR_DWTENA_Msk (1UL << ITM_TCR_DWTENA_Pos)
+#define ITM_TCR_SYNCENA_Pos 2U
+#define ITM_TCR_SYNCENA_Msk (1UL << ITM_TCR_SYNCENA_Pos)
+#define ITM_TCR_TSENA_Pos 1U
+#define ITM_TCR_TSENA_Msk (1UL << ITM_TCR_TSENA_Pos)
+#define ITM_TCR_ITMENA_Pos 0U
+#define ITM_TCR_ITMENA_Msk (1UL )
+#define ITM_IWR_ATVALIDM_Pos 0U
+#define ITM_IWR_ATVALIDM_Msk (1UL )
+#define ITM_IRR_ATREADYM_Pos 0U
+#define ITM_IRR_ATREADYM_Msk (1UL )
+#define ITM_IMCR_INTEGRATION_Pos 0U
+#define ITM_IMCR_INTEGRATION_Msk (1UL )
+#define ITM_LSR_ByteAcc_Pos 2U
+#define ITM_LSR_ByteAcc_Msk (1UL << ITM_LSR_ByteAcc_Pos)
+#define ITM_LSR_Access_Pos 1U
+#define ITM_LSR_Access_Msk (1UL << ITM_LSR_Access_Pos)
+#define ITM_LSR_Present_Pos 0U
+#define ITM_LSR_Present_Msk (1UL )
+#define DWT_CTRL_NUMCOMP_Pos 28U
+#define DWT_CTRL_NUMCOMP_Msk (0xFUL << DWT_CTRL_NUMCOMP_Pos)
+#define DWT_CTRL_NOTRCPKT_Pos 27U
+#define DWT_CTRL_NOTRCPKT_Msk (0x1UL << DWT_CTRL_NOTRCPKT_Pos)
+#define DWT_CTRL_NOEXTTRIG_Pos 26U
+#define DWT_CTRL_NOEXTTRIG_Msk (0x1UL << DWT_CTRL_NOEXTTRIG_Pos)
+#define DWT_CTRL_NOCYCCNT_Pos 25U
+#define DWT_CTRL_NOCYCCNT_Msk (0x1UL << DWT_CTRL_NOCYCCNT_Pos)
+#define DWT_CTRL_NOPRFCNT_Pos 24U
+#define DWT_CTRL_NOPRFCNT_Msk (0x1UL << DWT_CTRL_NOPRFCNT_Pos)
+#define DWT_CTRL_CYCEVTENA_Pos 22U
+#define DWT_CTRL_CYCEVTENA_Msk (0x1UL << DWT_CTRL_CYCEVTENA_Pos)
+#define DWT_CTRL_FOLDEVTENA_Pos 21U
+#define DWT_CTRL_FOLDEVTENA_Msk (0x1UL << DWT_CTRL_FOLDEVTENA_Pos)
+#define DWT_CTRL_LSUEVTENA_Pos 20U
+#define DWT_CTRL_LSUEVTENA_Msk (0x1UL << DWT_CTRL_LSUEVTENA_Pos)
+#define DWT_CTRL_SLEEPEVTENA_Pos 19U
+#define DWT_CTRL_SLEEPEVTENA_Msk (0x1UL << DWT_CTRL_SLEEPEVTENA_Pos)
+#define DWT_CTRL_EXCEVTENA_Pos 18U
+#define DWT_CTRL_EXCEVTENA_Msk (0x1UL << DWT_CTRL_EXCEVTENA_Pos)
+#define DWT_CTRL_CPIEVTENA_Pos 17U
+#define DWT_CTRL_CPIEVTENA_Msk (0x1UL << DWT_CTRL_CPIEVTENA_Pos)
+#define DWT_CTRL_EXCTRCENA_Pos 16U
+#define DWT_CTRL_EXCTRCENA_Msk (0x1UL << DWT_CTRL_EXCTRCENA_Pos)
+#define DWT_CTRL_PCSAMPLENA_Pos 12U
+#define DWT_CTRL_PCSAMPLENA_Msk (0x1UL << DWT_CTRL_PCSAMPLENA_Pos)
+#define DWT_CTRL_SYNCTAP_Pos 10U
+#define DWT_CTRL_SYNCTAP_Msk (0x3UL << DWT_CTRL_SYNCTAP_Pos)
+#define DWT_CTRL_CYCTAP_Pos 9U
+#define DWT_CTRL_CYCTAP_Msk (0x1UL << DWT_CTRL_CYCTAP_Pos)
+#define DWT_CTRL_POSTINIT_Pos 5U
+#define DWT_CTRL_POSTINIT_Msk (0xFUL << DWT_CTRL_POSTINIT_Pos)
+#define DWT_CTRL_POSTPRESET_Pos 1U
+#define DWT_CTRL_POSTPRESET_Msk (0xFUL << DWT_CTRL_POSTPRESET_Pos)
+#define DWT_CTRL_CYCCNTENA_Pos 0U
+#define DWT_CTRL_CYCCNTENA_Msk (0x1UL )
+#define DWT_CPICNT_CPICNT_Pos 0U
+#define DWT_CPICNT_CPICNT_Msk (0xFFUL )
+#define DWT_EXCCNT_EXCCNT_Pos 0U
+#define DWT_EXCCNT_EXCCNT_Msk (0xFFUL )
+#define DWT_SLEEPCNT_SLEEPCNT_Pos 0U
+#define DWT_SLEEPCNT_SLEEPCNT_Msk (0xFFUL )
+#define DWT_LSUCNT_LSUCNT_Pos 0U
+#define DWT_LSUCNT_LSUCNT_Msk (0xFFUL )
+#define DWT_FOLDCNT_FOLDCNT_Pos 0U
+#define DWT_FOLDCNT_FOLDCNT_Msk (0xFFUL )
+#define DWT_MASK_MASK_Pos 0U
+#define DWT_MASK_MASK_Msk (0x1FUL )
+#define DWT_FUNCTION_MATCHED_Pos 24U
+#define DWT_FUNCTION_MATCHED_Msk (0x1UL << DWT_FUNCTION_MATCHED_Pos)
+#define DWT_FUNCTION_DATAVADDR1_Pos 16U
+#define DWT_FUNCTION_DATAVADDR1_Msk (0xFUL << DWT_FUNCTION_DATAVADDR1_Pos)
+#define DWT_FUNCTION_DATAVADDR0_Pos 12U
+#define DWT_FUNCTION_DATAVADDR0_Msk (0xFUL << DWT_FUNCTION_DATAVADDR0_Pos)
+#define DWT_FUNCTION_DATAVSIZE_Pos 10U
+#define DWT_FUNCTION_DATAVSIZE_Msk (0x3UL << DWT_FUNCTION_DATAVSIZE_Pos)
+#define DWT_FUNCTION_LNK1ENA_Pos 9U
+#define DWT_FUNCTION_LNK1ENA_Msk (0x1UL << DWT_FUNCTION_LNK1ENA_Pos)
+#define DWT_FUNCTION_DATAVMATCH_Pos 8U
+#define DWT_FUNCTION_DATAVMATCH_Msk (0x1UL << DWT_FUNCTION_DATAVMATCH_Pos)
+#define DWT_FUNCTION_CYCMATCH_Pos 7U
+#define DWT_FUNCTION_CYCMATCH_Msk (0x1UL << DWT_FUNCTION_CYCMATCH_Pos)
+#define DWT_FUNCTION_EMITRANGE_Pos 5U
+#define DWT_FUNCTION_EMITRANGE_Msk (0x1UL << DWT_FUNCTION_EMITRANGE_Pos)
+#define DWT_FUNCTION_FUNCTION_Pos 0U
+#define DWT_FUNCTION_FUNCTION_Msk (0xFUL )
+#define TPI_ACPR_PRESCALER_Pos 0U
+#define TPI_ACPR_PRESCALER_Msk (0x1FFFUL )
+#define TPI_SPPR_TXMODE_Pos 0U
+#define TPI_SPPR_TXMODE_Msk (0x3UL )
+#define TPI_FFSR_FtNonStop_Pos 3U
+#define TPI_FFSR_FtNonStop_Msk (0x1UL << TPI_FFSR_FtNonStop_Pos)
+#define TPI_FFSR_TCPresent_Pos 2U
+#define TPI_FFSR_TCPresent_Msk (0x1UL << TPI_FFSR_TCPresent_Pos)
+#define TPI_FFSR_FtStopped_Pos 1U
+#define TPI_FFSR_FtStopped_Msk (0x1UL << TPI_FFSR_FtStopped_Pos)
+#define TPI_FFSR_FlInProg_Pos 0U
+#define TPI_FFSR_FlInProg_Msk (0x1UL )
+#define TPI_FFCR_TrigIn_Pos 8U
+#define TPI_FFCR_TrigIn_Msk (0x1UL << TPI_FFCR_TrigIn_Pos)
+#define TPI_FFCR_EnFCont_Pos 1U
+#define TPI_FFCR_EnFCont_Msk (0x1UL << TPI_FFCR_EnFCont_Pos)
+#define TPI_TRIGGER_TRIGGER_Pos 0U
+#define TPI_TRIGGER_TRIGGER_Msk (0x1UL )
+#define TPI_FIFO0_ITM_ATVALID_Pos 29U
+#define TPI_FIFO0_ITM_ATVALID_Msk (0x3UL << TPI_FIFO0_ITM_ATVALID_Pos)
+#define TPI_FIFO0_ITM_bytecount_Pos 27U
+#define TPI_FIFO0_ITM_bytecount_Msk (0x3UL << TPI_FIFO0_ITM_bytecount_Pos)
+#define TPI_FIFO0_ETM_ATVALID_Pos 26U
+#define TPI_FIFO0_ETM_ATVALID_Msk (0x3UL << TPI_FIFO0_ETM_ATVALID_Pos)
+#define TPI_FIFO0_ETM_bytecount_Pos 24U
+#define TPI_FIFO0_ETM_bytecount_Msk (0x3UL << TPI_FIFO0_ETM_bytecount_Pos)
+#define TPI_FIFO0_ETM2_Pos 16U
+#define TPI_FIFO0_ETM2_Msk (0xFFUL << TPI_FIFO0_ETM2_Pos)
+#define TPI_FIFO0_ETM1_Pos 8U
+#define TPI_FIFO0_ETM1_Msk (0xFFUL << TPI_FIFO0_ETM1_Pos)
+#define TPI_FIFO0_ETM0_Pos 0U
+#define TPI_FIFO0_ETM0_Msk (0xFFUL )
+#define TPI_ITATBCTR2_ATREADY2_Pos 0U
+#define TPI_ITATBCTR2_ATREADY2_Msk (0x1UL )
+#define TPI_ITATBCTR2_ATREADY1_Pos 0U
+#define TPI_ITATBCTR2_ATREADY1_Msk (0x1UL )
+#define TPI_FIFO1_ITM_ATVALID_Pos 29U
+#define TPI_FIFO1_ITM_ATVALID_Msk (0x3UL << TPI_FIFO1_ITM_ATVALID_Pos)
+#define TPI_FIFO1_ITM_bytecount_Pos 27U
+#define TPI_FIFO1_ITM_bytecount_Msk (0x3UL << TPI_FIFO1_ITM_bytecount_Pos)
+#define TPI_FIFO1_ETM_ATVALID_Pos 26U
+#define TPI_FIFO1_ETM_ATVALID_Msk (0x3UL << TPI_FIFO1_ETM_ATVALID_Pos)
+#define TPI_FIFO1_ETM_bytecount_Pos 24U
+#define TPI_FIFO1_ETM_bytecount_Msk (0x3UL << TPI_FIFO1_ETM_bytecount_Pos)
+#define TPI_FIFO1_ITM2_Pos 16U
+#define TPI_FIFO1_ITM2_Msk (0xFFUL << TPI_FIFO1_ITM2_Pos)
+#define TPI_FIFO1_ITM1_Pos 8U
+#define TPI_FIFO1_ITM1_Msk (0xFFUL << TPI_FIFO1_ITM1_Pos)
+#define TPI_FIFO1_ITM0_Pos 0U
+#define TPI_FIFO1_ITM0_Msk (0xFFUL )
+#define TPI_ITATBCTR0_ATREADY2_Pos 0U
+#define TPI_ITATBCTR0_ATREADY2_Msk (0x1UL )
+#define TPI_ITATBCTR0_ATREADY1_Pos 0U
+#define TPI_ITATBCTR0_ATREADY1_Msk (0x1UL )
+#define TPI_ITCTRL_Mode_Pos 0U
+#define TPI_ITCTRL_Mode_Msk (0x3UL )
+#define TPI_DEVID_NRZVALID_Pos 11U
+#define TPI_DEVID_NRZVALID_Msk (0x1UL << TPI_DEVID_NRZVALID_Pos)
+#define TPI_DEVID_MANCVALID_Pos 10U
+#define TPI_DEVID_MANCVALID_Msk (0x1UL << TPI_DEVID_MANCVALID_Pos)
+#define TPI_DEVID_PTINVALID_Pos 9U
+#define TPI_DEVID_PTINVALID_Msk (0x1UL << TPI_DEVID_PTINVALID_Pos)
+#define TPI_DEVID_MinBufSz_Pos 6U
+#define TPI_DEVID_MinBufSz_Msk (0x7UL << TPI_DEVID_MinBufSz_Pos)
+#define TPI_DEVID_AsynClkIn_Pos 5U
+#define TPI_DEVID_AsynClkIn_Msk (0x1UL << TPI_DEVID_AsynClkIn_Pos)
+#define TPI_DEVID_NrTraceInput_Pos 0U
+#define TPI_DEVID_NrTraceInput_Msk (0x1FUL )
+#define TPI_DEVTYPE_SubType_Pos 4U
+#define TPI_DEVTYPE_SubType_Msk (0xFUL )
+#define TPI_DEVTYPE_MajorType_Pos 0U
+#define TPI_DEVTYPE_MajorType_Msk (0xFUL << TPI_DEVTYPE_MajorType_Pos)
+#define MPU_TYPE_RALIASES 4U
+#define MPU_TYPE_IREGION_Pos 16U
+#define MPU_TYPE_IREGION_Msk (0xFFUL << MPU_TYPE_IREGION_Pos)
+#define MPU_TYPE_DREGION_Pos 8U
+#define MPU_TYPE_DREGION_Msk (0xFFUL << MPU_TYPE_DREGION_Pos)
+#define MPU_TYPE_SEPARATE_Pos 0U
+#define MPU_TYPE_SEPARATE_Msk (1UL )
+#define MPU_CTRL_PRIVDEFENA_Pos 2U
+#define MPU_CTRL_PRIVDEFENA_Msk (1UL << MPU_CTRL_PRIVDEFENA_Pos)
+#define MPU_CTRL_HFNMIENA_Pos 1U
+#define MPU_CTRL_HFNMIENA_Msk (1UL << MPU_CTRL_HFNMIENA_Pos)
+#define MPU_CTRL_ENABLE_Pos 0U
+#define MPU_CTRL_ENABLE_Msk (1UL )
+#define MPU_RNR_REGION_Pos 0U
+#define MPU_RNR_REGION_Msk (0xFFUL )
+#define MPU_RBAR_ADDR_Pos 5U
+#define MPU_RBAR_ADDR_Msk (0x7FFFFFFUL << MPU_RBAR_ADDR_Pos)
+#define MPU_RBAR_VALID_Pos 4U
+#define MPU_RBAR_VALID_Msk (1UL << MPU_RBAR_VALID_Pos)
+#define MPU_RBAR_REGION_Pos 0U
+#define MPU_RBAR_REGION_Msk (0xFUL )
+#define MPU_RASR_ATTRS_Pos 16U
+#define MPU_RASR_ATTRS_Msk (0xFFFFUL << MPU_RASR_ATTRS_Pos)
+#define MPU_RASR_XN_Pos 28U
+#define MPU_RASR_XN_Msk (1UL << MPU_RASR_XN_Pos)
+#define MPU_RASR_AP_Pos 24U
+#define MPU_RASR_AP_Msk (0x7UL << MPU_RASR_AP_Pos)
+#define MPU_RASR_TEX_Pos 19U
+#define MPU_RASR_TEX_Msk (0x7UL << MPU_RASR_TEX_Pos)
+#define MPU_RASR_S_Pos 18U
+#define MPU_RASR_S_Msk (1UL << MPU_RASR_S_Pos)
+#define MPU_RASR_C_Pos 17U
+#define MPU_RASR_C_Msk (1UL << MPU_RASR_C_Pos)
+#define MPU_RASR_B_Pos 16U
+#define MPU_RASR_B_Msk (1UL << MPU_RASR_B_Pos)
+#define MPU_RASR_SRD_Pos 8U
+#define MPU_RASR_SRD_Msk (0xFFUL << MPU_RASR_SRD_Pos)
+#define MPU_RASR_SIZE_Pos 1U
+#define MPU_RASR_SIZE_Msk (0x1FUL << MPU_RASR_SIZE_Pos)
+#define MPU_RASR_ENABLE_Pos 0U
+#define MPU_RASR_ENABLE_Msk (1UL )
+#define CoreDebug_DHCSR_DBGKEY_Pos 16U
+#define CoreDebug_DHCSR_DBGKEY_Msk (0xFFFFUL << CoreDebug_DHCSR_DBGKEY_Pos)
+#define CoreDebug_DHCSR_S_RESET_ST_Pos 25U
+#define CoreDebug_DHCSR_S_RESET_ST_Msk (1UL << CoreDebug_DHCSR_S_RESET_ST_Pos)
+#define CoreDebug_DHCSR_S_RETIRE_ST_Pos 24U
+#define CoreDebug_DHCSR_S_RETIRE_ST_Msk (1UL << CoreDebug_DHCSR_S_RETIRE_ST_Pos)
+#define CoreDebug_DHCSR_S_LOCKUP_Pos 19U
+#define CoreDebug_DHCSR_S_LOCKUP_Msk (1UL << CoreDebug_DHCSR_S_LOCKUP_Pos)
+#define CoreDebug_DHCSR_S_SLEEP_Pos 18U
+#define CoreDebug_DHCSR_S_SLEEP_Msk (1UL << CoreDebug_DHCSR_S_SLEEP_Pos)
+#define CoreDebug_DHCSR_S_HALT_Pos 17U
+#define CoreDebug_DHCSR_S_HALT_Msk (1UL << CoreDebug_DHCSR_S_HALT_Pos)
+#define CoreDebug_DHCSR_S_REGRDY_Pos 16U
+#define CoreDebug_DHCSR_S_REGRDY_Msk (1UL << CoreDebug_DHCSR_S_REGRDY_Pos)
+#define CoreDebug_DHCSR_C_SNAPSTALL_Pos 5U
+#define CoreDebug_DHCSR_C_SNAPSTALL_Msk (1UL << CoreDebug_DHCSR_C_SNAPSTALL_Pos)
+#define CoreDebug_DHCSR_C_MASKINTS_Pos 3U
+#define CoreDebug_DHCSR_C_MASKINTS_Msk (1UL << CoreDebug_DHCSR_C_MASKINTS_Pos)
+#define CoreDebug_DHCSR_C_STEP_Pos 2U
+#define CoreDebug_DHCSR_C_STEP_Msk (1UL << CoreDebug_DHCSR_C_STEP_Pos)
+#define CoreDebug_DHCSR_C_HALT_Pos 1U
+#define CoreDebug_DHCSR_C_HALT_Msk (1UL << CoreDebug_DHCSR_C_HALT_Pos)
+#define CoreDebug_DHCSR_C_DEBUGEN_Pos 0U
+#define CoreDebug_DHCSR_C_DEBUGEN_Msk (1UL )
+#define CoreDebug_DCRSR_REGWnR_Pos 16U
+#define CoreDebug_DCRSR_REGWnR_Msk (1UL << CoreDebug_DCRSR_REGWnR_Pos)
+#define CoreDebug_DCRSR_REGSEL_Pos 0U
+#define CoreDebug_DCRSR_REGSEL_Msk (0x1FUL )
+#define CoreDebug_DEMCR_TRCENA_Pos 24U
+#define CoreDebug_DEMCR_TRCENA_Msk (1UL << CoreDebug_DEMCR_TRCENA_Pos)
+#define CoreDebug_DEMCR_MON_REQ_Pos 19U
+#define CoreDebug_DEMCR_MON_REQ_Msk (1UL << CoreDebug_DEMCR_MON_REQ_Pos)
+#define CoreDebug_DEMCR_MON_STEP_Pos 18U
+#define CoreDebug_DEMCR_MON_STEP_Msk (1UL << CoreDebug_DEMCR_MON_STEP_Pos)
+#define CoreDebug_DEMCR_MON_PEND_Pos 17U
+#define CoreDebug_DEMCR_MON_PEND_Msk (1UL << CoreDebug_DEMCR_MON_PEND_Pos)
+#define CoreDebug_DEMCR_MON_EN_Pos 16U
+#define CoreDebug_DEMCR_MON_EN_Msk (1UL << CoreDebug_DEMCR_MON_EN_Pos)
+#define CoreDebug_DEMCR_VC_HARDERR_Pos 10U
+#define CoreDebug_DEMCR_VC_HARDERR_Msk (1UL << CoreDebug_DEMCR_VC_HARDERR_Pos)
+#define CoreDebug_DEMCR_VC_INTERR_Pos 9U
+#define CoreDebug_DEMCR_VC_INTERR_Msk (1UL << CoreDebug_DEMCR_VC_INTERR_Pos)
+#define CoreDebug_DEMCR_VC_BUSERR_Pos 8U
+#define CoreDebug_DEMCR_VC_BUSERR_Msk (1UL << CoreDebug_DEMCR_VC_BUSERR_Pos)
+#define CoreDebug_DEMCR_VC_STATERR_Pos 7U
+#define CoreDebug_DEMCR_VC_STATERR_Msk (1UL << CoreDebug_DEMCR_VC_STATERR_Pos)
+#define CoreDebug_DEMCR_VC_CHKERR_Pos 6U
+#define CoreDebug_DEMCR_VC_CHKERR_Msk (1UL << CoreDebug_DEMCR_VC_CHKERR_Pos)
+#define CoreDebug_DEMCR_VC_NOCPERR_Pos 5U
+#define CoreDebug_DEMCR_VC_NOCPERR_Msk (1UL << CoreDebug_DEMCR_VC_NOCPERR_Pos)
+#define CoreDebug_DEMCR_VC_MMERR_Pos 4U
+#define CoreDebug_DEMCR_VC_MMERR_Msk (1UL << CoreDebug_DEMCR_VC_MMERR_Pos)
+#define CoreDebug_DEMCR_VC_CORERESET_Pos 0U
+#define CoreDebug_DEMCR_VC_CORERESET_Msk (1UL )
+#define _VAL2FLD(field,value) (((uint32_t)(value) << field ## _Pos) & field ## _Msk)
+#define _FLD2VAL(field,value) (((uint32_t)(value) & field ## _Msk) >> field ## _Pos)
+#define SCS_BASE (0xE000E000UL)
+#define ITM_BASE (0xE0000000UL)
+#define DWT_BASE (0xE0001000UL)
+#define TPI_BASE (0xE0040000UL)
+#define CoreDebug_BASE (0xE000EDF0UL)
+#define SysTick_BASE (SCS_BASE + 0x0010UL)
+#define NVIC_BASE (SCS_BASE + 0x0100UL)
+#define SCB_BASE (SCS_BASE + 0x0D00UL)
+#define SCnSCB ((SCnSCB_Type *) SCS_BASE )
+#define SCB ((SCB_Type *) SCB_BASE )
+#define SysTick ((SysTick_Type *) SysTick_BASE )
+#define NVIC ((NVIC_Type *) NVIC_BASE )
+#define ITM ((ITM_Type *) ITM_BASE )
+#define DWT ((DWT_Type *) DWT_BASE )
+#define TPI ((TPI_Type *) TPI_BASE )
+#define CoreDebug ((CoreDebug_Type *) CoreDebug_BASE)
+#define MPU_BASE (SCS_BASE + 0x0D90UL)
+#define MPU ((MPU_Type *) MPU_BASE )
+#define NVIC_SetPriorityGrouping __NVIC_SetPriorityGrouping
+#define NVIC_GetPriorityGrouping __NVIC_GetPriorityGrouping
+#define NVIC_EnableIRQ __NVIC_EnableIRQ
+#define NVIC_GetEnableIRQ __NVIC_GetEnableIRQ
+#define NVIC_DisableIRQ __NVIC_DisableIRQ
+#define NVIC_GetPendingIRQ __NVIC_GetPendingIRQ
+#define NVIC_SetPendingIRQ __NVIC_SetPendingIRQ
+#define NVIC_ClearPendingIRQ __NVIC_ClearPendingIRQ
+#define NVIC_GetActive __NVIC_GetActive
+#define NVIC_SetPriority __NVIC_SetPriority
+#define NVIC_GetPriority __NVIC_GetPriority
+#define NVIC_SystemReset __NVIC_SystemReset
+#define NVIC_SetVector __NVIC_SetVector
+#define NVIC_GetVector __NVIC_GetVector
+#define NVIC_USER_IRQ_OFFSET 16
+#define EXC_RETURN_HANDLER (0xFFFFFFF1UL)
+#define EXC_RETURN_THREAD_MSP (0xFFFFFFF9UL)
+#define EXC_RETURN_THREAD_PSP (0xFFFFFFFDUL)
+#define ARM_MPU_ARMV7_H ARM_MPU_ARMV7_H
+#define ARM_MPU_REGION_SIZE_32B ((uint8_t)0x04U)
+#define ARM_MPU_REGION_SIZE_64B ((uint8_t)0x05U)
+#define ARM_MPU_REGION_SIZE_128B ((uint8_t)0x06U)
+#define ARM_MPU_REGION_SIZE_256B ((uint8_t)0x07U)
+#define ARM_MPU_REGION_SIZE_512B ((uint8_t)0x08U)
+#define ARM_MPU_REGION_SIZE_1KB ((uint8_t)0x09U)
+#define ARM_MPU_REGION_SIZE_2KB ((uint8_t)0x0AU)
+#define ARM_MPU_REGION_SIZE_4KB ((uint8_t)0x0BU)
+#define ARM_MPU_REGION_SIZE_8KB ((uint8_t)0x0CU)
+#define ARM_MPU_REGION_SIZE_16KB ((uint8_t)0x0DU)
+#define ARM_MPU_REGION_SIZE_32KB ((uint8_t)0x0EU)
+#define ARM_MPU_REGION_SIZE_64KB ((uint8_t)0x0FU)
+#define ARM_MPU_REGION_SIZE_128KB ((uint8_t)0x10U)
+#define ARM_MPU_REGION_SIZE_256KB ((uint8_t)0x11U)
+#define ARM_MPU_REGION_SIZE_512KB ((uint8_t)0x12U)
+#define ARM_MPU_REGION_SIZE_1MB ((uint8_t)0x13U)
+#define ARM_MPU_REGION_SIZE_2MB ((uint8_t)0x14U)
+#define ARM_MPU_REGION_SIZE_4MB ((uint8_t)0x15U)
+#define ARM_MPU_REGION_SIZE_8MB ((uint8_t)0x16U)
+#define ARM_MPU_REGION_SIZE_16MB ((uint8_t)0x17U)
+#define ARM_MPU_REGION_SIZE_32MB ((uint8_t)0x18U)
+#define ARM_MPU_REGION_SIZE_64MB ((uint8_t)0x19U)
+#define ARM_MPU_REGION_SIZE_128MB ((uint8_t)0x1AU)
+#define ARM_MPU_REGION_SIZE_256MB ((uint8_t)0x1BU)
+#define ARM_MPU_REGION_SIZE_512MB ((uint8_t)0x1CU)
+#define ARM_MPU_REGION_SIZE_1GB ((uint8_t)0x1DU)
+#define ARM_MPU_REGION_SIZE_2GB ((uint8_t)0x1EU)
+#define ARM_MPU_REGION_SIZE_4GB ((uint8_t)0x1FU)
+#define ARM_MPU_AP_NONE 0U
+#define ARM_MPU_AP_PRIV 1U
+#define ARM_MPU_AP_URO 2U
+#define ARM_MPU_AP_FULL 3U
+#define ARM_MPU_AP_PRO 5U
+#define ARM_MPU_AP_RO 6U
+#define ARM_MPU_RBAR(Region,BaseAddress) (((BaseAddress) & MPU_RBAR_ADDR_Msk) | ((Region) & MPU_RBAR_REGION_Msk) | (MPU_RBAR_VALID_Msk))
+#define ARM_MPU_ACCESS_(TypeExtField,IsShareable,IsCacheable,IsBufferable) ((((TypeExtField ) << MPU_RASR_TEX_Pos) & MPU_RASR_TEX_Msk) | (((IsShareable ) << MPU_RASR_S_Pos) & MPU_RASR_S_Msk) | (((IsCacheable ) << MPU_RASR_C_Pos) & MPU_RASR_C_Msk) | (((IsBufferable ) << MPU_RASR_B_Pos) & MPU_RASR_B_Msk))
+#define ARM_MPU_RASR_EX(DisableExec,AccessPermission,AccessAttributes,SubRegionDisable,Size) ((((DisableExec ) << MPU_RASR_XN_Pos) & MPU_RASR_XN_Msk) | (((AccessPermission) << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk) | (((AccessAttributes) ) & (MPU_RASR_TEX_Msk | MPU_RASR_S_Msk | MPU_RASR_C_Msk | MPU_RASR_B_Msk)))
+#define ARM_MPU_RASR(DisableExec,AccessPermission,TypeExtField,IsShareable,IsCacheable,IsBufferable,SubRegionDisable,Size) ARM_MPU_RASR_EX(DisableExec, AccessPermission, ARM_MPU_ACCESS_(TypeExtField, IsShareable, IsCacheable, IsBufferable), SubRegionDisable, Size)
+#define ARM_MPU_ACCESS_ORDERED ARM_MPU_ACCESS_(0U, 1U, 0U, 0U)
+#define ARM_MPU_ACCESS_DEVICE(IsShareable) ((IsShareable) ? ARM_MPU_ACCESS_(0U, 1U, 0U, 1U) : ARM_MPU_ACCESS_(2U, 0U, 0U, 0U))
+#define ARM_MPU_ACCESS_NORMAL(OuterCp,InnerCp,IsShareable) ARM_MPU_ACCESS_((4U | (OuterCp)), IsShareable, ((InnerCp) & 2U), ((InnerCp) & 1U))
+#define ARM_MPU_CACHEP_NOCACHE 0U
+#define ARM_MPU_CACHEP_WB_WRA 1U
+#define ARM_MPU_CACHEP_WT_NWA 2U
+#define ARM_MPU_CACHEP_WB_NWA 3U
+#define LPC_FLASH_BASE (0x00000000UL)
+#define LPC_RAM_BASE (0x10000000UL)
+#define LPC_AHBRAM0_BASE (0x2007C000UL)
+#define LPC_AHBRAM1_BASE (0x20080000UL)
+#define LPC_GPIO_BASE (0x2009C000UL)
+#define LPC_APB0_BASE (0x40000000UL)
+#define LPC_APB1_BASE (0x40080000UL)
+#define LPC_AHB_BASE (0x50000000UL)
+#define LPC_CM3_BASE (0xE0000000UL)
+#define LPC_WDT_BASE (LPC_APB0_BASE + 0x00000)
+#define LPC_TIM0_BASE (LPC_APB0_BASE + 0x04000)
+#define LPC_TIM1_BASE (LPC_APB0_BASE + 0x08000)
+#define LPC_UART0_BASE (LPC_APB0_BASE + 0x0C000)
+#define LPC_UART1_BASE (LPC_APB0_BASE + 0x10000)
+#define LPC_PWM1_BASE (LPC_APB0_BASE + 0x18000)
+#define LPC_I2C0_BASE (LPC_APB0_BASE + 0x1C000)
+#define LPC_SPI_BASE (LPC_APB0_BASE + 0x20000)
+#define LPC_RTC_BASE (LPC_APB0_BASE + 0x24000)
+#define LPC_GPIOINT_BASE (LPC_APB0_BASE + 0x28080)
+#define LPC_PINCON_BASE (LPC_APB0_BASE + 0x2C000)
+#define LPC_SSP1_BASE (LPC_APB0_BASE + 0x30000)
+#define LPC_ADC_BASE (LPC_APB0_BASE + 0x34000)
+#define LPC_CANAF_RAM_BASE (LPC_APB0_BASE + 0x38000)
+#define LPC_CANAF_BASE (LPC_APB0_BASE + 0x3C000)
+#define LPC_CANCR_BASE (LPC_APB0_BASE + 0x40000)
+#define LPC_CAN1_BASE (LPC_APB0_BASE + 0x44000)
+#define LPC_CAN2_BASE (LPC_APB0_BASE + 0x48000)
+#define LPC_I2C1_BASE (LPC_APB0_BASE + 0x5C000)
+#define LPC_SSP0_BASE (LPC_APB1_BASE + 0x08000)
+#define LPC_DAC_BASE (LPC_APB1_BASE + 0x0C000)
+#define LPC_TIM2_BASE (LPC_APB1_BASE + 0x10000)
+#define LPC_TIM3_BASE (LPC_APB1_BASE + 0x14000)
+#define LPC_UART2_BASE (LPC_APB1_BASE + 0x18000)
+#define LPC_UART3_BASE (LPC_APB1_BASE + 0x1C000)
+#define LPC_I2C2_BASE (LPC_APB1_BASE + 0x20000)
+#define LPC_I2S_BASE (LPC_APB1_BASE + 0x28000)
+#define LPC_RIT_BASE (LPC_APB1_BASE + 0x30000)
+#define LPC_MCPWM_BASE (LPC_APB1_BASE + 0x38000)
+#define LPC_QEI_BASE (LPC_APB1_BASE + 0x3C000)
+#define LPC_SC_BASE (LPC_APB1_BASE + 0x7C000)
+#define LPC_EMAC_BASE (LPC_AHB_BASE + 0x00000)
+#define LPC_GPDMA_BASE (LPC_AHB_BASE + 0x04000)
+#define LPC_GPDMACH0_BASE (LPC_AHB_BASE + 0x04100)
+#define LPC_GPDMACH1_BASE (LPC_AHB_BASE + 0x04120)
+#define LPC_GPDMACH2_BASE (LPC_AHB_BASE + 0x04140)
+#define LPC_GPDMACH3_BASE (LPC_AHB_BASE + 0x04160)
+#define LPC_GPDMACH4_BASE (LPC_AHB_BASE + 0x04180)
+#define LPC_GPDMACH5_BASE (LPC_AHB_BASE + 0x041A0)
+#define LPC_GPDMACH6_BASE (LPC_AHB_BASE + 0x041C0)
+#define LPC_GPDMACH7_BASE (LPC_AHB_BASE + 0x041E0)
+#define LPC_USB_BASE (LPC_AHB_BASE + 0x0C000)
+#define LPC_GPIO0_BASE (LPC_GPIO_BASE + 0x00000)
+#define LPC_GPIO1_BASE (LPC_GPIO_BASE + 0x00020)
+#define LPC_GPIO2_BASE (LPC_GPIO_BASE + 0x00040)
+#define LPC_GPIO3_BASE (LPC_GPIO_BASE + 0x00060)
+#define LPC_GPIO4_BASE (LPC_GPIO_BASE + 0x00080)
+#define LPC_SC ((LPC_SC_TypeDef *) LPC_SC_BASE )
+#define LPC_GPIO0 ((LPC_GPIO_TypeDef *) LPC_GPIO0_BASE )
+#define LPC_GPIO1 ((LPC_GPIO_TypeDef *) LPC_GPIO1_BASE )
+#define LPC_GPIO2 ((LPC_GPIO_TypeDef *) LPC_GPIO2_BASE )
+#define LPC_GPIO3 ((LPC_GPIO_TypeDef *) LPC_GPIO3_BASE )
+#define LPC_GPIO4 ((LPC_GPIO_TypeDef *) LPC_GPIO4_BASE )
+#define LPC_WDT ((LPC_WDT_TypeDef *) LPC_WDT_BASE )
+#define LPC_TIM0 ((LPC_TIM_TypeDef *) LPC_TIM0_BASE )
+#define LPC_TIM1 ((LPC_TIM_TypeDef *) LPC_TIM1_BASE )
+#define LPC_TIM2 ((LPC_TIM_TypeDef *) LPC_TIM2_BASE )
+#define LPC_TIM3 ((LPC_TIM_TypeDef *) LPC_TIM3_BASE )
+#define LPC_RIT ((LPC_RIT_TypeDef *) LPC_RIT_BASE )
+#define LPC_UART0 ((LPC_UART_TypeDef *) LPC_UART0_BASE )
+#define LPC_UART1 ((LPC_UART1_TypeDef *) LPC_UART1_BASE )
+#define LPC_UART2 ((LPC_UART_TypeDef *) LPC_UART2_BASE )
+#define LPC_UART3 ((LPC_UART_TypeDef *) LPC_UART3_BASE )
+#define LPC_PWM1 ((LPC_PWM_TypeDef *) LPC_PWM1_BASE )
+#define LPC_I2C0 ((LPC_I2C_TypeDef *) LPC_I2C0_BASE )
+#define LPC_I2C1 ((LPC_I2C_TypeDef *) LPC_I2C1_BASE )
+#define LPC_I2C2 ((LPC_I2C_TypeDef *) LPC_I2C2_BASE )
+#define LPC_I2S ((LPC_I2S_TypeDef *) LPC_I2S_BASE )
+#define LPC_SPI ((LPC_SPI_TypeDef *) LPC_SPI_BASE )
+#define LPC_RTC ((LPC_RTC_TypeDef *) LPC_RTC_BASE )
+#define LPC_GPIOINT ((LPC_GPIOINT_TypeDef *) LPC_GPIOINT_BASE )
+#define LPC_PINCON ((LPC_PINCON_TypeDef *) LPC_PINCON_BASE )
+#define LPC_SSP0 ((LPC_SSP_TypeDef *) LPC_SSP0_BASE )
+#define LPC_SSP1 ((LPC_SSP_TypeDef *) LPC_SSP1_BASE )
+#define LPC_ADC ((LPC_ADC_TypeDef *) LPC_ADC_BASE )
+#define LPC_DAC ((LPC_DAC_TypeDef *) LPC_DAC_BASE )
+#define LPC_CANAF_RAM ((LPC_CANAF_RAM_TypeDef *) LPC_CANAF_RAM_BASE)
+#define LPC_CANAF ((LPC_CANAF_TypeDef *) LPC_CANAF_BASE )
+#define LPC_CANCR ((LPC_CANCR_TypeDef *) LPC_CANCR_BASE )
+#define LPC_CAN1 ((LPC_CAN_TypeDef *) LPC_CAN1_BASE )
+#define LPC_CAN2 ((LPC_CAN_TypeDef *) LPC_CAN2_BASE )
+#define LPC_MCPWM ((LPC_MCPWM_TypeDef *) LPC_MCPWM_BASE )
+#define LPC_QEI ((LPC_QEI_TypeDef *) LPC_QEI_BASE )
+#define LPC_EMAC ((LPC_EMAC_TypeDef *) LPC_EMAC_BASE )
+#define LPC_GPDMA ((LPC_GPDMA_TypeDef *) LPC_GPDMA_BASE )
+#define LPC_GPDMACH0 ((LPC_GPDMACH_TypeDef *) LPC_GPDMACH0_BASE )
+#define LPC_GPDMACH1 ((LPC_GPDMACH_TypeDef *) LPC_GPDMACH1_BASE )
+#define LPC_GPDMACH2 ((LPC_GPDMACH_TypeDef *) LPC_GPDMACH2_BASE )
+#define LPC_GPDMACH3 ((LPC_GPDMACH_TypeDef *) LPC_GPDMACH3_BASE )
+#define LPC_GPDMACH4 ((LPC_GPDMACH_TypeDef *) LPC_GPDMACH4_BASE )
+#define LPC_GPDMACH5 ((LPC_GPDMACH_TypeDef *) LPC_GPDMACH5_BASE )
+#define LPC_GPDMACH6 ((LPC_GPDMACH_TypeDef *) LPC_GPDMACH6_BASE )
+#define LPC_GPDMACH7 ((LPC_GPDMACH_TypeDef *) LPC_GPDMACH7_BASE )
+#define LPC_USB ((LPC_USB_TypeDef *) LPC_USB_BASE )
