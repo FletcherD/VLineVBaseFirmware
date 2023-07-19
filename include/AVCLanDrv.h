@@ -10,6 +10,30 @@ extern "C" {
 
 class AVCLanDrv{
 	private:
+		typedef uint32_t Time;
+		enum InputType {
+			RISING_EDGE,
+			FALLING_EDGE,
+			TIMEOUT
+		};
+
+		struct InputEvent {
+			Time time;
+			InputType type;
+		};
+
+		typedef void (AVCLanDrv::*State)(InputEvent);
+		State state;
+
+		void state_Idle(InputEvent i);
+		void state_StartBit(InputEvent i);
+		void state_WaitForBit(InputEvent i);
+		void state_MeasureBit(InputEvent i);
+
+		uint8_t messageBuf[256];
+		uint32_t bufPos;
+		void receiveBit(bool bit);
+
 		p_timer timer = p_timer(2);
 
 		PinCfgType AVC_RX_PIN = {
@@ -49,10 +73,8 @@ class AVCLanDrv{
 				OpenDrain:	PIN_PINMODE_NORMAL
 		};
 
+		uint32_t lastEventTime;
 
-		// Active low
-		bool isInputClear()			{ return gpioPinRead(AVC_RX_PIN); }
-		bool isInputSet()			{ return !isInputClear(); }
 		void setStandby(bool isOn)	{ gpioPinWrite(AVC_STB_PIN, isOn); }
 		void setEnabled(bool isOn)	{ gpioPinWrite(AVC_EN_PIN, isOn); }
 		// Active low
@@ -64,6 +86,7 @@ class AVCLanDrv{
 		const uint32_t T_Bit_1		= 		T_Bit 	/ 2;
 		const uint32_t T_Bit_0		= (4 *	T_Bit) 	/ 5;
 		const uint32_t T_BitMeasure	= (T_Bit_1 + T_Bit_0) / 2;
+		const uint32_t T_Timeout	= 10000;
 
 	public:
 		typedef enum
@@ -74,14 +97,7 @@ class AVCLanDrv{
 
 		void begin();
 
-		bool readBit();
-
-		uint32_t readBits(uint8_t n);
-
-		void readMessage();
-
 		void onTimerCallback();
-		void onGpioCallback();
 
 		static AVCLanDrv* instance;
 };

@@ -31,16 +31,19 @@
 #include "cmsis_device.h"
 
 #define POWER_PORT_NUMBER              (1)
+
 #define POWER_USB5V_PIN                (27)
 #define POWER_VCORE_5V_PIN             (15)
 #define POWER_VCORE_3P3V_PIN           (29)
+#define POWER_VBASE_5V_PIN				(19)
 
 // ----------------------------------------------------------------------------
 
-static constexpr int PowerPinList[3] = {
+static constexpr int PowerPinList[] = {
 	 POWER_USB5V_PIN,
 	 POWER_VCORE_5V_PIN,
-	 POWER_VCORE_3P3V_PIN
+	 POWER_VCORE_3P3V_PIN,
+	 POWER_VBASE_5V_PIN
 };
 
 class power
@@ -49,7 +52,8 @@ public:
   enum PowerNode {
 	  Usb5v = 0,
 	  Vcore_5v = 1,
-	  Vcore_3p3v = 2
+	  Vcore_3p3v = 2,
+	  Vbase_5v = 3,
   };
 
   power();

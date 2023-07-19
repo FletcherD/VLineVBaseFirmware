@@ -68,6 +68,7 @@ main (int argc, char* argv[])
   power.turn_on(power::PowerNode::Usb5v);
   power.turn_on(power::PowerNode::Vcore_3p3v);
   power.turn_on(power::PowerNode::Vcore_5v);
+  power.turn_on(power::PowerNode::Vbase_5v);
 
   AVCLanDrv avcLan;
   avcLan.begin();

@@ -12,6 +12,7 @@ p_timer::p_timer(uint8_t timerN) : timerN(timerN), lpcTimer(LpcTimers[timerN])
 	TIM_Init(lpcTimer, TIM_TIMER_MODE, &lpcTimerConfig);
 	lpcTimer->PR = 1000;
 
+	NVIC_EnableIRQ(LpcTimerIRQs[timerN]);
 	TIM_Cmd(lpcTimer, FunctionalState::ENABLE);
 }
 
@@ -21,29 +22,30 @@ void p_timer::reset() {
 uint32_t p_timer::getPrescaleTickRate() {
 	return CLKPWR_GetPCLK(LpcTimerPClks[timerN]);
 }
-uint32_t p_timer::getBigTicks()	{
+uint32_t p_timer::getTicks() {
 	return lpcTimer->TC;
 }
-uint32_t p_timer::getTicks()	{
-	return lpcTimer->PC;
-}
 void p_timer::sleep(uint32_t duration) {
-	uint32_t waitUntil = getBigTicks() + duration;
-	while(getBigTicks() < waitUntil);
+	uint32_t waitUntil = getTicks() + duration;
+	while(getTicks() < waitUntil);
 }
 
 void
-p_timer::setupRepeatingInterrupt(uint32_t interval)
+p_timer::setupTimerInterrupt(uint32_t duration)
 {
 	TIM_MATCHCFG_Type timerMatchConfig;
 	timerMatchConfig.MatchChannel = 0;
-	timerMatchConfig.MatchValue = interval;
+	timerMatchConfig.MatchValue = (lpcTimer->TC) + duration;
 	timerMatchConfig.IntOnMatch = ENABLE;
-	timerMatchConfig.ResetOnMatch = ENABLE;
+	timerMatchConfig.ResetOnMatch = DISABLE;
 	timerMatchConfig.StopOnMatch = DISABLE;
 	timerMatchConfig.ExtMatchOutputType = TIM_EXTMATCH_NOTHING;
 	TIM_ConfigMatch(lpcTimer, &timerMatchConfig);
-	NVIC_EnableIRQ(LpcTimerIRQs[timerN]);
+}
+void
+p_timer::updateTimer(uint32_t duration)
+{
+	TIM_UpdateMatchValue(lpcTimer, 0, (lpcTimer->TC) + duration);
 }
 
 void
@@ -58,7 +60,6 @@ p_timer::setupCaptureInterrupt()
 	timerCapCfg.RisingEdge = 1;
 	timerCapCfg.IntOnCaption = 1;
 	TIM_ConfigCapture(lpcTimer, &timerCapCfg);
-	NVIC_EnableIRQ(LpcTimerIRQs[timerN]);
 }
 void
 p_timer::clearInterrupt()

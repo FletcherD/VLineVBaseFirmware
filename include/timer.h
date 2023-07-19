@@ -19,11 +19,10 @@ static constexpr uint32_t LpcTimerPClks[] = {
 class p_timer
 {
 private:
-
 	const uint8_t timerN;
-	LPC_TIM_TypeDef* lpcTimer;
 
 public:
+	LPC_TIM_TypeDef* lpcTimer;
 
 	const uint32_t tickRate = SystemCoreClock;
 
@@ -37,13 +36,12 @@ public:
 
 	uint32_t getPrescaleTickRate();
 
-	uint32_t getBigTicks();
-
 	uint32_t getTicks();
 
 	void sleep(uint32_t duration);
 
-	void setupRepeatingInterrupt(uint32_t interval);
+	void setupTimerInterrupt(uint32_t duration);
+	void updateTimer(uint32_t duration);
 	void setupCaptureInterrupt();
 	void clearInterrupt();
 };
