@@ -1,7 +1,7 @@
 #include "cmsis_device.h"
 extern "C" {
-#include "lpc17xx_gpio.h"
-#include "lpc17xx_pinsel.h"
+#include "GPIO_LPC17xx.h"
+#include "PIN_LPC17xx.h"
 #include "LPC17xx.h"
 }
 #include "timer.h"
@@ -10,43 +10,45 @@ extern "C" {
 
 class AVCLanDrv{
 	private:
-		p_timer timer;
+		p_timer timer = p_timer(2);
 
-		PINSEL_CFG_Type AVC_RX_PIN = {
+		PinCfgType AVC_RX_PIN = {
 				Portnum: 	0,
 				Pinnum:		4,
-				Funcnum:	PINSEL_FUNC_0,
-				Pinmode:	PINSEL_PINMODE_TRISTATE,
-				OpenDrain:	PINSEL_PINMODE_NORMAL
+				// Timer Capture function
+				Funcnum:	PIN_FUNC_3,
+				Pinmode:	PIN_PINMODE_PULLUP,
+				OpenDrain:	PIN_PINMODE_NORMAL
 		};
-		PINSEL_CFG_Type AVC_TX_PIN = {
+		PinCfgType AVC_TX_PIN = {
 				Portnum: 	0,
 				Pinnum:		5,
-				Funcnum:	PINSEL_FUNC_0,
-				Pinmode:	PINSEL_PINMODE_TRISTATE,
-				OpenDrain:	PINSEL_PINMODE_OPENDRAIN
+				Funcnum:	PIN_FUNC_0,
+				Pinmode:	PIN_PINMODE_TRISTATE,
+				OpenDrain:	PIN_PINMODE_OPENDRAIN
 		};
-		PINSEL_CFG_Type AVC_STB_PIN = {
+		PinCfgType AVC_STB_PIN = {
 				Portnum: 	2,
 				Pinnum:		5,
-				Funcnum:	PINSEL_FUNC_0,
-				Pinmode:	PINSEL_PINMODE_TRISTATE,
-				OpenDrain:	PINSEL_PINMODE_OPENDRAIN
+				Funcnum:	PIN_FUNC_0,
+				Pinmode:	PIN_PINMODE_TRISTATE,
+				OpenDrain:	PIN_PINMODE_OPENDRAIN
 		};
-		PINSEL_CFG_Type AVC_EN_PIN = {
+		PinCfgType AVC_EN_PIN = {
 				Portnum: 	2,
 				Pinnum:		6,
-				Funcnum:	PINSEL_FUNC_0,
-				Pinmode:	PINSEL_PINMODE_TRISTATE,
-				OpenDrain:	PINSEL_PINMODE_NORMAL
+				Funcnum:	PIN_FUNC_0,
+				Pinmode:	PIN_PINMODE_TRISTATE,
+				OpenDrain:	PIN_PINMODE_NORMAL
 		};
-		PINSEL_CFG_Type AVC_ERR_PIN = {
+		PinCfgType AVC_ERR_PIN = {
 				Portnum: 	2,
 				Pinnum:		7,
-				Funcnum:	PINSEL_FUNC_0,
-				Pinmode:	PINSEL_PINMODE_TRISTATE,
-				OpenDrain:	PINSEL_PINMODE_NORMAL
+				Funcnum:	PIN_FUNC_0,
+				Pinmode:	PIN_PINMODE_TRISTATE,
+				OpenDrain:	PIN_PINMODE_NORMAL
 		};
+
 
 		// Active low
 		bool isInputClear()			{ return gpioPinRead(AVC_RX_PIN); }
@@ -79,6 +81,7 @@ class AVCLanDrv{
 		void readMessage();
 
 		void onTimerCallback();
+		void onGpioCallback();
 
 		static AVCLanDrv* instance;
 };

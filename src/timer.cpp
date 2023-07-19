@@ -1,84 +1,67 @@
-/*
- * This file is part of the µOS++ distribution.
- *   (https://github.com/micro-os-plus)
- * Copyright (c) 2014 Liviu Ionescu.
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom
- * the Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- */
-
 #include "timer.h"
 #include "cortexm/exception-handlers.h"
 
 // ----------------------------------------------------------------------------
 
-#if defined(USE_HAL_DRIVER)
-extern "C" void HAL_IncTick(void);
-#endif
+p_timer::p_timer(uint8_t timerN) : timerN(timerN), lpcTimer(LpcTimers[timerN])
+{
+	TIM_TIMERCFG_Type lpcTimerConfig;
+	TIM_ConfigStructInit(TIM_TIMER_MODE, &lpcTimerConfig);
+	lpcTimerConfig.PrescaleOption = TIM_PRESCALE_USVAL;
+	lpcTimerConfig.PrescaleValue = 1;
+	TIM_Init(lpcTimer, TIM_TIMER_MODE, &lpcTimerConfig);
+	lpcTimer->PR = 1000;
 
-// ----------------------------------------------------------------------------
+	TIM_Cmd(lpcTimer, FunctionalState::ENABLE);
+}
 
-
-// ----------------------------------------------------------------------------
-
-volatile timer::ticks_t timer::ms_delayCount;
+void p_timer::reset() {
+	lpcTimer->TC = 0;
+}
+uint32_t p_timer::getPrescaleTickRate() {
+	return CLKPWR_GetPCLK(LpcTimerPClks[timerN]);
+}
+uint32_t p_timer::getBigTicks()	{
+	return lpcTimer->TC;
+}
+uint32_t p_timer::getTicks()	{
+	return lpcTimer->PC;
+}
+void p_timer::sleep(uint32_t duration) {
+	uint32_t waitUntil = getBigTicks() + duration;
+	while(getBigTicks() < waitUntil);
+}
 
 void
-timer::start(void)
+p_timer::setupRepeatingInterrupt(uint32_t interval)
 {
-  // Use SysTick as reference for the delay loops.
-  SysTick_Config(SystemCoreClock / FREQUENCY_HZ);
-}
-
-
-void
-timer::sleep(ticks_t ticks)
-{
-  ms_delayCount = ticks;
-
-  // Busy wait until the SysTick decrements the counter to zero.
-  while (ms_delayCount != 0u)
-    ;
+	TIM_MATCHCFG_Type timerMatchConfig;
+	timerMatchConfig.MatchChannel = 0;
+	timerMatchConfig.MatchValue = interval;
+	timerMatchConfig.IntOnMatch = ENABLE;
+	timerMatchConfig.ResetOnMatch = ENABLE;
+	timerMatchConfig.StopOnMatch = DISABLE;
+	timerMatchConfig.ExtMatchOutputType = TIM_EXTMATCH_NOTHING;
+	TIM_ConfigMatch(lpcTimer, &timerMatchConfig);
+	NVIC_EnableIRQ(LpcTimerIRQs[timerN]);
 }
 
 void
-timer::tick(void)
+p_timer::setupCaptureInterrupt()
 {
-  // Decrement to zero the counter used by the delay routine.
-  if (ms_delayCount != 0u)
-    {
-      --ms_delayCount;
-    }
+	lpcTimer->MCR = 0;
+	lpcTimer->EMR = 0;
+
+	TIM_CAPTURECFG_Type timerCapCfg;
+	timerCapCfg.CaptureChannel = 0;
+	timerCapCfg.FallingEdge = 1;
+	timerCapCfg.RisingEdge = 1;
+	timerCapCfg.IntOnCaption = 1;
+	TIM_ConfigCapture(lpcTimer, &timerCapCfg);
+	NVIC_EnableIRQ(LpcTimerIRQs[timerN]);
 }
-
-
-// ----- SysTick_Handler() ----------------------------------------------------
-
-extern "C" void
-SysTick_Handler(void)
+void
+p_timer::clearInterrupt()
 {
-#if defined(USE_HAL_DRIVER)
-  HAL_IncTick();
-#endif
-  timer::tick();
+	lpcTimer->IR = 0xffffffff;
 }
-
-// ----------------------------------------------------------------------------

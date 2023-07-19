@@ -1,13 +1,24 @@
 #include "AVCLanDrv.h"
+#include "diag/trace.h"
 
 extern "C" {
-void TIMER0_IRQHandler(void) {
+void TIMER2_IRQHandler(void) {
 	AVCLanDrv::instance->onTimerCallback();
+}
+// GPIO interrupt
+void EINT3_IRQHandler(void) {
+	AVCLanDrv::instance->onGpioCallback();
 }
 }
 
 void AVCLanDrv::onTimerCallback() {
-	uartOut.printf("Timer: %d\r\n", timer.getBigTicks());
+	uint32_t gpioVal = GPIO_PortRead(AVC_RX_PIN.Portnum);
+	uartOut.printf("GPIO: %08x %d\r\n", gpioVal, timer.getBigTicks());
+	timer.clearInterrupt();
+}
+void AVCLanDrv::onGpioCallback() {
+	uint32_t gpioVal = GPIO_PortRead(AVC_RX_PIN.Portnum);
+	uartOut.printf("GPIO: %08x %d\r\n", gpioVal, timer.getBigTicks());
 }
 
 bool AVCLanDrv::readBit() {
@@ -77,8 +88,6 @@ void AVCLanDrv::readMessage() {
 void AVCLanDrv::begin (){
 	AVCLanDrv::instance = this;
 
-	//timer.setupRepeatingInterrupt(1000000);
-
 	LPC_GPIO(0)->DIR = 0x00400320;
 	LPC_GPIO(1)->DIR = 0x7ffbc113;
 	LPC_GPIO(2)->DIR = 0x00003964;
@@ -89,29 +98,35 @@ void AVCLanDrv::begin (){
 	LPC_GPIO(2)->PIN = 0x00002759;
 	LPC_GPIO(3)->PIN = 0x06000000;
 	LPC_GPIO(4)->PIN = 0x00000000;
-	LPC_PINCON->PINMODE0 = 0x80aaaaaa;
-	LPC_PINCON->PINMODE1 = 0x2aa2aaa8;
-	LPC_PINCON->PINMODE2 = 0xa00a020a;
-	LPC_PINCON->PINMODE3 = 0xaaaaaa8a;
-	LPC_PINCON->PINMODE4 = 0x0a8aaaaa;
+	LPC_PINCON->PINMODE0 = 0xffaaaaaa;
+	LPC_PINCON->PINMODE1 = 0xeaaeaabf;
+	LPC_PINCON->PINMODE2 = 0xaff2fefa;
+	LPC_PINCON->PINMODE3 = 0xeaaaaaba;
+	LPC_PINCON->PINMODE4 = 0x0aba2aaa;
 	LPC_PINCON->PINMODE7 = 0x00280000;
-	LPC_PINCON->PINMODE9 = 0x0a000000;
-	LPC_PINCON->PINMODE_OD0 = 0x18180c20;
+	LPC_PINCON->PINMODE9 = 0x0b000000;
+	LPC_PINCON->PINMODE_OD0 = 0x18580c20;
 	LPC_PINCON->PINMODE_OD1 = 0x00100100;
 	LPC_PINCON->PINMODE_OD2 = 0x00002020;
 	LPC_PINCON->PINMODE_OD3 = 0x04000000;
-	LPC_PINCON->PINMODE_OD4 = 0x10000000;
+	LPC_PINCON->PINMODE_OD4 = 0x00000000;
 
-	PINSEL_ConfigPin(&AVC_RX_PIN);
-	PINSEL_ConfigPin(&AVC_TX_PIN);
-	PINSEL_ConfigPin(&AVC_STB_PIN);
-	PINSEL_ConfigPin(&AVC_EN_PIN);
-	PINSEL_ConfigPin(&AVC_ERR_PIN);
+	pinConfigure(AVC_RX_PIN);
+	pinConfigure(AVC_TX_PIN);
+	pinConfigure(AVC_STB_PIN);
+	pinConfigure(AVC_EN_PIN);
+	pinConfigure(AVC_ERR_PIN);
+
+	timer.setupCaptureInterrupt();
 
 	setStandby(false);
 	setEnabled(true);
 	setTx(false);
 
+	while(true) {
+		  uartOut.printf("Idle\r\n");
+		  timer.sleep(100000);
+	}
 /*
 	uint32_t lastTime = 0;
 	uint32_t tBuf[1024];

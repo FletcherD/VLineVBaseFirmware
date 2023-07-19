@@ -69,7 +69,7 @@ void SysTick_Handler       (void) __attribute__ ((weak, alias("Default_Handler")
 
 /* external interrupts...   */
 void WDT_IRQHandler         (void) __attribute__ ((weak, alias("Default_Handler")));
-void TIMER0_IRQHandler      (void);// __attribute__ ((weak, alias("Default_Handler")));
+void TIMER0_IRQHandler      (void) __attribute__ ((weak, alias("Default_Handler")));
 void TIMER1_IRQHandler      (void) __attribute__ ((weak, alias("Default_Handler")));
 void TIMER2_IRQHandler      (void) __attribute__ ((weak, alias("Default_Handler")));
 void TIMER3_IRQHandler      (void) __attribute__ ((weak, alias("Default_Handler")));

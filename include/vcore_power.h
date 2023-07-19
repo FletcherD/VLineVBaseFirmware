@@ -37,7 +37,7 @@
 
 // ----------------------------------------------------------------------------
 
-static int PowerPinList[3] = {
+static constexpr int PowerPinList[3] = {
 	 POWER_USB5V_PIN,
 	 POWER_VCORE_5V_PIN,
 	 POWER_VCORE_3P3V_PIN

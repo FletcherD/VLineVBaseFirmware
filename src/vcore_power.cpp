@@ -2,7 +2,7 @@
 #include "util.h"
 
 extern "C" {
-#include "lpc17xx_gpio.h"
+#include "GPIO_LPC17xx.h"
 #include "lpc17xx_clkpwr.h"
 }
 // ----------------------------------------------------------------------------
@@ -24,12 +24,12 @@ power::power()
 void
 power::turn_on(PowerNode powerNode)
 {
-	gpioPinWrite(POWER_PORT_NUMBER, PowerPinList[powerNode], 0);
+	GPIO_PinWrite(POWER_PORT_NUMBER, PowerPinList[powerNode], 0);
 }
 
 void
 power::turn_off(PowerNode powerNode)
 {
-	gpioPinWrite(POWER_PORT_NUMBER, PowerPinList[powerNode], 1);
+	GPIO_PinWrite(POWER_PORT_NUMBER, PowerPinList[powerNode], 1);
 }
 // ----------------------------------------------------------------------------

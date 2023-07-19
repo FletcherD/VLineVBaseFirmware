@@ -72,7 +72,6 @@ main (int argc, char* argv[])
   AVCLanDrv avcLan;
   avcLan.begin();
   while(1) {
-	  //avcLan.readMessage();
   }
 
   //gpioTest();
