@@ -5,15 +5,31 @@ extern "C" {
 #include <string.h>
 }
 #include <functional>
+#include <queue>
+#include <vector>
 
 class uart
 {
 private:
-
 	static void
-	callback(uint32_t event);
+	signalEventStatic(uint32_t event);
+	void
+	signalEvent(uint32_t event);
+
+	struct SendData {
+		char* data;
+		uint32_t size;
+	};
+	std::queue<SendData> sendBuf;
+	static constexpr uint32_t sendBufSize = 128;
+
+
+	void
+	sendNextBuf();
 
 public:
+	bool sendReady = true;
+
 	ARM_DRIVER_USART * USARTdrv;
 	uint32_t
 	start();

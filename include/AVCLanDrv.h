@@ -8,13 +8,24 @@ extern "C" {
 #include "uart.h"
 #include "util.h"
 
+struct SendData {
+	uint16_t time;
+	uint16_t data;
+};
+
+static constexpr uint32_t sendBufSize = 128;
+static SendData sendBuf[1024];
+static uint32_t sendPos = 0;
+
 class AVCLanDrv{
+	public:
+
+		p_timer timer = p_timer(2);
 	private:
 		typedef uint32_t Time;
 		enum InputType {
 			RISING_EDGE,
-			FALLING_EDGE,
-			TIMEOUT
+			FALLING_EDGE
 		};
 
 		struct InputEvent {
@@ -30,11 +41,12 @@ class AVCLanDrv{
 		void state_WaitForBit(InputEvent i);
 		void state_MeasureBit(InputEvent i);
 
+		void messageEnd();
+
 		uint8_t messageBuf[256];
 		uint32_t bufPos;
 		void receiveBit(bool bit);
 
-		p_timer timer = p_timer(2);
 
 		PinCfgType AVC_RX_PIN = {
 				Portnum: 	0,
@@ -73,10 +85,22 @@ class AVCLanDrv{
 				OpenDrain:	PIN_PINMODE_NORMAL
 		};
 
+
+		PinCfgType AVC_EN2_PIN = {
+				Portnum: 	2,
+				Pinnum:		18,
+				Funcnum:	PIN_FUNC_0,
+				Pinmode:	PIN_PINMODE_TRISTATE,
+				OpenDrain:	PIN_PINMODE_NORMAL
+		};
+
 		uint32_t lastEventTime;
+
 
 		void setStandby(bool isOn)	{ gpioPinWrite(AVC_STB_PIN, isOn); }
 		void setEnabled(bool isOn)	{ gpioPinWrite(AVC_EN_PIN, isOn); }
+
+		void setEnabled2(bool isOn)	{ gpioPinWrite(AVC_EN2_PIN, isOn); }
 		// Active low
 		void setTx(bool isOn)		{ gpioPinWrite(AVC_TX_PIN, !isOn); }
 
@@ -86,9 +110,10 @@ class AVCLanDrv{
 		const uint32_t T_Bit_1		= 		T_Bit 	/ 2;
 		const uint32_t T_Bit_0		= (4 *	T_Bit) 	/ 5;
 		const uint32_t T_BitMeasure	= (T_Bit_1 + T_Bit_0) / 2;
-		const uint32_t T_Timeout	= 10000;
+		const uint32_t T_Timeout	= timer.uS( 1000 );
 
 	public:
+
 		typedef enum
 		{   // No this is not a mistake, broadcast = 0!
 		    AVC_MSG_DIRECT    = 1,

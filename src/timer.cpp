@@ -10,7 +10,7 @@ p_timer::p_timer(uint8_t timerN) : timerN(timerN), lpcTimer(LpcTimers[timerN])
 	lpcTimerConfig.PrescaleOption = TIM_PRESCALE_USVAL;
 	lpcTimerConfig.PrescaleValue = 1;
 	TIM_Init(lpcTimer, TIM_TIMER_MODE, &lpcTimerConfig);
-	lpcTimer->PR = 1000;
+	lpcTimer->PR = 100;
 
 	NVIC_EnableIRQ(LpcTimerIRQs[timerN]);
 	TIM_Cmd(lpcTimer, FunctionalState::ENABLE);
@@ -28,6 +28,14 @@ uint32_t p_timer::getTicks() {
 void p_timer::sleep(uint32_t duration) {
 	uint32_t waitUntil = getTicks() + duration;
 	while(getTicks() < waitUntil);
+}
+
+void p_timer::setIrqEnabled(bool isEnabled) {
+	if (isEnabled) {
+		NVIC_EnableIRQ(LpcTimerIRQs[timerN]);
+	} else {
+		NVIC_DisableIRQ(LpcTimerIRQs[timerN]);
+	}
 }
 
 void

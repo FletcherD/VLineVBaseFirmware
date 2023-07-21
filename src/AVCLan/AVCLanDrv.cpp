@@ -13,19 +13,38 @@ void AVCLanDrv::onTimerCallback() {
 	timer.updateTimer(T_Timeout);
 
 	InputEvent event;
-	if(interruptType & 1UL)
-	{
-		event.type = TIMEOUT;
-	} else {
-		uint32_t eventTime = timer.lpcTimer->CR0;
-		uint32_t rxIn = GPIO_PortRead(AVC_RX_PIN.Portnum);
+	uint32_t eventTime = timer.lpcTimer->CR0;
+	uint32_t rxIn = GPIO_PortRead(AVC_RX_PIN.Portnum);
+	event.time = eventTime - lastEventTime;
+	event.type = (rxIn & (1UL << AVC_RX_PIN.Pinnum)) ? RISING_EDGE : FALLING_EDGE;
+	lastEventTime = eventTime;
 
-		event.time = eventTime - lastEventTime;
-		lastEventTime = eventTime;
-		event.type = (rxIn & (1UL << AVC_RX_PIN.Pinnum)) ? FALLING_EDGE : RISING_EDGE;
+	SendData thisData;
+	thisData.time = event.time;
+	thisData.data = event.type;
+
+	sendBuf[sendPos++] = thisData;
+
+	if(sendPos == sendBufSize) {
+		timer.setIrqEnabled(false);
+		for (uint i = 0; i != sendBufSize; i++) {
+			uartOut.printf("%d\t%d\r\n", sendBuf[i].time, sendBuf[i].data);
+		}
+		sendPos = 0;
+		timer.setIrqEnabled(true);
 	}
 
+	//uartOut.printf("%d\t%d\t%d \r\n", eventTime, event.time, event.type);
+/*
+	if((interruptType & 1UL) || event.time > T_Timeout)
+	{
+		if(state != &AVCLanDrv::state_Idle)
+			uartOut.printf("Timeout %d\n", timer.lpcTimer->TC);
+		state = &AVCLanDrv::state_Idle;
+		messageEnd();
+	}
 	(this->*state)(event);
+*/
 }
 
 
@@ -45,50 +64,49 @@ void AVCLanDrv::state_StartBit(InputEvent e) {
 		uartOut.printf("StartBitLen: %d\r\n", e.time);
 		bufPos = 0;
 		state = &AVCLanDrv::state_WaitForBit;
-	} else if (e.type == TIMEOUT) {
-		uartOut.printf("Timeout during StartBit \r\n", e.time);
-		state = &AVCLanDrv::state_Idle;
 	}
 }
 void AVCLanDrv::state_WaitForBit(InputEvent e) {
 	if(e.type == FALLING_EDGE) {
 		state = &AVCLanDrv::state_MeasureBit;
-	} else if (e.type == TIMEOUT) {
-		uartOut.printf("Timeout during WaitForBit \r\n", e.time);
-		state = &AVCLanDrv::state_Idle;
 	}
 }
 void AVCLanDrv::state_MeasureBit(InputEvent e) {
 	if(e.type == RISING_EDGE) {
 		uartOut.printf("BitLen: %d\r\n", e.time);
 		state = &AVCLanDrv::state_WaitForBit;
-	} else if (e.type == TIMEOUT) {
-		uartOut.printf("Timeout during MeasureBit \r\n", e.time);
-		state = &AVCLanDrv::state_Idle;
+
+		bool bitVal = (e.time > T_BitMeasure) ? false : true;
+		receiveBit(bitVal);
 	}
 }
 
 void AVCLanDrv::receiveBit(bool bit) {
 	if(bit) {
+		uartOut.printf("ReceiveBit: %d \r\n", bit?1:0);
 		uint8_t whichByte = (bufPos / 8);
 		uint8_t whichBit  = (bufPos % 8);
 		messageBuf[whichByte] |= (1<<whichBit);
 	}
+	bufPos++;
 }
 
-#define LPC_GPIO(n)             ((LPC_GPIO_TypeDef *)(LPC_GPIO0_BASE + 0x00020*n))
-#define DIR  FIODIR
-#define SET  FIOSET
-#define CLR  FIOCLR
-#define PIN  FIOPIN
-#define MASK FIOMASK
+void AVCLanDrv::messageEnd() {
+	uartOut.printf("MessageEnd ");
+	uint8_t messageLen = bufPos/8 + 1;
+	for (uint8_t i = 0; i != messageLen; i++) {
+		uartOut.printf("%02x ", messageBuf[i]);
+		messageBuf[i] = 0;
+	}
+	uartOut.printf("\r\n");
+	bufPos = 0;
+}
+
 // AVCLan driver & timer2 init,
-void AVCLanDrv::begin (){
+void AVCLanDrv::begin () {
 	AVCLanDrv::instance = this;
 
 	state = &AVCLanDrv::state_Idle;
-
-
 
 	pinConfigure(AVC_RX_PIN);
 	pinConfigure(AVC_TX_PIN);
@@ -96,8 +114,11 @@ void AVCLanDrv::begin (){
 	pinConfigure(AVC_EN_PIN);
 	pinConfigure(AVC_ERR_PIN);
 
+	pinConfigure(AVC_EN2_PIN);
+	setEnabled2(false);
+
 	timer.setupCaptureInterrupt();
-	timer.setupTimerInterrupt(T_Timeout);
+	//timer.setupTimerInterrupt(T_Timeout);
 
 	setStandby(false);
 	setEnabled(true);

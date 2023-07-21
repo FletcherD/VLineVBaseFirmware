@@ -10,11 +10,20 @@ extern "C" {
 // ----------------------------------------------------------------------------
 
 static constexpr LPC_TIM_TypeDef* LpcTimers[] = {
-	LPC_TIM0, LPC_TIM1, LPC_TIM2, LPC_TIM3	};
+	LPC_TIM0,
+	LPC_TIM1,
+	LPC_TIM2,
+	LPC_TIM3 };
 static constexpr IRQn LpcTimerIRQs[] = {
-	TIMER0_IRQn, TIMER1_IRQn, TIMER2_IRQn, TIMER3_IRQn	};
+	TIMER0_IRQn,
+	TIMER1_IRQn,
+	TIMER2_IRQn,
+	TIMER3_IRQn	};
 static constexpr uint32_t LpcTimerPClks[] = {
-	CLKPWR_PCLKSEL_TIMER0, CLKPWR_PCLKSEL_TIMER1, CLKPWR_PCLKSEL_TIMER2, CLKPWR_PCLKSEL_TIMER3	};
+	CLKPWR_PCLKSEL_TIMER0,
+	CLKPWR_PCLKSEL_TIMER1,
+	CLKPWR_PCLKSEL_TIMER2,
+	CLKPWR_PCLKSEL_TIMER3 };
 
 class p_timer
 {
@@ -24,10 +33,9 @@ private:
 public:
 	LPC_TIM_TypeDef* lpcTimer;
 
-	const uint32_t tickRate = SystemCoreClock;
-
+	uint32_t ticksPerS() { return SystemCoreClock / lpcTimer->PR; }
 	uint32_t uS(uint32_t uS) {
-		return uS * (tickRate / 1000000);
+		return 96 * (SystemCoreClock/1000000) * uS / (lpcTimer->PR);
 	}
 
 	p_timer(uint8_t timerN);
@@ -44,6 +52,7 @@ public:
 	void updateTimer(uint32_t duration);
 	void setupCaptureInterrupt();
 	void clearInterrupt();
+	void setIrqEnabled(bool);
 };
 
 #endif // TIMER_H_
