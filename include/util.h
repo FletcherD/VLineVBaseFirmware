@@ -4,6 +4,15 @@ extern "C" {
 #include "LPC17xx.h"
 }
 
+#ifndef UTIL_H_
+#define UTIL_H_
+
+template<typename T> T swapBytes(T num);
+
+template<typename T> T swapBytes(T num) {
+	return num;
+}
+
 typedef struct {
 	uint8_t Portnum;	/**< Port Number, should be PINSEL_PORT_x,
 						where x should be in range from 0 to 4 */
@@ -18,6 +27,7 @@ typedef struct {
 	uint8_t OpenDrain;	/**< OpenDrain mode, should be:
 						- PINSEL_PINMODE_NORMAL: Pin is in the normal (not open drain) mode
 						- PINSEL_PINMODE_OPENDRAIN: Pin is in the open drain mode */
+	uint8_t GpioDir;	/** GPIO_DIR_INPUT, GPIO_DIR_OUTPUT */
 } PinCfgType;
 
 void pinConfigure(PinCfgType);
@@ -33,3 +43,5 @@ void gpioPinWrite(PinCfgType pinCfg, bool value);
 void gpioPinSet(uint8_t portNum, uint8_t pinNum);
 void gpioPinClear(uint8_t portNum, uint8_t pinNum);
 void gpioPinWrite(uint8_t portNum, uint8_t pinNum, bool value);
+
+#endif

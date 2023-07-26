@@ -30,11 +30,11 @@
 
 #include "cmsis_device.h"
 
-#define POWER_PORT_NUMBER              (1)
+#define POWER_PORT_NUMBER              	(1)
 
-#define POWER_USB5V_PIN                (27)
-#define POWER_VCORE_5V_PIN             (15)
-#define POWER_VCORE_3P3V_PIN           (29)
+#define POWER_USB5V_PIN                	(27)
+#define POWER_VCORE_5V_PIN             	(15)
+#define POWER_VCORE_3P3V_PIN           	(29)
 #define POWER_VBASE_5V_PIN				(19)
 
 // ----------------------------------------------------------------------------

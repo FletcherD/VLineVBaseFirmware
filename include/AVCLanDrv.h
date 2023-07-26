@@ -8,6 +8,8 @@ extern "C" {
 #include "uart.h"
 #include "util.h"
 
+#include "AVCLanMsg.h"
+
 struct SendData {
 	uint16_t time;
 	uint16_t data;
@@ -41,12 +43,18 @@ class AVCLanDrv{
 		void state_WaitForBit(InputEvent i);
 		void state_MeasureBit(InputEvent i);
 
-		void messageEnd();
 
-		uint8_t messageBuf[256];
+		static constexpr uint8_t messageBufLen = 128;
+		uint8_t messageBuf[messageBufLen];
 		uint32_t bufPos;
+
+		AVCLanMsg thisMsg;
+
 		void receiveBit(bool bit);
 
+		void messageEnd();
+
+		void resetBuffer();
 
 		PinCfgType AVC_RX_PIN = {
 				Portnum: 	0,
@@ -54,71 +62,60 @@ class AVCLanDrv{
 				// Timer Capture function
 				Funcnum:	PIN_FUNC_3,
 				Pinmode:	PIN_PINMODE_PULLUP,
-				OpenDrain:	PIN_PINMODE_NORMAL
+				OpenDrain:	PIN_PINMODE_NORMAL,
+				GpioDir:	GPIO_DIR_INPUT
 		};
 		PinCfgType AVC_TX_PIN = {
 				Portnum: 	0,
 				Pinnum:		5,
 				Funcnum:	PIN_FUNC_0,
 				Pinmode:	PIN_PINMODE_TRISTATE,
-				OpenDrain:	PIN_PINMODE_OPENDRAIN
+				OpenDrain:	PIN_PINMODE_OPENDRAIN,
+				GpioDir:	GPIO_DIR_INPUT
 		};
 		PinCfgType AVC_STB_PIN = {
 				Portnum: 	2,
 				Pinnum:		5,
 				Funcnum:	PIN_FUNC_0,
 				Pinmode:	PIN_PINMODE_TRISTATE,
-				OpenDrain:	PIN_PINMODE_OPENDRAIN
+				OpenDrain:	PIN_PINMODE_OPENDRAIN,
+				GpioDir:	GPIO_DIR_OUTPUT
 		};
 		PinCfgType AVC_EN_PIN = {
-				Portnum: 	2,
-				Pinnum:		6,
+				Portnum: 	1,
+				Pinnum:		17,
 				Funcnum:	PIN_FUNC_0,
 				Pinmode:	PIN_PINMODE_TRISTATE,
-				OpenDrain:	PIN_PINMODE_NORMAL
+				OpenDrain:	PIN_PINMODE_NORMAL,
+				GpioDir:	GPIO_DIR_OUTPUT
 		};
 		PinCfgType AVC_ERR_PIN = {
 				Portnum: 	2,
 				Pinnum:		7,
 				Funcnum:	PIN_FUNC_0,
 				Pinmode:	PIN_PINMODE_TRISTATE,
-				OpenDrain:	PIN_PINMODE_NORMAL
+				OpenDrain:	PIN_PINMODE_NORMAL,
+				GpioDir:	GPIO_DIR_OUTPUT
 		};
-
-
-		PinCfgType AVC_EN2_PIN = {
-				Portnum: 	2,
-				Pinnum:		18,
-				Funcnum:	PIN_FUNC_0,
-				Pinmode:	PIN_PINMODE_TRISTATE,
-				OpenDrain:	PIN_PINMODE_NORMAL
-		};
-
 		uint32_t lastEventTime;
 
 
 		void setStandby(bool isOn)	{ gpioPinWrite(AVC_STB_PIN, isOn); }
-		void setEnabled(bool isOn)	{ gpioPinWrite(AVC_EN_PIN, isOn); }
-
-		void setEnabled2(bool isOn)	{ gpioPinWrite(AVC_EN2_PIN, isOn); }
+		// Active low
+		void setEnabled(bool isOn)	{ gpioPinWrite(AVC_EN_PIN, !isOn); }
 		// Active low
 		void setTx(bool isOn)		{ gpioPinWrite(AVC_TX_PIN, !isOn); }
 
 		// Times in timer ticks
-		const uint32_t T_StartBit	= timer.uS(	168	);
-		const uint32_t T_Bit		= timer.uS(	39	);
+		const uint32_t T_StartBit	= 170;	//timer.uS(	168	);
+		const uint32_t T_Bit		= 39;	//timer.uS(	39	);
 		const uint32_t T_Bit_1		= 		T_Bit 	/ 2;
 		const uint32_t T_Bit_0		= (4 *	T_Bit) 	/ 5;
-		const uint32_t T_BitMeasure	= (T_Bit_1 + T_Bit_0) / 2;
-		const uint32_t T_Timeout	= timer.uS( 1000 );
+		const uint32_t T_BitMeasure	= 27;	//(T_Bit_1 + T_Bit_0) / 2;
+		const uint32_t T_Timeout	= 200;	//timer.uS( 300 );
 
 	public:
-
-		typedef enum
-		{   // No this is not a mistake, broadcast = 0!
-		    AVC_MSG_DIRECT    = 1,
-		    AVC_MSG_BROADCAST = 0
-		} AvcTransmissionMode;
+		AVCLanDrv();
 
 		void begin();
 

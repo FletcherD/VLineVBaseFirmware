@@ -29,9 +29,10 @@ main (int argc, char* argv[])
 	power.turn_on(power::PowerNode::Vbase_5v);
 
 	AVCLanDrv avcLan;
-	avcLan.begin();
+
+	uint32_t t = 0;
 	while(1) {
-		uartOut.printf("Idle\r\n");
+		uartOut.printf("Idle %d\r\n", t++);
 		avcLan.timer.sleep(1000000);
 	}
 }
