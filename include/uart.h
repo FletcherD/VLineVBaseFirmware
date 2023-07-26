@@ -21,7 +21,7 @@ private:
 		uint32_t size;
 	};
 	std::queue<SendData> sendBuf;
-	static constexpr uint32_t sendBufSize = 32;
+	static constexpr uint32_t sendBufSize = 128;
 
 
 	void

@@ -15,26 +15,31 @@ struct SendData {
 	uint16_t data;
 };
 
-static constexpr uint32_t sendBufSize = 128;
-static SendData sendBuf[1024];
-static uint32_t sendPos = 0;
-
 class AVCLanDrv{
 	public:
-
 		p_timer timer = p_timer(2);
+
 	private:
 		typedef uint32_t Time;
 		enum InputType {
 			RISING_EDGE,
 			FALLING_EDGE
 		};
-
 		struct InputEvent {
 			Time time;
 			InputType type;
 		};
+		Time lastEventTime;
 
+		// Times in timer ticks
+		const uint32_t T_StartBit	= timer.uS(	170	);
+		const uint32_t T_Bit		= timer.uS(	39	);
+		const uint32_t T_Bit_1		= 		T_Bit 	/ 2;
+		const uint32_t T_Bit_0		= (4 *	T_Bit) 	/ 5;
+		const uint32_t T_BitMeasure	= (T_Bit_1 + T_Bit_0) / 2;
+		const uint32_t T_Timeout	= timer.uS( 200 );
+
+		// AVC-LAN RX state machine
 		typedef void (AVCLanDrv::*State)(InputEvent);
 		State state;
 
@@ -43,18 +48,19 @@ class AVCLanDrv{
 		void state_WaitForBit(InputEvent i);
 		void state_MeasureBit(InputEvent i);
 
+		// ------------------------
 
-		static constexpr uint8_t messageBufLen = 128;
+		static constexpr uint8_t messageBufLen = 32;
 		uint8_t messageBuf[messageBufLen];
-		uint32_t bufPos;
+		uint32_t bufPos = 0;
 
 		AVCLanMsg thisMsg;
 
 		void receiveBit(bool bit);
-
 		void messageEnd();
-
 		void resetBuffer();
+
+		// Pin definitions
 
 		PinCfgType AVC_RX_PIN = {
 				Portnum: 	0,
@@ -97,8 +103,6 @@ class AVCLanDrv{
 				OpenDrain:	PIN_PINMODE_NORMAL,
 				GpioDir:	GPIO_DIR_OUTPUT
 		};
-		uint32_t lastEventTime;
-
 
 		void setStandby(bool isOn)	{ gpioPinWrite(AVC_STB_PIN, isOn); }
 		// Active low
@@ -106,18 +110,8 @@ class AVCLanDrv{
 		// Active low
 		void setTx(bool isOn)		{ gpioPinWrite(AVC_TX_PIN, !isOn); }
 
-		// Times in timer ticks
-		const uint32_t T_StartBit	= 170;	//timer.uS(	168	);
-		const uint32_t T_Bit		= 39;	//timer.uS(	39	);
-		const uint32_t T_Bit_1		= 		T_Bit 	/ 2;
-		const uint32_t T_Bit_0		= (4 *	T_Bit) 	/ 5;
-		const uint32_t T_BitMeasure	= 27;	//(T_Bit_1 + T_Bit_0) / 2;
-		const uint32_t T_Timeout	= 200;	//timer.uS( 300 );
-
 	public:
 		AVCLanDrv();
-
-		void begin();
 
 		void onTimerCallback();
 

@@ -97,44 +97,35 @@ void AVCLanDrv::messageEnd() {
 
 	timer.setIrqEnabled(false);
 
-	bool broadcast 			= thisMsg.getField<bool>(AVCLanMsg::Broadcast);
-	uint16_t masterAddress 	= thisMsg.getField<uint32_t>(AVCLanMsg::MasterAddress);
-	uint16_t slaveAddress 	= thisMsg.getField<uint32_t>(AVCLanMsg::SlaveAddress);
-	uint8_t control 		= thisMsg.getField<uint32_t>(AVCLanMsg::Control);
-	uint8_t dataLen 		= thisMsg.getField<uint32_t>(AVCLanMsg::DataLength);
+	bool broadcast 			= thisMsg.getField(AVCLanMsg::Broadcast);
+	uint16_t masterAddress 	= thisMsg.getField(AVCLanMsg::MasterAddress);
+	uint16_t slaveAddress 	= thisMsg.getField(AVCLanMsg::SlaveAddress);
+	uint8_t control 		= thisMsg.getField(AVCLanMsg::Control);
+	uint8_t dataLen 		= thisMsg.getField(AVCLanMsg::DataLength);
 	uint8_t data[dataLen];
 	for(uint8_t i = 0; i < dataLen; i++) {
-		data[i] 			= thisMsg.getField<uint32_t>(AVCLanMsg::Data(i));
+		data[i] 			= thisMsg.getField(AVCLanMsg::Data(i));
 	}
-	uint32_t messageLengthExpected = thisMsg.getMessageLength();
 
 	char dataStr[dataLen*3+1];
 	for(uint8_t i = 0; i < dataLen; i++) {
 		snprintf(dataStr+i*3, 4, "%02x ", data[i]);
 	}
-	uartOut.printf("%d/%d\t: %c %03x %03x %01x %d \t",
-			bufPos, messageLengthExpected,
+	uartOut.printf("%c %03x %03x %01x %d \t%s\r\n",
 			(broadcast == AVCLanMsg::AVC_MSG_BROADCAST ? 'B' : '-'),
 			masterAddress, slaveAddress, control, dataLen, dataStr);
-	uartOut.printf("%s\r\n", dataStr);
-	/*
-	uint8_t messageLen = bufPos/8 + (bufPos % 8 != 0);
-	uartOut.printf("%d\t: ", bufPos);
-	for (uint8_t i = 0; i != messageLen; i++) {
-		uartOut.printf("%02x ", messageBuf[i]);
-	}
-	uartOut.printf("\r\n");
-	*/
 
 	resetBuffer();
 	timer.setIrqEnabled(true);
 }
 
 AVCLanDrv::AVCLanDrv()
-	: thisMsg(messageBuf),
-	  state(&AVCLanDrv::state_Idle)
+	: messageBuf{0},
+	  thisMsg(messageBuf)
 {
 	AVCLanDrv::instance = this;
+
+	state = &AVCLanDrv::state_Idle;
 
 	pinConfigure(AVC_RX_PIN);
 	//pinConfigure(AVC_TX_PIN);

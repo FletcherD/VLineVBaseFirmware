@@ -15,6 +15,9 @@ public:
 	struct AVCLanMsgField {
 		uint8_t 	BitOffset;
 		uint8_t 	LengthBits;
+		uint8_t		StartByte() {
+			return BitOffset/8;
+		}
 	};
 
 	typedef enum
@@ -50,6 +53,20 @@ private:
 public:
 	AVCLanMsg(uint8_t*);
 
+	uint32_t
+	getField(AVCLanMsgField field)
+	{
+		uint8_t startByte = field.BitOffset / 8;
+		uint8_t endByte = (field.BitOffset + field.LengthBits - 1) / 8;
+		if(endByte-startByte == 0) {
+			return getField<uint8_t>(field);
+		} else if(endByte-startByte == 1) {
+			return getField<uint16_t>(field);
+		} else {
+			return getField<uint32_t>(field);
+		}
+	}
+
 	template<typename T> T
 	getField(AVCLanMsgField field)
 	{
@@ -84,7 +101,7 @@ public:
 				AVCLanMsg::Data_P(0).LengthBits +
 				AVCLanMsg::Data_A(0).LengthBits;
 		static constexpr uint32_t dataFieldOffset = AVCLanMsg::Data(0).BitOffset;
-		uint8_t dataLen = getField<uint32_t>(DataLength);
+		uint8_t dataLen = getField(DataLength);
 		return dataFieldOffset + dataLen*dataFieldLength;
 	}
 

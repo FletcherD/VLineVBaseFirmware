@@ -11,7 +11,6 @@ uart::start()
 	USARTdrv = &Driver_USART0;
 
 	ARM_USART_CAPABILITIES drv_capabilities = USARTdrv->GetCapabilities();
-	trace_printf("event_tx_complete: %d\n", drv_capabilities.event_tx_complete);
 
 	/*Initialize the USART driver */
 	uint32_t errNo = USARTdrv->Initialize(&uart::signalEventStatic);
@@ -40,9 +39,14 @@ uart::printf(const char *format, ...)
 	va_list ap;
 	va_start (ap, format);
 
+	va_list apCopy;
+	va_copy(apCopy, ap);
+	size_t strSize = vsnprintf(NULL, 0, format, apCopy);
+	va_end(apCopy);
+
 	SendData thisData;
-	thisData.data = new char[sendBufSize];
-	thisData.size = vsnprintf (thisData.data, sendBufSize, format, ap);
+	thisData.data = new char[strSize+1];
+	thisData.size = vsnprintf(thisData.data, strSize+1, format, ap);
 	sendBuf.push(thisData);
 
 	if (sendReady) {
@@ -56,9 +60,9 @@ uart::printf(const char *format, ...)
 void
 uart::sendNextBuf()
 {
+	sendReady = false;
 	SendData thisData = sendBuf.front();
 	send(thisData.data, thisData.size);
-	sendReady = false;
 }
 
 void

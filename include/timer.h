@@ -33,16 +33,13 @@ private:
 public:
 	LPC_TIM_TypeDef* lpcTimer;
 
-	uint32_t ticksPerS() { return SystemCoreClock / lpcTimer->PR; }
-	uint32_t uS(uint32_t uS) {
-		return 96 * (SystemCoreClock/1000000) * uS / (lpcTimer->PR);
-	}
+	uint32_t getPrescaleTickRate();
+	uint32_t ticksPerS();
+	uint32_t uS(uint32_t uS);
 
 	p_timer(uint8_t timerN);
 
 	void reset();
-
-	uint32_t getPrescaleTickRate();
 
 	uint32_t getTicks();
 

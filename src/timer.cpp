@@ -7,10 +7,9 @@ p_timer::p_timer(uint8_t timerN) : timerN(timerN), lpcTimer(LpcTimers[timerN])
 {
 	TIM_TIMERCFG_Type lpcTimerConfig;
 	TIM_ConfigStructInit(TIM_TIMER_MODE, &lpcTimerConfig);
-	lpcTimerConfig.PrescaleOption = TIM_PRESCALE_USVAL;
-	lpcTimerConfig.PrescaleValue = 1;
+	lpcTimerConfig.PrescaleOption = TIM_PRESCALE_TICKVAL;
+	lpcTimerConfig.PrescaleValue = 100;
 	TIM_Init(lpcTimer, TIM_TIMER_MODE, &lpcTimerConfig);
-	lpcTimer->PR = 100;
 
 	NVIC_EnableIRQ(LpcTimerIRQs[timerN]);
 	TIM_Cmd(lpcTimer, FunctionalState::ENABLE);
@@ -22,6 +21,13 @@ void p_timer::reset() {
 uint32_t p_timer::getPrescaleTickRate() {
 	return CLKPWR_GetPCLK(LpcTimerPClks[timerN]);
 }
+uint32_t p_timer::ticksPerS() {
+	return getPrescaleTickRate() / (lpcTimer->PR+1);
+}
+uint32_t p_timer::uS(uint32_t uS) {
+	return (ticksPerS() * uS) / 1000000;
+}
+
 uint32_t p_timer::getTicks() {
 	return lpcTimer->TC;
 }

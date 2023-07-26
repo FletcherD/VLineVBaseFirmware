@@ -1,14 +1,10 @@
 #include "util.h"
 
 template<> uint32_t swapBytes(uint32_t num) {
-	return (num & 0x000000ff) << 24u
-		| (num & 0x0000ff00) << 8u
-		| (num & 0x00ff0000) >> 8u
-		| (num & 0xff000000) >> 24u;
+	return __REV(num);
 }
 template<> uint16_t swapBytes(uint16_t num) {
-	return (num & 0x00ff) << 8u
-		| (num & 0xff00) >> 8u;
+	return __REV16(num);
 }
 
 void pinConfigure(PinCfgType pinCfg) {
