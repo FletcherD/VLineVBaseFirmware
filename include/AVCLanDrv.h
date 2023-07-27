@@ -1,3 +1,6 @@
+#ifndef AVCLANDRV_H_
+#define AVCLANDRV_H_
+
 #include "cmsis_device.h"
 extern "C" {
 #include "GPIO_LPC17xx.h"
@@ -10,26 +13,9 @@ extern "C" {
 
 #include "AVCLanMsg.h"
 
-struct SendData {
-	uint16_t time;
-	uint16_t data;
-};
-
-class AVCLanDrv{
-	public:
-		p_timer timer = p_timer(2);
-
-	private:
-		typedef uint32_t Time;
-		enum InputType {
-			RISING_EDGE,
-			FALLING_EDGE
-		};
-		struct InputEvent {
-			Time time;
-			InputType type;
-		};
-		Time lastEventTime;
+class AVCLanDrvBase {
+	protected:
+		p_timer timer;
 
 		// Times in timer ticks
 		const uint32_t T_StartBit	= timer.uS(	170	);
@@ -39,28 +25,7 @@ class AVCLanDrv{
 		const uint32_t T_BitMeasure	= (T_Bit_1 + T_Bit_0) / 2;
 		const uint32_t T_Timeout	= timer.uS( 200 );
 
-		// AVC-LAN RX state machine
-		typedef void (AVCLanDrv::*State)(InputEvent);
-		State state;
-
-		void state_Idle(InputEvent i);
-		void state_StartBit(InputEvent i);
-		void state_WaitForBit(InputEvent i);
-		void state_MeasureBit(InputEvent i);
-
 		// ------------------------
-
-		static constexpr uint8_t messageBufLen = 32;
-		uint8_t messageBuf[messageBufLen];
-		uint32_t bufPos = 0;
-
-		AVCLanMsg thisMsg;
-
-		void receiveBit(bool bit);
-		void messageEnd();
-		void resetBuffer();
-
-		// Pin definitions
 
 		PinCfgType AVC_RX_PIN = {
 				Portnum: 	0,
@@ -104,6 +69,12 @@ class AVCLanDrv{
 				GpioDir:	GPIO_DIR_OUTPUT
 		};
 
+		enum AVCLanMode {
+			RECEIVE,
+			TRANSMIT
+		};
+		AVCLanMode operatingMode;
+
 		void setStandby(bool isOn)	{ gpioPinWrite(AVC_STB_PIN, isOn); }
 		// Active low
 		void setEnabled(bool isOn)	{ gpioPinWrite(AVC_EN_PIN, !isOn); }
@@ -111,9 +82,10 @@ class AVCLanDrv{
 		void setTx(bool isOn)		{ gpioPinWrite(AVC_TX_PIN, !isOn); }
 
 	public:
-		AVCLanDrv();
+		AVCLanDrvBase(p_timer);
 
 		void onTimerCallback();
 
-		static AVCLanDrv* instance;
 };
+
+#endif

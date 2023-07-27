@@ -21,7 +21,7 @@ public:
 	};
 
 	typedef enum
-	{   // No this is not a mistake, broadcast = 0!
+	{
 	    AVC_MSG_DIRECT    = 1,
 	    AVC_MSG_BROADCAST = 0
 	} AVCLanTransmissionMode;

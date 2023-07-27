@@ -5,7 +5,7 @@
 #include "timer.h"
 
 #include "vcore_power.h"
-#include "AVCLanDrv.h"
+#include "AVCLanDrvRxTx.h"
 
 // Sample pragmas to cope with warnings. Please note the related line at
 // the end of this function, used to pop the compiler diagnostics status.
@@ -28,12 +28,13 @@ main (int argc, char* argv[])
 	power.turn_on(power::PowerNode::Vcore_5v);
 	power.turn_on(power::PowerNode::Vbase_5v);
 
-	AVCLanDrv avcLan;
+	p_timer timer = p_timer(2);
+	AVCLanDrvRxTx avcLan(timer);
 
 	uint32_t t = 0;
 	while(1) {
 		uartOut.printf("Idle %d\r\n", t++);
-		avcLan.timer.sleep(1000000);
+		timer.sleep(1000000);
 	}
 }
 

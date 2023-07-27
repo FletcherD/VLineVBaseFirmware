@@ -1,3 +1,6 @@
+#ifndef UART_H_
+#define UART_H_
+
 extern "C" {
 #include "Driver_USART.h"
 #include <stdio.h>
@@ -21,8 +24,6 @@ private:
 		uint32_t size;
 	};
 	std::queue<SendData> sendBuf;
-	static constexpr uint32_t sendBufSize = 128;
-
 
 	void
 	sendNextBuf();
@@ -42,3 +43,5 @@ public:
 };
 
 extern uart uartOut;
+
+#endif
