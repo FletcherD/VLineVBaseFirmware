@@ -72,7 +72,7 @@ void AVCLanRx::state_MeasureBit(InputEvent e) {
 			state = &AVCLanRx::state_Idle;
 			uartOut.printf("\tAbort\r\n");
 			resetBuffer();
-			rxEnd();
+			endReceive();
 			return;
 		}
 
@@ -132,5 +132,5 @@ void AVCLanRx::messageEnd() {
 	resetBuffer();
 	timer.setIrqEnabled(true);
 
-	rxEnd();
+	endReceive();
 }

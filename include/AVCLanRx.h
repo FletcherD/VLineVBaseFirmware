@@ -45,7 +45,7 @@ class AVCLanRx : public virtual AVCLanDrvBase {
 		void resetBuffer();
 		void messageEnd();
 
-		virtual void rxEnd() = 0;
+		virtual void endReceive() {};
 
 	public:
 		AVCLanRx(p_timer);

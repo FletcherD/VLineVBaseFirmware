@@ -31,17 +31,18 @@ void AVCLanDrvRxTx::sendMessage(AVCLanMsg message) {
 	}
 }
 
-void AVCLanDrvRxTx::rxEnd() {
+void AVCLanDrvRxTx::endReceive() {
 	startIdle();
 }
-void AVCLanDrvRxTx::txEnd() {
+void AVCLanDrvRxTx::endTransmit() {
 	startIdle();
 }
 
 void AVCLanDrvRxTx::startTransmit() {
 	operatingMode = TRANSMIT;
 	timer.setCaptureInterruptEnabled(false);
-	AVCLanTx::startSend();
+	timer.setTimerInterruptEnabled(true);
+	AVCLanTx::startTransmit();
 }
 void AVCLanDrvRxTx::startReceive() {
 	operatingMode = RECEIVE;

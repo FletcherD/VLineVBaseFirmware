@@ -4,11 +4,10 @@
 
 class AVCLanDrvRxTx : public AVCLanRx, AVCLanTx
 {
-	void txEnd();
-	void rxEnd();
-
 	void startTransmit();
+	void endTransmit();
 	void startReceive();
+	void endReceive();
 	void startIdle();
 
 	enum AVCLanMode {

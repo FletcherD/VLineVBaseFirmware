@@ -35,6 +35,17 @@ main (int argc, char* argv[])
 	while(1) {
 		uartOut.printf("Idle %d\r\n", t++);
 		timer.sleep(1000000);
+
+		AVCLanMsg message;
+		message.setField(AVCLanMsg::Broadcast, true);
+		message.setField(AVCLanMsg::MasterAddress, 0x110);
+		uint16_t slaveAddress = 0xfff;
+		message.setField(AVCLanMsg::SlaveAddress, slaveAddress);
+		message.setField(AVCLanMsg::SlaveAddress_P, AVCLanMsg::calculateParity(slaveAddress));
+		uint8_t control = 0xf;
+		message.setField(AVCLanMsg::Control, control);
+		message.setField(AVCLanMsg::Control_P, AVCLanMsg::calculateParity(control));
+		//message.setField(AVCLanMsg::Control, 0xf);
 	}
 }
 

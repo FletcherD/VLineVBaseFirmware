@@ -21,17 +21,6 @@ class AVCLanTx : public virtual AVCLanDrvBase {
 			TIMER_TRIGGERED,
 			SEND_REQUESTED
 		};
-		Time lastEventTime;
-
-
-		PinCfgType AVC_TX_PIN = {
-				Portnum: 	0,
-				Pinnum:		5,
-				Funcnum:	PIN_FUNC_0,
-				Pinmode:	PIN_PINMODE_TRISTATE,
-				OpenDrain:	PIN_PINMODE_OPENDRAIN,
-				GpioDir:	GPIO_DIR_INPUT
-		};
 
 		typedef void (AVCLanTx::*State)(SendEvent);
 		State state;
@@ -49,12 +38,9 @@ class AVCLanTx : public virtual AVCLanDrvBase {
 
 		bool getNextBit();
 
-		// Active low
-		void setTx(bool isOn)		{
-			gpioPinWrite(AVC_TX_PIN, !isOn);
-		}
+		void setTxPinState(bool isOn);
 
-		virtual void txEnd() = 0;
+		virtual void endTransmit() {};
 
 	public:
 		AVCLanTx(p_timer);
@@ -64,7 +50,7 @@ class AVCLanTx : public virtual AVCLanDrvBase {
 
 		bool isMessageWaiting();
 
-		void startSend();
+		void startTransmit();
 
 		void onTimerCallback();
 };

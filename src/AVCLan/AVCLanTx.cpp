@@ -1,21 +1,21 @@
 #include "AVCLanTx.h"
 
 AVCLanTx::AVCLanTx(p_timer timer)
-	: AVCLanDrvBase(timer)
+	: AVCLanDrvBase(timer),
+	  state(&AVCLanTx::state_Idle)
 {
-
 }
 
 void AVCLanTx::state_Idle(SendEvent i) {
 	if(i == SEND_REQUESTED) {
-		startSend();
+		startTransmit();
 	}
 }
 
 void AVCLanTx::state_StartBit(SendEvent i) {
 	if(i == TIMER_TRIGGERED) {
-		setTx(false);
 		timer.setupTimerInterrupt(T_Bit_0);
+		setTxPinState(false);
 		state = &AVCLanTx::state_PeriodOff;
 	}
 }
@@ -29,9 +29,8 @@ void AVCLanTx::state_PeriodOff(SendEvent i) {
 		else
 			pulseDur = T_Bit_0;
 
-		setTx(true);
 		timer.setupTimerInterrupt(pulseDur);
-
+		setTxPinState(true);
 		state = &AVCLanTx::state_PeriodOn;
 	}
 }
@@ -45,8 +44,8 @@ void AVCLanTx::state_PeriodOn(SendEvent i) {
 		else
 			pulseDur = T_Bit - T_Bit_0;
 
-		setTx(false);
 		timer.setupTimerInterrupt(pulseDur);
+		setTxPinState(false);
 
 		bufPos++;
 		if (bufPos == sendQueue.front().lengthBits) {
@@ -64,9 +63,9 @@ void AVCLanTx::state_EndWait(SendEvent i) {
 	if(i == TIMER_TRIGGERED) {
 		if(sendQueue.empty()) {
 			state = &AVCLanTx::state_Idle;
-			txEnd();
+			endTransmit();
 		} else {
-			startSend();
+			startTransmit();
 		}
 	}
 }
@@ -79,9 +78,9 @@ bool AVCLanTx::isMessageWaiting() {
 	return !(sendQueue.empty());
 }
 
-void AVCLanTx::startSend() {
-	setTx(true);
+void AVCLanTx::startTransmit() {
 	timer.setupTimerInterrupt(T_StartBit);
+	setTxPinState(true);
 	state = &AVCLanTx::state_StartBit;
 }
 
@@ -95,4 +94,9 @@ bool AVCLanTx::getNextBit() {
 	uint8_t whichBit  = (bufPos % 8);
 	bool bit = messageBuf[whichByte] & (0x80>>whichBit);
 	return bit;
+}
+
+void AVCLanTx::setTxPinState(bool isOn)	{
+	// Active low
+	gpioPinWrite(AVC_TX_PIN, !isOn);
 }
