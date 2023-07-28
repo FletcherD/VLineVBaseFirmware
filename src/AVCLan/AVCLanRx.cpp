@@ -1,6 +1,25 @@
 #include "AVCLanRx.h"
 #include "AVCLanMsg.h"
-#include "diag/trace.h"
+
+AVCLanRx::AVCLanRx(p_timer timer)
+	: AVCLanDrvBase(timer)
+{
+	state = &AVCLanRx::state_Idle;
+
+	pinConfigure(AVC_RX_PIN);
+	//pinConfigure(AVC_TX_PIN);
+	pinConfigure(AVC_STB_PIN);
+	pinConfigure(AVC_EN_PIN);
+	//pinConfigure(AVC_ERR_PIN);
+
+	setEnabled(true);
+	setStandby(false);
+	//setTx(false);
+
+	lastEventTime = timer.getTicks();
+	timer.setupCaptureInterrupt();
+	timer.setupTimerInterrupt(T_Timeout);
+}
 
 void AVCLanRx::onTimerCallback() {
 	uint32_t interruptType = timer.lpcTimer->IR;
@@ -50,9 +69,10 @@ void AVCLanRx::state_MeasureBit(InputEvent e) {
 		state = &AVCLanRx::state_WaitForBit;
 
 		if(e.time > T_Bit) {
-			resetBuffer();
 			state = &AVCLanRx::state_Idle;
 			uartOut.printf("\tAbort\r\n");
+			resetBuffer();
+			rxEnd();
 			return;
 		}
 
@@ -69,10 +89,10 @@ void AVCLanRx::receiveBit(bool bit) {
 	uint8_t whichByte = (bufPos / 8);
 	uint8_t whichBit  = (bufPos % 8);
 	if (whichBit==0) {
-		messageBuf[whichByte] = 0;
+		thisMsg.messageBuf[whichByte] = 0;
 	}
 	if (bit) {
-		messageBuf[whichByte] |= (0x80>>whichBit);
+		thisMsg.messageBuf[whichByte] |= (0x80>>whichBit);
 	}
 	bufPos++;
 
@@ -111,30 +131,6 @@ void AVCLanRx::messageEnd() {
 
 	resetBuffer();
 	timer.setIrqEnabled(true);
-}
 
-AVCLanRx::AVCLanRx(p_timer timer)
-	: AVCLanDrvBase(timer),
-	messageBuf{0},
-	thisMsg(messageBuf)
-{
-	state = &AVCLanRx::state_Idle;
-
-	pinConfigure(AVC_RX_PIN);
-	//pinConfigure(AVC_TX_PIN);
-	pinConfigure(AVC_STB_PIN);
-	pinConfigure(AVC_EN_PIN);
-	//pinConfigure(AVC_ERR_PIN);
-
-	setEnabled(true);
-	setStandby(false);
-	//setTx(false);
-
-	lastEventTime = timer.getTicks();
-	timer.setupCaptureInterrupt();
-	timer.setupTimerInterrupt(T_Timeout);
-}
-
-bool AVCLanRx::isBusy() {
-	return (state != &AVCLanRx::state_Idle);
+	rxEnd();
 }

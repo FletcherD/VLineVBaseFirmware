@@ -10,25 +10,54 @@ AVCLanDrvRxTx::AVCLanDrvRxTx(p_timer timer)
 	AVCLanDrvRxTx::instance = this;
 }
 
+AVCLanDrvRxTx::~AVCLanDrvRxTx() {
+}
+
 void AVCLanDrvRxTx::onTimerCallback() {
-	if(operatingMode == RECEIVE) {
+	if(operatingMode == IDLE) {
+		startReceive();
 		AVCLanRx::onTimerCallback();
-	}
-	else if(operatingMode == TRANSMIT) {
+	} else if(operatingMode == RECEIVE) {
+		AVCLanRx::onTimerCallback();
+	} else if(operatingMode == TRANSMIT) {
 		AVCLanTx::onTimerCallback();
 	}
 }
 
-
-void AVCLanDrvRxTx::sendMessage(uint8_t* thisMessage, uint32_t thisMessageLengthBits) {
-	queueMessage(thisMessage, thisMessageLengthBits);
-
-	if( !AVCLanRx::isBusy() ) {
-		operatingMode = TRANSMIT;
-
+void AVCLanDrvRxTx::sendMessage(AVCLanMsg message) {
+	AVCLanTx::queueMessage(message);
+	if( operatingMode == IDLE ) {
+		startTransmit();
 	}
 }
 
+void AVCLanDrvRxTx::rxEnd() {
+	startIdle();
+}
+void AVCLanDrvRxTx::txEnd() {
+	startIdle();
+}
+
+void AVCLanDrvRxTx::startTransmit() {
+	operatingMode = TRANSMIT;
+	timer.setCaptureInterruptEnabled(false);
+	AVCLanTx::startSend();
+}
+void AVCLanDrvRxTx::startReceive() {
+	operatingMode = RECEIVE;
+	timer.setCaptureInterruptEnabled(true);
+	timer.setTimerInterruptEnabled(true);
+}
+
+void AVCLanDrvRxTx::startIdle() {
+	if(AVCLanTx::isMessageWaiting()) {
+		startTransmit();
+	} else {
+		operatingMode = IDLE;
+		timer.setCaptureInterruptEnabled(true);
+		timer.setTimerInterruptEnabled(false);
+	}
+}
 
 extern "C" {
 void TIMER2_IRQHandler(void) {

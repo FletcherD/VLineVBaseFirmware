@@ -12,6 +12,7 @@ extern "C" {
 #include "util.h"
 
 #include "AVCLanDrv.h"
+#include "AVCLanMsg.h"
 
 class AVCLanTx : public virtual AVCLanDrvBase {
 	private:
@@ -39,33 +40,31 @@ class AVCLanTx : public virtual AVCLanDrvBase {
 		void state_StartBit(SendEvent i);
 		void state_PeriodOff(SendEvent i);
 		void state_PeriodOn(SendEvent i);
+		void state_EndWait(SendEvent i);
 
 		// ------------------------
 
-		struct SendData {
-			uint8_t* data;
-			uint32_t size;
-		};
-		std::queue<SendData> sendQueue;
-
-		static constexpr uint8_t messageBufLen = 32;
+		std::queue<AVCLanMsg> sendQueue;
 		uint32_t bufPos = 0;
 
 		bool getNextBit();
-
-		void endTransmission();
 
 		// Active low
 		void setTx(bool isOn)		{
 			gpioPinWrite(AVC_TX_PIN, !isOn);
 		}
 
+		virtual void txEnd() = 0;
+
 	public:
 		AVCLanTx(p_timer);
+		virtual ~AVCLanTx() {};
 
-		void queueMessage(uint8_t* message, uint32_t messageLength);
+		void queueMessage(AVCLanMsg);
 
-		bool isBusy();
+		bool isMessageWaiting();
+
+		void startSend();
 
 		void onTimerCallback();
 };

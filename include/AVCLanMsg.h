@@ -47,11 +47,13 @@ public:
 		return AVCLanMsgField( { BitOffset:	44+9+(10*N), LengthBits:1 } );
 	}
 
-private:
-	uint8_t* messageBuf;
-
 public:
-	AVCLanMsg(uint8_t*);
+	static constexpr uint8_t messageBufLen = 32;
+	uint8_t* messageBuf;
+	uint32_t lengthBits;
+
+	AVCLanMsg();
+	~AVCLanMsg();
 
 	uint32_t
 	getField(AVCLanMsgField field)

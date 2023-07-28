@@ -47,7 +47,11 @@ public:
 
 	void setupTimerInterrupt(uint32_t duration);
 	void updateTimer(uint32_t duration);
+	void setTimerInterruptEnabled(bool enabled);
+
 	void setupCaptureInterrupt();
+	void setCaptureInterruptEnabled(bool enabled);
+
 	void clearInterrupt();
 	void setIrqEnabled(bool);
 };

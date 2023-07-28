@@ -23,6 +23,7 @@ class AVCLanDrvBase {
 		const uint32_t T_Bit_1		= 		T_Bit 	/ 2;
 		const uint32_t T_Bit_0		= (4 *	T_Bit) 	/ 5;
 		const uint32_t T_BitMeasure	= (T_Bit_1 + T_Bit_0) / 2;
+		const uint32_t T_EndWait	= timer.uS(	100	);
 		const uint32_t T_Timeout	= timer.uS( 200 );
 
 		// ------------------------
@@ -69,24 +70,12 @@ class AVCLanDrvBase {
 				GpioDir:	GPIO_DIR_OUTPUT
 		};
 
-		enum AVCLanMode {
-			RECEIVE,
-			TRANSMIT
-		};
-		AVCLanMode operatingMode;
-
 		void setStandby(bool isOn)	{ gpioPinWrite(AVC_STB_PIN, isOn); }
 		// Active low
 		void setEnabled(bool isOn)	{ gpioPinWrite(AVC_EN_PIN, !isOn); }
-		// Active low
-		void setTx(bool isOn)		{ gpioPinWrite(AVC_TX_PIN, !isOn); }
 
 	public:
 		AVCLanDrvBase(p_timer);
-
-		void onTimerCallback();
-
-
 };
 
 #endif

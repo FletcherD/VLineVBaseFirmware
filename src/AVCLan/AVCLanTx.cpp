@@ -8,10 +8,7 @@ AVCLanTx::AVCLanTx(p_timer timer)
 
 void AVCLanTx::state_Idle(SendEvent i) {
 	if(i == SEND_REQUESTED) {
-		setTx(true);
-		timer.setupTimerInterrupt(T_StartBit);
-
-		state = &AVCLanTx::state_StartBit;
+		startSend();
 	}
 }
 
@@ -19,7 +16,6 @@ void AVCLanTx::state_StartBit(SendEvent i) {
 	if(i == TIMER_TRIGGERED) {
 		setTx(false);
 		timer.setupTimerInterrupt(T_Bit_0);
-
 		state = &AVCLanTx::state_PeriodOff;
 	}
 }
@@ -53,33 +49,40 @@ void AVCLanTx::state_PeriodOn(SendEvent i) {
 		timer.setupTimerInterrupt(pulseDur);
 
 		bufPos++;
-		if (bufPos == sendQueue.front().size) {
+		if (bufPos == sendQueue.front().lengthBits) {
+			// Message done
 			sendQueue.pop();
-			state = &AVCLanTx::state_Idle;
+			timer.setupTimerInterrupt(T_EndWait);
+			state = &AVCLanTx::state_EndWait;
 		} else {
 			state = &AVCLanTx::state_PeriodOff;
 		}
 	}
 }
 
-void AVCLanTx::endTransmission() {
-
-}
-
-void AVCLanTx::queueMessage(uint8_t* thisMessage, uint32_t thisMessageLengthBits) {
-	uint8_t thisMessageLengthBytes = (thisMessageLengthBits/8) + (thisMessageLengthBits%8 ? 1 : 0);
-
-	SendData thisData;
-	thisData.data = new uint8_t[thisMessageLengthBytes];
-	for (uint8_t i = 0; i < thisMessageLengthBytes; i++) {
-		thisData.data[i] = thisMessage[i];
+void AVCLanTx::state_EndWait(SendEvent i) {
+	if(i == TIMER_TRIGGERED) {
+		if(sendQueue.empty()) {
+			state = &AVCLanTx::state_Idle;
+			txEnd();
+		} else {
+			startSend();
+		}
 	}
-	thisData.size = thisMessageLengthBits;
-	sendQueue.push(thisData);
 }
 
-bool AVCLanTx::isBusy() {
-	return (sendQueue.empty());
+void AVCLanTx::queueMessage(AVCLanMsg message) {
+	sendQueue.push(message);
+}
+
+bool AVCLanTx::isMessageWaiting() {
+	return !(sendQueue.empty());
+}
+
+void AVCLanTx::startSend() {
+	setTx(true);
+	timer.setupTimerInterrupt(T_StartBit);
+	state = &AVCLanTx::state_StartBit;
 }
 
 void AVCLanTx::onTimerCallback() {
@@ -87,7 +90,7 @@ void AVCLanTx::onTimerCallback() {
 }
 
 bool AVCLanTx::getNextBit() {
-	uint8_t* messageBuf = sendQueue.front().data;
+	uint8_t* messageBuf = sendQueue.front().messageBuf;
 	uint8_t whichByte = (bufPos / 8);
 	uint8_t whichBit  = (bufPos % 8);
 	bool bit = messageBuf[whichByte] & (0x80>>whichBit);

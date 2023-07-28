@@ -38,20 +38,18 @@ class AVCLanRx : public virtual AVCLanDrvBase {
 
 		// ------------------------
 
-		static constexpr uint8_t messageBufLen = 32;
-		uint8_t messageBuf[messageBufLen];
+		AVCLanMsg thisMsg;
 		uint32_t bufPos = 0;
 
-		AVCLanMsg thisMsg;
-
 		void receiveBit(bool bit);
-		void messageEnd();
 		void resetBuffer();
+		void messageEnd();
+
+		virtual void rxEnd() = 0;
 
 	public:
 		AVCLanRx(p_timer);
-
-		bool isBusy();
+		virtual ~AVCLanRx() {};
 
 		void onTimerCallback();
 };

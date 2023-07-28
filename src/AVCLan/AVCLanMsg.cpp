@@ -13,9 +13,15 @@ constexpr AVCLanMsg::AVCLanMsgField AVCLanMsg::SlaveAddress;
 constexpr AVCLanMsg::AVCLanMsgField AVCLanMsg::Control;
 constexpr AVCLanMsg::AVCLanMsgField AVCLanMsg::DataLength;
 
-AVCLanMsg::AVCLanMsg(uint8_t* messageBuf)
-	: messageBuf(messageBuf)
+AVCLanMsg::AVCLanMsg()
+	: messageBuf(new uint8_t[messageBufLen]),
+	  lengthBits(0)
 {
+}
+
+AVCLanMsg::~AVCLanMsg()
+{
+	delete messageBuf;
 }
 
 

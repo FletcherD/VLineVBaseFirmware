@@ -36,14 +36,6 @@ void p_timer::sleep(uint32_t duration) {
 	while(getTicks() < waitUntil);
 }
 
-void p_timer::setIrqEnabled(bool isEnabled) {
-	if (isEnabled) {
-		NVIC_EnableIRQ(LpcTimerIRQs[timerN]);
-	} else {
-		NVIC_DisableIRQ(LpcTimerIRQs[timerN]);
-	}
-}
-
 void
 p_timer::setupTimerInterrupt(uint32_t duration)
 {
@@ -61,6 +53,16 @@ p_timer::updateTimer(uint32_t duration)
 {
 	TIM_UpdateMatchValue(lpcTimer, 0, (lpcTimer->TC) + duration);
 }
+void
+p_timer::setTimerInterruptEnabled(bool isEnabled)
+{
+	uint32_t bitMask = TIM_INT_ON_MATCH(0);
+	if(isEnabled) {
+		lpcTimer->MCR |= bitMask;
+	} else {
+		lpcTimer->MCR &= (~bitMask);
+	}
+}
 
 void
 p_timer::setupCaptureInterrupt()
@@ -74,6 +76,26 @@ p_timer::setupCaptureInterrupt()
 	timerCapCfg.RisingEdge = 1;
 	timerCapCfg.IntOnCaption = 1;
 	TIM_ConfigCapture(lpcTimer, &timerCapCfg);
+}
+
+void
+p_timer::setCaptureInterruptEnabled(bool isEnabled)
+{
+	uint32_t bitMask = TIM_INT_ON_CAP(0);
+	if(isEnabled) {
+		lpcTimer->MCR |= bitMask;
+	} else {
+		lpcTimer->MCR &= (~bitMask);
+	}
+}
+
+
+void p_timer::setIrqEnabled(bool isEnabled) {
+	if (isEnabled) {
+		NVIC_EnableIRQ(LpcTimerIRQs[timerN]);
+	} else {
+		NVIC_DisableIRQ(LpcTimerIRQs[timerN]);
+	}
 }
 void
 p_timer::clearInterrupt()
