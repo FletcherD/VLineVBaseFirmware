@@ -135,3 +135,6 @@ AVCLanRx::AVCLanRx(p_timer timer)
 	timer.setupTimerInterrupt(T_Timeout);
 }
 
+bool AVCLanRx::isBusy() {
+	return (state != &AVCLanRx::state_Idle);
+}

@@ -10,6 +10,8 @@ public:
 	AVCLanDrvRxTx(p_timer timer);
 
 	void onTimerCallback();
+
+	void sendMessage(uint8_t* thisMessage, uint32_t thisMessageLength);
 };
 
 

@@ -16,12 +16,9 @@ extern "C" {
 class AVCLanTx : public virtual AVCLanDrvBase {
 	private:
 		typedef uint32_t Time;
-		enum SendEventType {
-			TIMER_MATCH
-		};
-		struct SendEvent {
-			Time time;
-			SendEventType type;
+		enum SendEvent {
+			TIMER_TRIGGERED,
+			SEND_REQUESTED
 		};
 		Time lastEventTime;
 
@@ -35,21 +32,28 @@ class AVCLanTx : public virtual AVCLanDrvBase {
 				GpioDir:	GPIO_DIR_INPUT
 		};
 
-		typedef void (AVCLanTx::*State)(AVCLanTx);
+		typedef void (AVCLanTx::*State)(SendEvent);
 		State state;
 
 		void state_Idle(SendEvent i);
 		void state_StartBit(SendEvent i);
-		void state_OffPeriod(SendEvent i);
-		void state_OnPeriod(SendEvent i);
+		void state_PeriodOff(SendEvent i);
+		void state_PeriodOn(SendEvent i);
 
 		// ------------------------
 
 		struct SendData {
-			uint8_t data;
-			uint32_t length;
+			uint8_t* data;
+			uint32_t size;
 		};
-		std::queue<SendData> sendBuf;
+		std::queue<SendData> sendQueue;
+
+		static constexpr uint8_t messageBufLen = 32;
+		uint32_t bufPos = 0;
+
+		bool getNextBit();
+
+		void endTransmission();
 
 		// Active low
 		void setTx(bool isOn)		{
@@ -58,6 +62,10 @@ class AVCLanTx : public virtual AVCLanDrvBase {
 
 	public:
 		AVCLanTx(p_timer);
+
+		void queueMessage(uint8_t* message, uint32_t messageLength);
+
+		bool isBusy();
 
 		void onTimerCallback();
 };

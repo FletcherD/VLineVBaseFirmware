@@ -20,6 +20,16 @@ void AVCLanDrvRxTx::onTimerCallback() {
 }
 
 
+void AVCLanDrvRxTx::sendMessage(uint8_t* thisMessage, uint32_t thisMessageLengthBits) {
+	queueMessage(thisMessage, thisMessageLengthBits);
+
+	if( !AVCLanRx::isBusy() ) {
+		operatingMode = TRANSMIT;
+
+	}
+}
+
+
 extern "C" {
 void TIMER2_IRQHandler(void) {
 	AVCLanDrvRxTx::instance->onTimerCallback();

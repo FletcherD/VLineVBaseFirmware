@@ -86,6 +86,7 @@ class AVCLanDrvBase {
 
 		void onTimerCallback();
 
+
 };
 
 #endif

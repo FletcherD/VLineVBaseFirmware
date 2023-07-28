@@ -51,6 +51,8 @@ class AVCLanRx : public virtual AVCLanDrvBase {
 	public:
 		AVCLanRx(p_timer);
 
+		bool isBusy();
+
 		void onTimerCallback();
 };
 
