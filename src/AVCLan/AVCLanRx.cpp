@@ -1,5 +1,6 @@
+#include <AVCLanMsg.h>
 #include "AVCLanRx.h"
-#include "AVCLanMsg.h"
+
 
 AVCLanRx::AVCLanRx(p_timer timer)
 	: AVCLanDrvBase(timer)

@@ -4,7 +4,7 @@
  *  Created on: Jul 24, 2023
  *      Author: fletcher
  */
-#include "AVCLanMsg.h"
+#include <AVCLanMsg.h>
 #include "util.h"
 
 constexpr AVCLanMsg::AVCLanMsgField AVCLanMsg::Broadcast;
@@ -17,18 +17,28 @@ constexpr AVCLanMsg::AVCLanMsgField AVCLanMsg::DataLength;
 constexpr AVCLanMsg::AVCLanMsgField AVCLanMsg::DataLength_P;
 
 AVCLanMsg::AVCLanMsg()
-	: messageBuf{0},
-	  lengthBits(0)
+: messageBuf{0},
+  currentBit(0)
 {
 }
 
-bool AVCLanMsg::getBit(uint32_t bitPos) {
-	uint8_t whichByte = (bitPos / 8);
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-	whichByte = messageBufLen - whichByte - 1;
-#endif
-	uint8_t whichBit  = (bitPos % 8);
-	return messageBuf[whichByte] & (0x80>>whichBit);
+AVCLanMsg::AVCLanMsg(bool broadcast,
+			uint16_t masterAddress,
+			uint16_t slaveAddress,
+			uint8_t control,
+			std::vector<uint8_t> data)
+: messageBuf{0},
+  currentBit(0)
+{
+}
+
+bool AVCLanMsg::getNextBit() {
+	uint8_t fieldBit = currentBit - currentField.BitOffset;
+	if(fieldBit == currentField.LengthBits) {
+		currentField = nextField(currentField);
+		fieldBit = currentBit - currentField.BitOffset;
+	}
+
 }
 
 void AVCLanMsg::setBit(uint32_t bitPos, bool value) {
