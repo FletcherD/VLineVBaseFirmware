@@ -83,9 +83,9 @@ p_timer::setCaptureInterruptEnabled(bool isEnabled)
 {
 	uint32_t bitMask = TIM_INT_ON_CAP(0);
 	if(isEnabled) {
-		lpcTimer->MCR |= bitMask;
+		lpcTimer->CCR |= bitMask;
 	} else {
-		lpcTimer->MCR &= (~bitMask);
+		lpcTimer->CCR &= (~bitMask);
 	}
 }
 

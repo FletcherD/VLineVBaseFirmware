@@ -20,13 +20,18 @@ public:
 		uint8_t 	BitOffset;
 		uint8_t 	LengthBits;
 		bool		IsAck;
+		inline bool operator==(const AVCLanMsgField& other) const
+			{ return BitOffset == other.BitOffset; }
 	};
 
-	typedef enum
-	{
-	    AVC_MSG_DIRECT    = 1,
-	    AVC_MSG_BROADCAST = 0
-	} AVCLanTransmissionMode;
+	typedef enum {
+	    DIRECT    = 1,
+	    BROADCAST = 0
+	} BroadcastValue;
+	typedef enum {
+	    NAK = 1,
+	    ACK = 0
+	} AckValue;
 
 	static constexpr AVCLanMsgField Broadcast 			= {BitOffset: 0,	LengthBits: 1,	IsAck: false };
 	static constexpr AVCLanMsgField MasterAddress 		= {BitOffset: 1,	LengthBits: 12,	IsAck: false };
@@ -40,55 +45,38 @@ public:
 	static constexpr AVCLanMsgField DataLength 			= {BitOffset: 34,	LengthBits: 8,	IsAck: false };
 	static constexpr AVCLanMsgField DataLength_P 		= {BitOffset: 42,	LengthBits: 1,	IsAck: false };
 	static constexpr AVCLanMsgField DataLength_A 		= {BitOffset: 43,	LengthBits: 1,	IsAck: true	};
-	static AVCLanMsgField Data(uint8_t N) {
+	static constexpr AVCLanMsgField Data(uint8_t N) {
 		return AVCLanMsgField( { BitOffset: 44+  (10*N), LengthBits: 8,	IsAck: false } );
 	}
-	static AVCLanMsgField Data_P(uint8_t N) {
+	static constexpr AVCLanMsgField Data_P(uint8_t N) {
 		return AVCLanMsgField( { BitOffset:	44+8+(10*N), LengthBits: 1,	IsAck: false } );
 	}
-	static AVCLanMsgField Data_A(uint8_t N) {
+	static constexpr AVCLanMsgField Data_A(uint8_t N) {
 		return AVCLanMsgField( { BitOffset:	44+9+(10*N), LengthBits: 1, IsAck: true } );
 	}
 
-	static AVCLanMsgField nextField(AVCLanMsgField field) {
-		switch (field) {
-			case Broadcast:			return MasterAddress;
-			case MasterAddress:		return MasterAddress_P;
-			case MasterAddress_P:	return SlaveAddress;
-			case SlaveAddress:		return SlaveAddress_P;
-			case SlaveAddress_P:	return SlaveAddress_A;
-			case SlaveAddress_A:	return Control;
-			case Control:			return Control_A;
-			case Control_A:			return Control_P;
-			case Control_P:			return DataLength;
-			case DataLength:		return DataLength_P;
-			case DataLength_P:		return Data(0);
-		}
-		for(size_t i = 0; i < 32; i++) {
-			switch(field) {
-				case Data(i):		return Data_P(i);
-				case Data_P(i):		return Data_A(i);
-				case Data_A(i):		return Data(i+1);
-			}
-		}
-	}
-
-	AVCLanMsgField getCurrentField() {
-		AVCLanMsgField field = Broadcast;
-		while(true) {
-			if(currentBit >= field.BitOffset
-			&& currentBit < (field.BitOffset + field.LengthBits)) {
-				return field;
-			}
-			field = nextField(field);
+	static AVCLanMsgField nextField(const AVCLanMsgField field) {
+		if(field == Broadcast)			return MasterAddress;
+		if(field == MasterAddress)		return MasterAddress_P;
+		if(field == MasterAddress_P)	return SlaveAddress;
+		if(field == SlaveAddress)		return SlaveAddress_P;
+		if(field == SlaveAddress_P)		return SlaveAddress_A;
+		if(field == SlaveAddress_A)		return Control;
+		if(field == Control)			return Control_P;
+		if(field == Control_P)			return Control_A;
+		if(field == Control_A)			return DataLength;
+		if(field == DataLength)			return DataLength_P;
+		if(field == DataLength_P)		return DataLength_A;
+		if(field == DataLength_A)		return Data(0);
+		for(uint8_t i = 0; i < 32; i++) {
+			if(field == Data(i))		return Data_P(i);
+			if(field == Data_P(i))		return Data_A(i);
+			if(field == Data_A(i))		return Data(i+1);
 		}
 	}
 
 	static constexpr uint8_t messageBufLen = 32+sizeof(FieldValue);
 	uint8_t messageBuf[messageBufLen];
-
-	AVCLanMsgField currentField;
-	uint32_t currentBit;
 
 	AVCLanMsg();
 	AVCLanMsg(bool broadcast,
@@ -100,19 +88,12 @@ public:
 	bool getBit(uint32_t bitPos);
 	void setBit(uint32_t bitPos, bool value);
 
-	bool getNextBit();
-	void setNextBit(bool value);
+	FieldValue getField(AVCLanMsgField field);
+	void setField(AVCLanMsgField field, FieldValue value);
 
-	static bool	calculateParity(FieldValue data)
-	{
-		bool parity = false;
-		while(data != 0) {
-			if(data & 1UL)
-				parity = !parity;
-			data = (data >> 1);
-		}
-		return parity;
-	}
+	AVCLanMsgField getFieldAt(uint32_t bitPos);
+
+	static bool	calculateParity(FieldValue data);
 
 	uint32_t getMessageLength();
 

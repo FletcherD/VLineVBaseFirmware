@@ -43,7 +43,7 @@ class AVCLanDrvBase {
 				Funcnum:	PIN_FUNC_0,
 				Pinmode:	PIN_PINMODE_TRISTATE,
 				OpenDrain:	PIN_PINMODE_OPENDRAIN,
-				GpioDir:	GPIO_DIR_INPUT
+				GpioDir:	GPIO_DIR_OUTPUT
 		};
 		PinCfgType AVC_STB_PIN = {
 				Portnum: 	2,

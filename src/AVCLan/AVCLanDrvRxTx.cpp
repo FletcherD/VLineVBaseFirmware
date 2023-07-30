@@ -39,12 +39,14 @@ void AVCLanDrvRxTx::endTransmit() {
 }
 
 void AVCLanDrvRxTx::startTransmit() {
+	uartOut.printf("TX\r\n");
 	operatingMode = TRANSMIT;
 	timer.setCaptureInterruptEnabled(false);
 	timer.setTimerInterruptEnabled(true);
 	AVCLanTx::startTransmit();
 }
 void AVCLanDrvRxTx::startReceive() {
+	uartOut.printf("RX\r\n");
 	operatingMode = RECEIVE;
 	timer.setCaptureInterruptEnabled(true);
 	timer.setTimerInterruptEnabled(true);
@@ -54,6 +56,7 @@ void AVCLanDrvRxTx::startIdle() {
 	if(AVCLanTx::isMessageWaiting()) {
 		startTransmit();
 	} else {
+		uartOut.printf("IDLE\r\n");
 		operatingMode = IDLE;
 		timer.setCaptureInterruptEnabled(true);
 		timer.setTimerInterruptEnabled(false);

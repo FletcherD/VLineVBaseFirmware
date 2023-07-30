@@ -39,7 +39,7 @@ class AVCLanRx : public virtual AVCLanDrvBase {
 		// ------------------------
 
 		AVCLanMsg thisMsg;
-		uint32_t bufPos = 0;
+		uint32_t receiveBitPos;
 
 		void receiveBit(bool bit);
 		void resetBuffer();

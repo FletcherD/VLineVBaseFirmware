@@ -3,19 +3,16 @@
 
 
 AVCLanRx::AVCLanRx(p_timer timer)
-	: AVCLanDrvBase(timer)
+	: AVCLanDrvBase(timer),
+	  receiveBitPos(0)
 {
 	state = &AVCLanRx::state_Idle;
 
 	pinConfigure(AVC_RX_PIN);
-	//pinConfigure(AVC_TX_PIN);
 	pinConfigure(AVC_STB_PIN);
 	pinConfigure(AVC_EN_PIN);
-	//pinConfigure(AVC_ERR_PIN);
-
 	setEnabled(true);
 	setStandby(false);
-	//setTx(false);
 
 	lastEventTime = timer.getTicks();
 	timer.setupCaptureInterrupt();
@@ -83,22 +80,15 @@ void AVCLanRx::state_MeasureBit(InputEvent e) {
 }
 
 void AVCLanRx::resetBuffer() {
-	bufPos = 0;
+	receiveBitPos = 0;
 }
 
-void AVCLanRx::receiveBit(bool bit) {
-	uint8_t whichByte = (bufPos / 8);
-	uint8_t whichBit  = (bufPos % 8);
-	if (whichBit==0) {
-		thisMsg.messageBuf[whichByte] = 0;
-	}
-	if (bit) {
-		thisMsg.messageBuf[whichByte] |= (0x80>>whichBit);
-	}
-	bufPos++;
+void AVCLanRx::receiveBit(bool bitVal) {
+	thisMsg.setBit(receiveBitPos, bitVal);
+	receiveBitPos++;
 
-	if (bufPos >= AVCLanMsg::Data(0).BitOffset
-		&& bufPos == thisMsg.getMessageLength())
+	if (receiveBitPos >= AVCLanMsg::Data(0).BitOffset
+		&& receiveBitPos == thisMsg.getMessageLength())
 	{
 		// Message is done
 		state = &AVCLanRx::state_Idle;
@@ -107,7 +97,7 @@ void AVCLanRx::receiveBit(bool bit) {
 }
 
 void AVCLanRx::messageEnd() {
-	if (bufPos == 0)
+	if (receiveBitPos == 0)
 		return;
 
 	timer.setIrqEnabled(false);
@@ -126,9 +116,13 @@ void AVCLanRx::messageEnd() {
 	for(uint8_t i = 0; i < dataLen; i++) {
 		snprintf(dataStr+i*3, 4, "%02x ", data[i]);
 	}
-	uartOut.printf("%c %03x %03x %01x %d \t%s\r\n",
-			(broadcast == AVCLanMsg::AVC_MSG_BROADCAST ? 'B' : '-'),
-			masterAddress, slaveAddress, control, dataLen, dataStr);
+	uartOut.printf("%c %03x %03x %c %01x %d \t%s\r\n",
+			broadcast == AVCLanMsg::BROADCAST ? 'B' : '-',
+			masterAddress, slaveAddress,
+			thisMsg.getField(AVCLanMsg::SlaveAddress_A)==AVCLanMsg::ACK ? 'A' : 'a',
+			control,
+			dataLen,
+			dataStr);
 
 	resetBuffer();
 	timer.setIrqEnabled(true);

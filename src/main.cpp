@@ -6,6 +6,7 @@
 
 #include "vcore_power.h"
 #include "AVCLanDrvRxTx.h"
+#include "AVCLanMsg.h"
 
 // Sample pragmas to cope with warnings. Please note the related line at
 // the end of this function, used to pop the compiler diagnostics status.
@@ -33,19 +34,12 @@ main (int argc, char* argv[])
 
 	uint32_t t = 0;
 	while(1) {
+		timer.sleep(2000000);
 		uartOut.printf("Idle %d\r\n", t++);
-		timer.sleep(1000000);
 
-		AVCLanMsg message;
-		message.setField(AVCLanMsg::Broadcast, true);
-		message.setField(AVCLanMsg::MasterAddress, 0x110);
-		uint16_t slaveAddress = 0xfff;
-		message.setField(AVCLanMsg::SlaveAddress, slaveAddress);
-		message.setField(AVCLanMsg::SlaveAddress_P, AVCLanMsg::calculateParity(slaveAddress));
-		uint8_t control = 0xf;
-		message.setField(AVCLanMsg::Control, control);
-		message.setField(AVCLanMsg::Control_P, AVCLanMsg::calculateParity(control));
-		//message.setField(AVCLanMsg::Control, 0xf);
+		//AVCLanMsg messageBeep(false, 0x110, 0x440, 0xf, std::vector<uint8_t>({0x0, 0x5e, 0x29, 0x60, 0x80}) );
+		AVCLanMsg messagePing(true, 0x110, 0xfff, 0xf, std::vector<uint8_t>({0x12, 0x01, 0x20, 0x69}) );
+		avcLan.sendMessage(messagePing);
 	}
 }
 

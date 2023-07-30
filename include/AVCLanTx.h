@@ -34,7 +34,12 @@ class AVCLanTx : public virtual AVCLanDrvBase {
 		// ------------------------
 
 		std::queue<AVCLanMsg> sendQueue;
-		uint32_t bufPos = 0;
+		uint32_t sendLengthBits;
+		uint32_t sendBitPos;
+
+		uint32_t sendX[256];
+		uint8_t sendY[256];
+		uint32_t sendI = 0;
 
 		bool getNextBit();
 
