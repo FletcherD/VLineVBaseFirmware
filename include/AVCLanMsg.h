@@ -45,34 +45,15 @@ public:
 	static constexpr AVCLanMsgField DataLength 			= {BitOffset: 34,	LengthBits: 8,	IsAck: false };
 	static constexpr AVCLanMsgField DataLength_P 		= {BitOffset: 42,	LengthBits: 1,	IsAck: false };
 	static constexpr AVCLanMsgField DataLength_A 		= {BitOffset: 43,	LengthBits: 1,	IsAck: true	};
+	static constexpr uint8_t DataFieldLength = 10;
 	static constexpr AVCLanMsgField Data(uint8_t N) {
-		return AVCLanMsgField( { BitOffset: 44+  (10*N), LengthBits: 8,	IsAck: false } );
+		return AVCLanMsgField( { BitOffset: 44+  (DataFieldLength*N), LengthBits: 8, IsAck: false } );
 	}
 	static constexpr AVCLanMsgField Data_P(uint8_t N) {
-		return AVCLanMsgField( { BitOffset:	44+8+(10*N), LengthBits: 1,	IsAck: false } );
+		return AVCLanMsgField( { BitOffset:	44+8+(DataFieldLength*N), LengthBits: 1, IsAck: false } );
 	}
 	static constexpr AVCLanMsgField Data_A(uint8_t N) {
-		return AVCLanMsgField( { BitOffset:	44+9+(10*N), LengthBits: 1, IsAck: true } );
-	}
-
-	static AVCLanMsgField nextField(const AVCLanMsgField field) {
-		if(field == Broadcast)			return MasterAddress;
-		if(field == MasterAddress)		return MasterAddress_P;
-		if(field == MasterAddress_P)	return SlaveAddress;
-		if(field == SlaveAddress)		return SlaveAddress_P;
-		if(field == SlaveAddress_P)		return SlaveAddress_A;
-		if(field == SlaveAddress_A)		return Control;
-		if(field == Control)			return Control_P;
-		if(field == Control_P)			return Control_A;
-		if(field == Control_A)			return DataLength;
-		if(field == DataLength)			return DataLength_P;
-		if(field == DataLength_P)		return DataLength_A;
-		if(field == DataLength_A)		return Data(0);
-		for(uint8_t i = 0; i < 32; i++) {
-			if(field == Data(i))		return Data_P(i);
-			if(field == Data_P(i))		return Data_A(i);
-			if(field == Data_A(i))		return Data(i+1);
-		}
+		return AVCLanMsgField( { BitOffset:	44+9+(DataFieldLength*N), LengthBits: 1, IsAck: true } );
 	}
 
 	static constexpr uint8_t messageBufLen = 32+sizeof(FieldValue);
@@ -91,7 +72,7 @@ public:
 	FieldValue getField(AVCLanMsgField field);
 	void setField(AVCLanMsgField field, FieldValue value);
 
-	AVCLanMsgField getFieldAt(uint32_t bitPos);
+	static bool isAckBit(uint8_t bitPos);
 
 	static bool	calculateParity(FieldValue data);
 

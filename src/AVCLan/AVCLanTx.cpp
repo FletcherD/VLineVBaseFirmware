@@ -4,7 +4,8 @@ AVCLanTx::AVCLanTx(p_timer timer)
 	: AVCLanDrvBase(timer),
 	  state(&AVCLanTx::state_Idle),
 	  sendBitPos(0),
-	  sendLengthBits(0)
+	  sendLengthBits(0),
+	  ackResult(AVCLanMsg::NAK)
 {
 	pinConfigure(AVC_TX_PIN);
 	setTxPinState(false);
@@ -12,67 +13,63 @@ AVCLanTx::AVCLanTx(p_timer timer)
 	timer.setupTimerInterrupt(T_Timeout);
 }
 
-void AVCLanTx::state_Idle(SendEvent i) {
-	if(i == SEND_REQUESTED) {
+void AVCLanTx::state_Idle() {
+}
+
+void AVCLanTx::state_StartBit() {
+	startTime = timer.getTicks() + T_Bit_1;
+	timer.updateTimerAbsolute(startTime);
+	setTxPinState(false);
+	state = &AVCLanTx::state_PeriodOff;
+}
+
+void AVCLanTx::state_PeriodOff() {
+	if (sendBitPos == sendLengthBits) {
+		messageDone();
+		return;
+	}
+
+	setTxPinState(true);
+	bool bit = sendQueue.front().getBit(sendBitPos);
+	Time pulseTime = (T_Bit * sendBitPos) + (bit ? T_Bit_1 : T_Bit_0);
+	timer.updateTimerAbsolute(startTime + pulseTime);
+	state = &AVCLanTx::state_PeriodOn;
+}
+
+void AVCLanTx::state_PeriodOn() {
+	setTxPinState(false);
+
+	if(AVCLanMsg::isAckBit(sendBitPos)) {
+		Time pulseTime = (T_Bit * sendBitPos) + T_BitMeasure;
+		timer.updateTimerAbsolute(startTime + pulseTime);
+		state = &AVCLanTx::state_GetAck;
+		return;
+	}
+
+	sendBitPos++;
+	Time pulseTime = T_Bit * sendBitPos;
+	timer.updateTimerAbsolute(startTime + pulseTime);
+	state = &AVCLanTx::state_PeriodOff;
+}
+
+void AVCLanTx::state_GetAck() {
+	uint32_t rxIn = GPIO_PortRead(AVC_RX_PIN.Portnum);
+	rxIn = (rxIn & (1UL << AVC_RX_PIN.Pinnum));
+	ackResult = (rxIn ? AVCLanMsg::NAK : AVCLanMsg::ACK);
+
+	sendBitPos++;
+	Time pulseTime = T_Bit * sendBitPos;
+	timer.updateTimerAbsolute(startTime + pulseTime);
+	state = &AVCLanTx::state_PeriodOff;
+}
+
+void AVCLanTx::messageDone() {
+	sendQueue.pop();
+	if(sendQueue.empty()) {
+		state = &AVCLanTx::state_Idle;
+		endTransmit();
+	} else {
 		startTransmit();
-	}
-}
-
-void AVCLanTx::state_StartBit(SendEvent i) {
-	if(i == TIMER_TRIGGERED) {
-		timer.updateTimer(T_Bit_0);
-		setTxPinState(false);
-		state = &AVCLanTx::state_PeriodOff;
-	}
-}
-
-void AVCLanTx::state_PeriodOff(SendEvent i) {
-	if(i == TIMER_TRIGGERED) {
-		bool bit = sendQueue.front().getBit(sendBitPos);
-		Time pulseDur;
-		if (bit)
-			pulseDur = T_Bit_1;
-		else
-			pulseDur = T_Bit_0;
-
-		timer.updateTimer(pulseDur);
-		setTxPinState(true);
-		state = &AVCLanTx::state_PeriodOn;
-	}
-}
-
-void AVCLanTx::state_PeriodOn(SendEvent i) {
-	if(i == TIMER_TRIGGERED) {
-		bool bit = sendQueue.front().getBit(sendBitPos);
-		Time pulseDur;
-		if (bit)
-			pulseDur = T_Bit - T_Bit_1;
-		else
-			pulseDur = T_Bit - T_Bit_0;
-
-		timer.updateTimer(pulseDur);
-		setTxPinState(false);
-
-		sendBitPos++;
-		if (sendBitPos == sendLengthBits) {
-			// Message done
-			sendQueue.pop();
-			timer.updateTimer(T_EndWait);
-			state = &AVCLanTx::state_EndWait;
-		} else {
-			state = &AVCLanTx::state_PeriodOff;
-		}
-	}
-}
-
-void AVCLanTx::state_EndWait(SendEvent i) {
-	if(i == TIMER_TRIGGERED) {
-		if(sendQueue.empty()) {
-			state = &AVCLanTx::state_Idle;
-			endTransmit();
-		} else {
-			startTransmit();
-		}
 	}
 }
 
@@ -94,20 +91,10 @@ void AVCLanTx::startTransmit() {
 }
 
 void AVCLanTx::onTimerCallback() {
-	(this->*state)(TIMER_TRIGGERED);
+	(this->*state)();
 }
 
 void AVCLanTx::setTxPinState(bool isOn)	{
 	// Active low
 	gpioPinWrite(AVC_TX_PIN, !isOn);
-
-	sendX[sendI] = timer.getTicks();
-	sendY[sendI] = isOn;
-	sendI++;
-	if(sendI == 256) {
-		for(sendI=0; sendI!=256; sendI++) {
-			uartOut.printf("%d %d\r\n", sendX[sendI], sendY[sendI]);
-		}
-		sendI=0;
-	}
 }

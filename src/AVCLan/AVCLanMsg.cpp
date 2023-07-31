@@ -102,26 +102,10 @@ void AVCLanMsg::setField(AVCLanMsgField field, FieldValue value) {
 	*valuePtr |= (value << bitShift);
 }
 
-AVCLanMsg::AVCLanMsgField AVCLanMsg::getFieldAt(uint32_t bitPos) {
-	AVCLanMsgField field = Broadcast;
-	while(true) {
-		if(bitPos >= field.BitOffset
-		&& bitPos < (field.BitOffset + field.LengthBits)) {
-			return field;
-		}
-		field = nextField(field);
-	}
-}
-
 uint32_t AVCLanMsg::getMessageLength()
 {
-	static constexpr uint32_t dataFieldLength =
-			AVCLanMsg::Data(0).LengthBits +
-			AVCLanMsg::Data_P(0).LengthBits +
-			AVCLanMsg::Data_A(0).LengthBits;
-	static constexpr uint32_t dataFieldOffset = AVCLanMsg::Data(0).BitOffset;
 	uint8_t dataLen = getField(DataLength);
-	return dataFieldOffset + dataLen*dataFieldLength;
+	return AVCLanMsg::Data(0).BitOffset + dataLen*DataFieldLength;
 }
 
 bool AVCLanMsg::calculateParity(FieldValue data)
@@ -133,4 +117,18 @@ bool AVCLanMsg::calculateParity(FieldValue data)
 		data = (data >> 1);
 	}
 	return parity;
+}
+
+bool AVCLanMsg::isAckBit(uint8_t bitPos)
+{
+	if(bitPos == AVCLanMsg::SlaveAddress_A.BitOffset)
+		return true;
+	if(bitPos == AVCLanMsg::Control_A.BitOffset)
+		return true;
+	if(bitPos == AVCLanMsg::DataLength_A.BitOffset)
+		return true;
+	if((bitPos >= AVCLanMsg::Data_A(0).BitOffset)
+			&& (bitPos % DataFieldLength == AVCLanMsg::Data_A(0).BitOffset % DataFieldLength))
+		return true;
+	return false;
 }

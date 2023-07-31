@@ -20,9 +20,6 @@ AVCLanRx::AVCLanRx(p_timer timer)
 }
 
 void AVCLanRx::onTimerCallback() {
-	uint32_t interruptType = timer.lpcTimer->IR;
-	timer.clearInterrupt();
-
 	InputEvent event;
 	uint32_t eventTime = timer.lpcTimer->CR0;
 	uint32_t rxIn = GPIO_PortRead(AVC_RX_PIN.Portnum);
@@ -30,6 +27,7 @@ void AVCLanRx::onTimerCallback() {
 	event.type = (rxIn & (1UL << AVC_RX_PIN.Pinnum)) ? RISING_EDGE : FALLING_EDGE;
 	lastEventTime = eventTime;
 
+	uint32_t interruptType = timer.lpcTimer->IR;
 	if((interruptType & 1UL) || event.time > T_Timeout)
 	{
 		state = &AVCLanRx::state_Idle;

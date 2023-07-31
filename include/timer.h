@@ -35,7 +35,7 @@ public:
 
 	uint32_t getPrescaleTickRate();
 	uint32_t ticksPerS();
-	uint32_t uS(uint32_t uS);
+	uint32_t uS(float uS);
 
 	p_timer(uint8_t timerN);
 
@@ -47,6 +47,7 @@ public:
 
 	void setupTimerInterrupt(uint32_t duration);
 	void updateTimer(uint32_t duration);
+	void updateTimerAbsolute(uint32_t time);
 	void setTimerInterruptEnabled(bool enabled);
 
 	void setupCaptureInterrupt();

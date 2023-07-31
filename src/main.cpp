@@ -35,10 +35,11 @@ main (int argc, char* argv[])
 	uint32_t t = 0;
 	while(1) {
 		timer.sleep(2000000);
-		uartOut.printf("Idle %d\r\n", t++);
+		//uartOut.printf("Idle %d\r\n", t++);
 
-		//AVCLanMsg messageBeep(false, 0x110, 0x440, 0xf, std::vector<uint8_t>({0x0, 0x5e, 0x29, 0x60, 0x80}) );
-		AVCLanMsg messagePing(true, 0x110, 0xfff, 0xf, std::vector<uint8_t>({0x12, 0x01, 0x20, 0x69}) );
+		//AVCLanMsg messageBeep(AVCLanMsg::DIRECT, 0x110, 0x440, 0xf, std::vector<uint8_t>({0x0, 0x5e, 0x29, 0x60, 0x80}) );
+		AVCLanMsg messagePing(AVCLanMsg::BROADCAST, 0x110, 0xfff, 0xf, std::vector<uint8_t>({0x12, 0x01, 0x20, 0x69}) );
+		//AVCLanMsg messageGetDevices(AVCLanMsg::BROADCAST, 0x110, 0xfff, 0xf, std::vector<uint8_t>({0x12, 0x01, 0x00}) );
 		avcLan.sendMessage(messagePing);
 	}
 }

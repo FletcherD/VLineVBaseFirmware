@@ -17,11 +17,13 @@ class AVCLanDrvBase {
 	protected:
 		p_timer timer;
 
+		static constexpr float T_Bit_uS = 256. / 6.291456;
+
 		// Times in timer ticks
 		const uint32_t T_StartBit	= timer.uS(	170	);
-		const uint32_t T_Bit		= timer.uS(	39	);
-		const uint32_t T_Bit_1		= 		T_Bit 	/ 2;
-		const uint32_t T_Bit_0		= (4 *	T_Bit) 	/ 5;
+		const uint32_t T_Bit		= timer.uS(	T_Bit_uS );
+		const uint32_t T_Bit_1		= timer.uS(		T_Bit_uS   / 2 );
+		const uint32_t T_Bit_0		= timer.uS(	4. *T_Bit_uS ) / 5;
 		const uint32_t T_BitMeasure	= (T_Bit_1 + T_Bit_0) / 2;
 		const uint32_t T_EndWait	= timer.uS(	100	);
 		const uint32_t T_Timeout	= timer.uS( 200 );

@@ -24,7 +24,7 @@ uint32_t p_timer::getPrescaleTickRate() {
 uint32_t p_timer::ticksPerS() {
 	return getPrescaleTickRate() / (lpcTimer->PR+1);
 }
-uint32_t p_timer::uS(uint32_t uS) {
+uint32_t p_timer::uS(float uS) {
 	return (ticksPerS() * uS) / 1000000;
 }
 
@@ -52,6 +52,11 @@ void
 p_timer::updateTimer(uint32_t duration)
 {
 	TIM_UpdateMatchValue(lpcTimer, 0, (lpcTimer->TC) + duration);
+}
+void
+p_timer::updateTimerAbsolute(uint32_t time)
+{
+	TIM_UpdateMatchValue(lpcTimer, 0, time);
 }
 void
 p_timer::setTimerInterruptEnabled(bool isEnabled)
