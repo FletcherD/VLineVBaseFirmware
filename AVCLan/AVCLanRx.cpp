@@ -97,33 +97,9 @@ void AVCLanRx::receiveBit(bool bitVal) {
 void AVCLanRx::messageEnd() {
 	if (receiveBitPos == 0)
 		return;
+	resetBuffer();
 
 	timer.setIrqEnabled(false);
-
-	bool broadcast 			= thisMsg.getField(AVCLanMsg::Broadcast);
-	uint16_t masterAddress 	= thisMsg.getField(AVCLanMsg::MasterAddress);
-	uint16_t slaveAddress 	= thisMsg.getField(AVCLanMsg::SlaveAddress);
-	uint8_t control 		= thisMsg.getField(AVCLanMsg::Control);
-	uint8_t dataLen 		= thisMsg.getField(AVCLanMsg::DataLength);
-	uint8_t data[dataLen];
-	for(uint8_t i = 0; i < dataLen; i++) {
-		data[i] 			= thisMsg.getField(AVCLanMsg::Data(i));
-	}
-
-	char dataStr[dataLen*3+1];
-	for(uint8_t i = 0; i < dataLen; i++) {
-		snprintf(dataStr+i*3, 4, "%02x ", data[i]);
-	}
-	uartOut.printf("%c %03x %03x %c %01x %d \t%s\r\n",
-			broadcast == AVCLanMsg::BROADCAST ? 'B' : '-',
-			masterAddress, slaveAddress,
-			thisMsg.getField(AVCLanMsg::SlaveAddress_A)==AVCLanMsg::ACK ? 'A' : 'a',
-			control,
-			dataLen,
-			dataStr);
-
-	resetBuffer();
+	messageReceived(thisMsg);
 	timer.setIrqEnabled(true);
-
-	endReceive();
 }

@@ -3,26 +3,53 @@
 #include "diag/trace.h"
 /* USART Driver */
 extern ARM_DRIVER_USART Driver_USART0;
+extern ARM_DRIVER_USART Driver_USART1;
+extern ARM_DRIVER_USART Driver_USART2;
+extern ARM_DRIVER_USART Driver_USART3;
 
+uart* uart::uartInstance[];
 
-uint32_t
-uart::start()
+uart::uart(uint8_t uartNum, uint32_t baudRate)
 {
-	USARTdrv = &Driver_USART0;
+	uint32_t errNo;
+#if (RTE_UART0)
+	if(uartNum == 0) {
+		USARTdrv = &Driver_USART0;
+		errNo = USARTdrv->Initialize(&uart::signalEventUART0);
+	}
+#endif
 
-	ARM_USART_CAPABILITIES drv_capabilities = USARTdrv->GetCapabilities();
+#if (RTE_UART1)
+	if(uartNum == 1) {
+		USARTdrv = &Driver_USART1;
+		errNo = USARTdrv->Initialize(&uart::signalEventUART1);
+	}
+#endif
 
-	/*Initialize the USART driver */
-	uint32_t errNo = USARTdrv->Initialize(&uart::signalEventStatic);
+#if (RTE_UART2)
+	if(uartNum == 2) {
+		USARTdrv = &Driver_USART2;
+		errNo = USARTdrv->Initialize(&uart::signalEventUART2);
+	}
+#endif
+
+#if (RTE_UART3)
+	if(uartNum == 3) {
+		USARTdrv = &Driver_USART3;
+		errNo = USARTdrv->Initialize(&uart::signalEventUART3);
+	}
+#endif
+
 	errNo |= USARTdrv->PowerControl(ARM_POWER_FULL);
 	errNo |= USARTdrv->Control(ARM_USART_MODE_ASYNCHRONOUS |
 					ARM_USART_DATA_BITS_8 |
 					ARM_USART_PARITY_NONE |
 					ARM_USART_STOP_BITS_1 |
-					ARM_USART_FLOW_CONTROL_NONE, 921600);
+					ARM_USART_FLOW_CONTROL_NONE, baudRate);
 	errNo |= USARTdrv->Control (ARM_USART_CONTROL_TX, 1);
 	errNo |= USARTdrv->Control (ARM_USART_CONTROL_RX, 1);
-	return errNo;
+
+	uartInstance[uartNum] = this;
 }
 
 
@@ -32,26 +59,24 @@ uart::send(const void* data, uint32_t len)
 	return USARTdrv->Send(data, len);
 }
 
-int
-uart::printf(const char *format, ...)
+void
+uart::queueSend(SendData thisData)
 {
-	int size;
-	va_list ap;
-	va_start (ap, format);
-
-	va_list apCopy;
-	va_copy(apCopy, ap);
-	size_t strSize = vsnprintf(NULL, 0, format, apCopy);
-	va_end(apCopy);
-
-	SendData thisData;
-	thisData.data = new char[strSize+1];
-	thisData.size = vsnprintf(thisData.data, strSize+1, format, ap);
 	sendBuf.push(thisData);
-
 	if (sendReady) {
 		sendNextBuf();
 	}
+}
+
+int
+uart::printf(const char *format, ...)
+{
+	va_list ap;
+	va_start (ap, format);
+
+	SendData thisData;
+	thisData.size = vasiprintf((char**)&thisData.data, format, ap);
+	queueSend(thisData);
 
 	va_end (ap);
 	return thisData.size;
@@ -66,8 +91,20 @@ uart::sendNextBuf()
 }
 
 void
-uart::signalEventStatic(uint32_t event) {
-	uartOut.signalEvent(event);
+uart::signalEventUART0(uint32_t event) {
+	uartInstance[0]->signalEvent(event);
+}
+void
+uart::signalEventUART1(uint32_t event) {
+	uartInstance[1]->signalEvent(event);
+}
+void
+uart::signalEventUART2(uint32_t event) {
+	uartInstance[2]->signalEvent(event);
+}
+void
+uart::signalEventUART3(uint32_t event) {
+	uartInstance[3]->signalEvent(event);
 }
 
 void
@@ -83,6 +120,9 @@ uart::signalEvent(uint32_t event)
 			sendNextBuf();
 		}
 	}
+	if(event & ARM_USART_EVENT_RECEIVE_COMPLETE) {
+		receiveComplete();
+	}
 }
 
-uart uartOut;
+uart uartOut(0, 921600);

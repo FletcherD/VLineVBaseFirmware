@@ -3,9 +3,9 @@
 AVCLanDrvRxTx* AVCLanDrvRxTx::instance;
 
 AVCLanDrvRxTx::AVCLanDrvRxTx(p_timer timer)
-	: AVCLanTx(timer),
-	  AVCLanRx(timer),
-	  AVCLanDrvBase(timer)
+: AVCLanDrvBase(timer),
+  AVCLanTx(timer),
+  AVCLanRx(timer)
 {
 	AVCLanDrvRxTx::instance = this;
 }
@@ -60,6 +60,13 @@ void AVCLanDrvRxTx::startIdle() {
 		timer.setCaptureInterruptEnabled(true);
 		timer.setTimerInterruptEnabled(false);
 	}
+}
+
+void AVCLanDrvRxTx::messageReceived(AVCLanMsg message) {
+	const char* messageStr = message.toString();
+	uartOut.printf(messageStr);
+
+	messageReceivedCallback(message);
 }
 
 extern "C" {

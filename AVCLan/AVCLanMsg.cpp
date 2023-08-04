@@ -6,6 +6,7 @@
  */
 #include <AVCLanMsg.h>
 #include "util.h"
+#include <string>
 
 constexpr AVCLanMsg::AVCLanMsgField AVCLanMsg::Broadcast;
 constexpr AVCLanMsg::AVCLanMsgField AVCLanMsg::MasterAddress;
@@ -132,3 +133,27 @@ bool AVCLanMsg::isAckBit(uint8_t bitPos)
 		return true;
 	return false;
 }
+
+const char* AVCLanMsg::toString()
+{
+	bool broadcast 			= getField(AVCLanMsg::Broadcast);
+	uint16_t masterAddress 	= getField(AVCLanMsg::MasterAddress);
+	uint16_t slaveAddress 	= getField(AVCLanMsg::SlaveAddress);
+	uint8_t control 		= getField(AVCLanMsg::Control);
+	uint8_t dataLen 		= getField(AVCLanMsg::DataLength);
+
+	char dataStr[dataLen*3+1];
+	for(uint8_t i = 0; i < dataLen; i++) {
+		snprintf(dataStr+i*3, 4, "%02x ", (unsigned int)getField(AVCLanMsg::Data(i)));
+	}
+	char* str;
+	asiprintf(&str, "%c %03x %03x %c %01x %d \t%s\r\n",
+			broadcast == AVCLanMsg::BROADCAST ? 'B' : '-',
+			masterAddress, slaveAddress,
+			getField(AVCLanMsg::SlaveAddress_A)==AVCLanMsg::ACK ? 'A' : 'a',
+			control,
+			dataLen,
+			dataStr);
+	return str;
+}
+

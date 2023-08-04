@@ -8,6 +8,7 @@
 #include "util.h"
 
 #include <vector>
+#include <string>
 
 #ifndef AVCLAN_AVCLANMSG_H_
 #define AVCLAN_AVCLANMSG_H_
@@ -56,7 +57,8 @@ public:
 		return AVCLanMsgField( { BitOffset:	44+9+(DataFieldLength*N), LengthBits: 1, IsAck: true } );
 	}
 
-	static constexpr uint8_t messageBufLen = 32+sizeof(FieldValue);
+	static constexpr uint8_t MaxMessageLenBytes = 32;
+	static constexpr uint8_t messageBufLen = MaxMessageLenBytes+sizeof(FieldValue);
 	uint8_t messageBuf[messageBufLen];
 
 	AVCLanMsg();
@@ -78,6 +80,8 @@ public:
 
 	uint32_t getMessageLength();
 
+	const char* toString();
+	static AVCLanMsg fromString(const char* str);
 };
 
 #endif /* AVCLAN_AVCLANMSG_H_ */

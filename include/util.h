@@ -2,6 +2,8 @@ extern "C" {
 #include "GPIO_LPC17xx.h"
 #include "PIN_LPC17xx.h"
 #include "LPC17xx.h"
+#include <stdio.h>
+#include <stdarg.h>
 }
 
 #ifndef UTIL_H_

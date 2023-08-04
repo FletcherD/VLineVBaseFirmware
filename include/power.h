@@ -29,6 +29,7 @@
 #define VCORE_POWER_H_
 
 #include "cmsis_device.h"
+#include "util.h"
 
 #define POWER_PORT_NUMBER              	(1)
 
@@ -36,33 +37,68 @@
 #define POWER_VCORE_5V_PIN             	(15)
 #define POWER_VCORE_3P3V_PIN           	(29)
 #define POWER_VBASE_5V_PIN				(19)
+#define POWER_AUDIO_PIN					(14)
 
 // ----------------------------------------------------------------------------
 
 static constexpr int PowerPinList[] = {
-	 POWER_USB5V_PIN,
-	 POWER_VCORE_5V_PIN,
-	 POWER_VCORE_3P3V_PIN,
-	 POWER_VBASE_5V_PIN
+		POWER_USB5V_PIN,
+		POWER_VCORE_5V_PIN,
+		POWER_VCORE_3P3V_PIN,
+		POWER_VBASE_5V_PIN
 };
 
 class power
 {
 public:
-  enum PowerNode {
-	  Usb5v = 0,
-	  Vcore_5v = 1,
-	  Vcore_3p3v = 2,
-	  Vbase_5v = 3,
-  };
+	static constexpr PinCfgType VCore5V = {
+		Portnum: 	1,
+		Pinnum:		15,
+		Funcnum:	PIN_FUNC_0,
+		Pinmode:	PIN_PINMODE_TRISTATE,
+		OpenDrain:	PIN_PINMODE_NORMAL,
+		GpioDir:	GPIO_DIR_OUTPUT
+	};
+	static constexpr PinCfgType VCore3P3V = {
+		Portnum: 	1,
+		Pinnum:		29,
+		Funcnum:	PIN_FUNC_0,
+		Pinmode:	PIN_PINMODE_TRISTATE,
+		OpenDrain:	PIN_PINMODE_NORMAL,
+		GpioDir:	GPIO_DIR_OUTPUT
+	};
+	static constexpr PinCfgType VBase5V = {
+		Portnum: 	1,
+		Pinnum:		19,
+		Funcnum:	PIN_FUNC_0,
+		Pinmode:	PIN_PINMODE_TRISTATE,
+		OpenDrain:	PIN_PINMODE_NORMAL,
+		GpioDir:	GPIO_DIR_OUTPUT
+	};
+	static constexpr PinCfgType Usb5V = {
+		Portnum: 	1,
+		Pinnum:		27,
+		Funcnum:	PIN_FUNC_0,
+		Pinmode:	PIN_PINMODE_TRISTATE,
+		OpenDrain:	PIN_PINMODE_NORMAL,
+		GpioDir:	GPIO_DIR_OUTPUT
+	};
+	static constexpr PinCfgType AudioAmp = {
+		Portnum: 	1,
+		Pinnum:		14,
+		Funcnum:	PIN_FUNC_0,
+		Pinmode:	PIN_PINMODE_TRISTATE,
+		OpenDrain:	PIN_PINMODE_NORMAL,
+		GpioDir:	GPIO_DIR_OUTPUT
+	};
 
-  power();
+	power();
 
-  void
-  turn_on(PowerNode powerNode);
+	void
+	turn_on(PinCfgType powerPin);
 
-  void
-  turn_off(PowerNode powerNode);
+	void
+	turn_off(PinCfgType powerPin);
 };
 
 // ----------------------------------------------------------------------------
