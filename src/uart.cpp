@@ -73,12 +73,12 @@ uart::printf(const char *format, ...)
 {
 	va_list ap;
 	va_start (ap, format);
-
 	SendData thisData;
-	thisData.size = vasiprintf((char**)&thisData.data, format, ap);
+	thisData.size = vasprintf((char**)&thisData.data, format, ap);
+	va_end (ap);
+
 	queueSend(thisData);
 
-	va_end (ap);
 	return thisData.size;
 }
 
@@ -111,7 +111,7 @@ void
 uart::signalEvent(uint32_t event)
 {
 	if(event & ARM_USART_EVENT_SEND_COMPLETE) {
-		delete sendBuf.front().data;
+		free(sendBuf.front().data);
 		sendBuf.pop();
 
 		if(sendBuf.empty()) {
@@ -120,9 +120,11 @@ uart::signalEvent(uint32_t event)
 			sendNextBuf();
 		}
 	}
+	/*
 	if(event & ARM_USART_EVENT_RECEIVE_COMPLETE) {
 		receiveComplete();
 	}
+	*/
 }
 
-uart uartOut(0, 921600);
+uart uartOut(3, 1500000);

@@ -10,13 +10,12 @@ extern "C" {
 }
 #include <functional>
 #include <queue>
-#include <vector>
 
 class uart
 {
 public:
 	struct SendData {
-		uint8_t* data;
+		char* data;
 		uint32_t size;
 	};
 

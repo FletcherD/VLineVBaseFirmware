@@ -32,13 +32,13 @@ main (int argc, char* argv[])
 	p_timer timer = p_timer(2);
 	AVCLanDrvRxTx avcLan(timer);
 
-	avcLan.messageReceivedCallback = VCoreCommunication::onMessageReceived;
+	avcLan.messageReceivedCallback = &VCoreCommunication::onMessageReceived;
 
 	uint32_t t = 0;
 	while(1) {
 		timer.sleep(1000000);
-		VCoreCommunication::uartVCore.printf("Idle %d\r\n", t);
-		uartOut.printf("Idle %d\r\n", t++);
+		//VCoreCommunication::uartVCore.printf("Idle %d\r\n", t++);
+		//uartOut.printf("Idle %d\r\n", t++);
 
 		//AVCLanMsg messageBeep(AVCLanMsg::DIRECT, 0x110, 0x440, 0xf, std::vector<uint8_t>({0x0, 0x5e, 0x29, 0x60, 0x80}) );
 		//AVCLanMsg messagePing(AVCLanMsg::BROADCAST, 0x110, 0xfff, 0xf, std::vector<uint8_t>({0x12, 0x01, 0x20, 0x69}) );

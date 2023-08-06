@@ -134,7 +134,7 @@ bool AVCLanMsg::isAckBit(uint8_t bitPos)
 	return false;
 }
 
-const char* AVCLanMsg::toString()
+size_t AVCLanMsg::toString(char* str)
 {
 	bool broadcast 			= getField(AVCLanMsg::Broadcast);
 	uint16_t masterAddress 	= getField(AVCLanMsg::MasterAddress);
@@ -142,18 +142,16 @@ const char* AVCLanMsg::toString()
 	uint8_t control 		= getField(AVCLanMsg::Control);
 	uint8_t dataLen 		= getField(AVCLanMsg::DataLength);
 
-	char dataStr[dataLen*3+1];
-	for(uint8_t i = 0; i < dataLen; i++) {
-		snprintf(dataStr+i*3, 4, "%02x ", (unsigned int)getField(AVCLanMsg::Data(i)));
-	}
-	char* str;
-	asiprintf(&str, "%c %03x %03x %c %01x %d \t%s\r\n",
+	char* pos = str;
+	pos += sprintf(pos, "%c %03x %03x %c %01x %d \t",
 			broadcast == AVCLanMsg::BROADCAST ? 'B' : '-',
 			masterAddress, slaveAddress,
 			getField(AVCLanMsg::SlaveAddress_A)==AVCLanMsg::ACK ? 'A' : 'a',
 			control,
-			dataLen,
-			dataStr);
-	return str;
+			dataLen);
+	for(uint8_t i = 0; i < dataLen; i++) {
+		pos += sprintf(pos, "%02x ", (unsigned int)getField(AVCLanMsg::Data(i)));
+	}
+	return (pos-str);
 }
 

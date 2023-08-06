@@ -80,8 +80,8 @@ public:
 
 	uint32_t getMessageLength();
 
-	const char* toString();
-	static AVCLanMsg fromString(const char* str);
+	size_t toString(char*);
+	//static AVCLanMsg fromString(const char* str);
 };
 
 #endif /* AVCLAN_AVCLANMSG_H_ */

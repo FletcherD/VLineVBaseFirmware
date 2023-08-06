@@ -1,11 +1,11 @@
 #include "VCoreCommunication.h"
 
-uart VCoreCommunication::uartVCore(3, 1500000);
+uart VCoreCommunication::uartVCore(0, 921600);
 
 void VCoreCommunication::onMessageReceived(AVCLanMsg message) {
 	uart::SendData uartSendData;
 	uartSendData.size = AVCLanMsg::MaxMessageLenBytes;
-	uartSendData.data = new uint8_t[AVCLanMsg::MaxMessageLenBytes];
+	uartSendData.data = new char[AVCLanMsg::MaxMessageLenBytes];
 	for(uint8_t i = 0; i != AVCLanMsg::MaxMessageLenBytes; i++) {
 		uartSendData.data[i] = message.messageBuf[i];
 	}
@@ -16,8 +16,10 @@ void VCoreCommunication::receiveFromUart() {
 	uartVCore.USARTdrv->Receive(uartReceiveMsg.messageBuf, AVCLanMsg::MaxMessageLenBytes);
 }
 void VCoreCommunication::receiveComplete() {
-	uartOut.printf("Sending message: ");
-	uartOut.printf(uartReceiveMsg.toString());
+	char messageStr[128];
+	uartReceiveMsg.toString(messageStr);
+	uartOut.printf("Sending message: %s\r\n", messageStr);
 	AVCLanDrvRxTx::instance->sendMessage(uartReceiveMsg);
 	receiveFromUart();
 }
+

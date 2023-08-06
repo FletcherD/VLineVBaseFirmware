@@ -1,5 +1,8 @@
 #include "AVCLanDrvRxTx.h"
 
+#include <VCoreCommunication.h>
+#include <functional>
+
 AVCLanDrvRxTx* AVCLanDrvRxTx::instance;
 
 AVCLanDrvRxTx::AVCLanDrvRxTx(p_timer timer)
@@ -63,10 +66,17 @@ void AVCLanDrvRxTx::startIdle() {
 }
 
 void AVCLanDrvRxTx::messageReceived(AVCLanMsg message) {
-	const char* messageStr = message.toString();
-	uartOut.printf(messageStr);
+	timer.setCaptureInterruptEnabled(false);
+	timer.setTimerInterruptEnabled(false);
 
-	messageReceivedCallback(message);
+	char messageStr[128];
+	message.toString(messageStr);
+	uartOut.printf("%s\r\n", messageStr);
+
+	timer.setCaptureInterruptEnabled(true);
+	timer.setTimerInterruptEnabled(true);
+
+	std::invoke(messageReceivedCallback, message);
 }
 
 extern "C" {
