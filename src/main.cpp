@@ -33,10 +33,14 @@ main (int argc, char* argv[])
 	AVCLanDrvRxTx avcLan(timer);
 
 	avcLan.messageReceivedCallback = &VCoreCommunication::onMessageReceived;
+	VCoreCommunication::uartVCore.receiveComplete = &VCoreCommunication::uartReceiveComplete;
+	VCoreCommunication::startUartReceive();
 
 	uint32_t t = 0;
 	while(1) {
 		timer.sleep(1000000);
+		//trace_printf("Total Bit Errors: %d", avcLan.bitErrorCount);
+		trace_printf("RXCount: %d", VCoreCommunication::uartVCore.USARTdrv->GetRxCount());
 		//VCoreCommunication::uartVCore.printf("Idle %d\r\n", t++);
 		//uartOut.printf("Idle %d\r\n", t++);
 

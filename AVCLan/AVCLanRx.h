@@ -45,14 +45,19 @@ class AVCLanRx : public virtual AVCLanDrvBase {
 		void resetBuffer();
 		void messageEnd();
 
+		void onBitError();
+
 		virtual void endReceive() {};
 		virtual void messageReceived(AVCLanMsg) {};
 
 	public:
+		uint32_t bitErrorCount = 0;
+
 		AVCLanRx(p_timer);
 		virtual ~AVCLanRx() {};
 
 		void onTimerCallback();
+
 };
 
 #endif

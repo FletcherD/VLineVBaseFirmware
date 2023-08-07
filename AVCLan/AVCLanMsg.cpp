@@ -7,6 +7,7 @@
 #include <AVCLanMsg.h>
 #include "util.h"
 #include <string>
+#include <cstring>
 
 constexpr AVCLanMsg::AVCLanMsgField AVCLanMsg::Broadcast;
 constexpr AVCLanMsg::AVCLanMsgField AVCLanMsg::MasterAddress;
@@ -24,6 +25,11 @@ constexpr AVCLanMsg::AVCLanMsgField AVCLanMsg::DataLength_A;
 AVCLanMsg::AVCLanMsg()
 : messageBuf{0}
 {
+}
+
+AVCLanMsg::AVCLanMsg(const AVCLanMsg& otherMessage)
+{
+	memcpy(messageBuf, otherMessage.messageBuf, MaxMessageLenBytes);
 }
 
 AVCLanMsg::AVCLanMsg(bool broadcast,
@@ -52,20 +58,26 @@ AVCLanMsg::AVCLanMsg(bool broadcast,
 	}
 }
 
-bool AVCLanMsg::getBit(uint32_t bitPos) {
+bool AVCLanMsg::getBit(uint32_t bitPos) const
+{
 	uint8_t whichByte = (bitPos / 8);
+	/*
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-	whichByte = messageBufLen - whichByte - 1;
+	whichByte = MaxMessageLenBytes - whichByte - 1;
 #endif
+*/
 	uint8_t whichBit  = (bitPos % 8);
 	return messageBuf[whichByte] & (0x80>>whichBit);
 }
 
-void AVCLanMsg::setBit(uint32_t bitPos, bool value) {
+void AVCLanMsg::setBit(uint32_t bitPos, bool value)
+{
 	uint8_t whichByte = (bitPos / 8);
+	/*
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-	whichByte = messageBufLen - whichByte - 1;
+	whichByte = MaxMessageLenBytes - whichByte - 1;
 #endif
+*/
 	uint8_t whichBit  = (bitPos % 8);
 	if(value) {
 		messageBuf[whichByte] |= (0x80>>whichBit);
@@ -74,36 +86,51 @@ void AVCLanMsg::setBit(uint32_t bitPos, bool value) {
 	}
 }
 
-FieldValue AVCLanMsg::getField(AVCLanMsgField field)
+FieldValue AVCLanMsg::getField(AVCLanMsgField field) const
 {
 	uint8_t lenBytes = sizeof(FieldValue);
 	uint8_t startByte = field.BitOffset / 8;
+	/*
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-	startByte = messageBufLen - startByte - lenBytes;
+	startByte = MaxMessageLenBytes - startByte - lenBytes;
 #endif
+*/
 	FieldValue bitMask = (1UL<<field.LengthBits) - 1;
 	uint8_t bitShift = (lenBytes*8) - field.LengthBits - (field.BitOffset%8);
 
 	FieldValue value = *(FieldValue*)(messageBuf+startByte);
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	value = swapBytes(value);
+#endif
 	value = (value >> bitShift) & bitMask;
 	return value;
 }
 
-void AVCLanMsg::setField(AVCLanMsgField field, FieldValue value) {
+void AVCLanMsg::setField(AVCLanMsgField field, FieldValue value)
+{
 	uint8_t lenBytes = sizeof(value);
 	uint8_t startByte = field.BitOffset / 8;
+	/*
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-	startByte = messageBufLen - startByte - lenBytes;
+	startByte = MaxMessageLenBytes - startByte - lenBytes;
 #endif
+*/
 	FieldValue bitMask = (1UL<<field.LengthBits) - 1;
 	uint8_t bitShift = (lenBytes*8) - field.LengthBits - (field.BitOffset%8);
 
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	swapBytes(value);
+#endif
+
+	bitMask = bitMask << bitShift;
+	value = value << bitShift;
+
 	FieldValue* valuePtr = (uint32_t*)(messageBuf+startByte);
-	*valuePtr &= ~(bitMask << bitShift);
-	*valuePtr |= (value << bitShift);
+	*valuePtr &= ~(bitMask);
+	*valuePtr |= (value);
 }
 
-uint32_t AVCLanMsg::getMessageLength()
+uint32_t AVCLanMsg::getMessageLength() const
 {
 	uint8_t dataLen = getField(DataLength);
 	return AVCLanMsg::Data(0).BitOffset + dataLen*DataFieldLength;
@@ -134,24 +161,42 @@ bool AVCLanMsg::isAckBit(uint8_t bitPos)
 	return false;
 }
 
-size_t AVCLanMsg::toString(char* str)
+size_t AVCLanMsg::toString(char* str) const
 {
-	bool broadcast 			= getField(AVCLanMsg::Broadcast);
-	uint16_t masterAddress 	= getField(AVCLanMsg::MasterAddress);
-	uint16_t slaveAddress 	= getField(AVCLanMsg::SlaveAddress);
-	uint8_t control 		= getField(AVCLanMsg::Control);
-	uint8_t dataLen 		= getField(AVCLanMsg::DataLength);
+	uint8_t dataLen = getField(AVCLanMsg::DataLength);
 
 	char* pos = str;
 	pos += sprintf(pos, "%c %03x %03x %c %01x %d \t",
-			broadcast == AVCLanMsg::BROADCAST ? 'B' : '-',
-			masterAddress, slaveAddress,
-			getField(AVCLanMsg::SlaveAddress_A)==AVCLanMsg::ACK ? 'A' : 'a',
-			control,
-			dataLen);
-	for(uint8_t i = 0; i < dataLen; i++) {
-		pos += sprintf(pos, "%02x ", (unsigned int)getField(AVCLanMsg::Data(i)));
+		(getField(AVCLanMsg::Broadcast)==AVCLanMsg::BROADCAST ? 'B' : '-'),
+		getField(AVCLanMsg::MasterAddress),
+		getField(AVCLanMsg::SlaveAddress),
+		(getField(AVCLanMsg::SlaveAddress_A)==AVCLanMsg::ACK ? 'A' : 'a'),
+		getField(AVCLanMsg::Control),
+		dataLen);
+	// Prevent overflow
+	dataLen = (dataLen>21 ? 21 : dataLen);
+	for(uint8_t i = 0; i != dataLen; i++) {
+		pos += sprintf(pos, "%02x ", getField(AVCLanMsg::Data(i)));
 	}
 	return (pos-str);
 }
 
+bool AVCLanMsg::isValid() const
+{
+	if(getMessageLength() > (MaxMessageLenBytes*8))
+		return false;
+	if(calculateParity(getField(MasterAddress)) != getField(MasterAddress_P))
+		return false;
+	if(calculateParity(getField(SlaveAddress)) != getField(SlaveAddress_P))
+		return false;
+	if(calculateParity(getField(Control)) != getField(Control_P))
+		return false;
+	uint8_t dataLen = getField(DataLength);
+	if(calculateParity(dataLen) != getField(DataLength_P))
+		return false;
+	for(size_t i = 0; i != dataLen; i++) {
+		if(calculateParity(getField(Data(i))) != getField(Data_P(i)))
+			return false;
+	}
+	return true;
+}

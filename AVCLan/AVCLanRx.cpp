@@ -1,6 +1,6 @@
 #include <AVCLanMsg.h>
 #include "AVCLanRx.h"
-
+#include "diag/trace.h"
 
 AVCLanRx::AVCLanRx(p_timer timer)
 	: AVCLanDrvBase(timer),
@@ -46,8 +46,7 @@ void AVCLanRx::state_Idle(InputEvent e) {
 }
 void AVCLanRx::state_StartBit(InputEvent e) {
 	if(e.type == RISING_EDGE) {
-		if(e.time < 100) {
-			// Spurious
+		if(e.time < (T_StartBit / 2)) {
 			state = &AVCLanRx::state_Idle;
 			return;
 		}
@@ -56,25 +55,20 @@ void AVCLanRx::state_StartBit(InputEvent e) {
 	}
 }
 void AVCLanRx::state_WaitForBit(InputEvent e) {
-	if(e.type == FALLING_EDGE) {
-		state = &AVCLanRx::state_MeasureBit;
+	if(e.type != FALLING_EDGE || e.time > T_Bit) {
+		onBitError();
+		return;
 	}
+	state = &AVCLanRx::state_MeasureBit;
 }
 void AVCLanRx::state_MeasureBit(InputEvent e) {
-	if(e.type == RISING_EDGE) {
-		state = &AVCLanRx::state_WaitForBit;
-
-		if(e.time > T_Bit) {
-			state = &AVCLanRx::state_Idle;
-			uartOut.printf("\tAbort\r\n");
-			resetBuffer();
-			endReceive();
-			return;
-		}
-
-		bool bitVal = (e.time > T_BitMeasure) ? false : true;
-		receiveBit(bitVal);
+	if(e.type != RISING_EDGE || e.time > T_Bit) {
+		onBitError();
+		return;
 	}
+	state = &AVCLanRx::state_WaitForBit;
+	bool bitVal = (e.time > T_BitMeasure) ? false : true;
+	receiveBit(bitVal);
 }
 
 void AVCLanRx::resetBuffer() {
@@ -97,9 +91,21 @@ void AVCLanRx::receiveBit(bool bitVal) {
 void AVCLanRx::messageEnd() {
 	if (receiveBitPos == 0)
 		return;
-	resetBuffer();
 
+	if(!thisMsg.isValid() || receiveBitPos != thisMsg.getMessageLength()) {
+		onBitError();
+		return;
+	}
+
+	resetBuffer();
 	timer.setIrqEnabled(false);
 	messageReceived(thisMsg);
 	timer.setIrqEnabled(true);
+}
+
+void AVCLanRx::onBitError() {
+	bitErrorCount++;
+	state = &AVCLanRx::state_Idle;
+	resetBuffer();
+	endReceive();
 }

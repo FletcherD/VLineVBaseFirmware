@@ -7,9 +7,9 @@ class VCoreCommunication {
 public:
 	static void onMessageReceived(AVCLanMsg message);
 
-	static void receiveFromUart();
+	static void startUartReceive();
 
-	static void receiveComplete();
+	static void uartReceiveComplete();
 
 	static uart uartVCore;
 };

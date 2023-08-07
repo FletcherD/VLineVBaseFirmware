@@ -40,6 +40,14 @@ uart::uart(uint8_t uartNum, uint32_t baudRate)
 	}
 #endif
 
+/*
+	ARM_USART_CAPABILITIES drv_capabilities = USARTdrv->GetCapabilities();
+#define CAPABILITY_STR(f) (drv_capabilities.f ? #f "\n" : "")
+	trace_printf("UART %d Capabilities: \n%s %s %s %s",
+			uartNum,
+			CAPABILITY_STR())
+*/
+
 	errNo |= USARTdrv->PowerControl(ARM_POWER_FULL);
 	errNo |= USARTdrv->Control(ARM_USART_MODE_ASYNCHRONOUS |
 					ARM_USART_DATA_BITS_8 |
@@ -111,7 +119,7 @@ void
 uart::signalEvent(uint32_t event)
 {
 	if(event & ARM_USART_EVENT_SEND_COMPLETE) {
-		free(sendBuf.front().data);
+		delete sendBuf.front().data;
 		sendBuf.pop();
 
 		if(sendBuf.empty()) {
@@ -120,11 +128,10 @@ uart::signalEvent(uint32_t event)
 			sendNextBuf();
 		}
 	}
-	/*
 	if(event & ARM_USART_EVENT_RECEIVE_COMPLETE) {
-		receiveComplete();
+		if(receiveComplete)
+			receiveComplete();
 	}
-	*/
 }
 
 uart uartOut(3, 1500000);

@@ -58,29 +58,29 @@ public:
 	}
 
 	static constexpr uint8_t MaxMessageLenBytes = 32;
-	static constexpr uint8_t messageBufLen = MaxMessageLenBytes+sizeof(FieldValue);
-	uint8_t messageBuf[messageBufLen];
+	uint8_t messageBuf[MaxMessageLenBytes];
 
 	AVCLanMsg();
+	AVCLanMsg(const AVCLanMsg&);
 	AVCLanMsg(bool broadcast,
 			uint16_t masterAddress,
 			uint16_t slaveAddress,
 			uint8_t control,
 			std::vector<uint8_t> data);
 
-	bool getBit(uint32_t bitPos);
+	bool getBit(uint32_t bitPos) const;
 	void setBit(uint32_t bitPos, bool value);
 
-	FieldValue getField(AVCLanMsgField field);
+	FieldValue getField(AVCLanMsgField field) const;
 	void setField(AVCLanMsgField field, FieldValue value);
 
 	static bool isAckBit(uint8_t bitPos);
 
 	static bool	calculateParity(FieldValue data);
 
-	uint32_t getMessageLength();
-
-	size_t toString(char*);
+	uint32_t getMessageLength() const;
+	bool isValid() const;
+	size_t toString(char*) const;
 	//static AVCLanMsg fromString(const char* str);
 };
 

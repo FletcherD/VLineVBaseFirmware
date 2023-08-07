@@ -66,17 +66,13 @@ void AVCLanDrvRxTx::startIdle() {
 }
 
 void AVCLanDrvRxTx::messageReceived(AVCLanMsg message) {
-	timer.setCaptureInterruptEnabled(false);
-	timer.setTimerInterruptEnabled(false);
+	AVCLanMsg messageCopy(message);
 
 	char messageStr[128];
-	message.toString(messageStr);
+	messageCopy.toString(messageStr);
 	uartOut.printf("%s\r\n", messageStr);
 
-	timer.setCaptureInterruptEnabled(true);
-	timer.setTimerInterruptEnabled(true);
-
-	std::invoke(messageReceivedCallback, message);
+	std::invoke(messageReceivedCallback, messageCopy);
 }
 
 extern "C" {
