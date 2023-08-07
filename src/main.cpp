@@ -32,17 +32,22 @@ main (int argc, char* argv[])
 	p_timer timer = p_timer(2);
 	AVCLanDrvRxTx avcLan(timer);
 
-	avcLan.messageReceivedCallback = &VCoreCommunication::onMessageReceived;
 	VCoreCommunication::uartVCore.receiveComplete = &VCoreCommunication::uartReceiveComplete;
 	VCoreCommunication::startUartReceive();
 
-	uint32_t t = 0;
 	while(1) {
-		timer.sleep(1000000);
-		//trace_printf("Total Bit Errors: %d", avcLan.bitErrorCount);
-		trace_printf("RXCount: %d", VCoreCommunication::uartVCore.USARTdrv->GetRxCount());
+		uint32_t waitUntil = timer.getTicks() + 1000000;
+		while(timer.getTicks() < waitUntil) {
+			while(!avcLan.receiveQueue.empty()) {
+				VCoreCommunication::onMessageReceived(avcLan.receiveQueue.front());
+				avcLan.receiveQueue.pop();
+			}
+		}
+		trace_printf("Bit Errors: %d - Total Msgs: %d - Longest msg: %d - Mode: %d", avcLan.bitErrorCount, avcLan.totalMsgCount, avcLan.longestMsg, avcLan.operatingMode);
+		//trace_printf("RXCount: %d", VCoreCommunication::uartVCore.USARTdrv->GetRxCount());
 		//VCoreCommunication::uartVCore.printf("Idle %d\r\n", t++);
 		//uartOut.printf("Idle %d\r\n", t++);
+		//trace_printf("TX Send Bit: %d", avcLan.sendBitPos);
 
 		//AVCLanMsg messageBeep(AVCLanMsg::DIRECT, 0x110, 0x440, 0xf, std::vector<uint8_t>({0x0, 0x5e, 0x29, 0x60, 0x80}) );
 		//AVCLanMsg messagePing(AVCLanMsg::BROADCAST, 0x110, 0xfff, 0xf, std::vector<uint8_t>({0x12, 0x01, 0x20, 0x69}) );

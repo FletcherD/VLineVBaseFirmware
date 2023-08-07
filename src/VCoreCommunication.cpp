@@ -4,40 +4,66 @@
 
 uart VCoreCommunication::uartVCore(0, 921600);
 
-AVCLanMsg VCoreCommunication::uartReceiveMsg;
+uint8_t* VCoreCommunication::uartReceiveByte = uartReceiveBuf;
+uint8_t VCoreCommunication::uartReceiveBuf[uartReceiveBufSize];
 
 void VCoreCommunication::onMessageReceived(AVCLanMsg message) {
-	/*
+	static uint32_t totalMsgs = 0;
+
+	static constexpr size_t headerLen = 2;
+	static constexpr uint8_t header = 0xff;
+	static constexpr size_t messageLen = headerLen + AVCLanMsg::MaxMessageLenBytes;
+
 	uart::SendData uartSendData;
-	uartSendData.size = AVCLanMsg::MaxMessageLenBytes;
-	uartSendData.data = new char[AVCLanMsg::MaxMessageLenBytes];
-	for(uint8_t i = 0; i != AVCLanMsg::MaxMessageLenBytes; i++) {
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-		uartSendData.data[i] = message.messageBuf[AVCLanMsg::MaxMessageLenBytes-i-1];
-#else
-		uartSendData.data[i] = message.messageBuf[i];
-#endif
+	uartSendData.size = messageLen;
+	uartSendData.data = new char[messageLen];
+	for(size_t i = 0; i < headerLen; i++) {
+		uartSendData.data[i] = header;
 	}
-	*/
-	char messageStr[128];
-	message.toString(messageStr);
-	uartVCore.printf("%s\r\n", messageStr);
-	//uartVCore.queueSend(uartSendData);
+	for(uint8_t i = 0; i != AVCLanMsg::MaxMessageLenBytes; i++) {
+		size_t j = i+headerLen;
+		uartSendData.data[j] = message.messageBuf[i];
+	}
+
+	uartVCore.queueSend(uartSendData);
+
+	//trace_printf("Total msgs: %d\n", totalMsgs++);
 }
 
 void VCoreCommunication::startUartReceive() {
-	int32_t errNo = uartVCore.USARTdrv->Receive(uartReceiveMsg.messageBuf, AVCLanMsg::MaxMessageLenBytes);
+	int32_t errNo = uartVCore.USARTdrv->Receive(uartReceiveByte, 1);
 }
 
 void VCoreCommunication::uartReceiveComplete() {
-	char messageStr[128];
-	uartReceiveMsg.toString(messageStr);
-	if(uartReceiveMsg.isValid()) {
-		trace_printf("Sending message: %s\n", messageStr);
-		AVCLanDrvRxTx::instance->sendMessage(uartReceiveMsg);
-	} else {
-		trace_printf("Error! Want to send invalid message: %s\n", messageStr);
+	static uint8_t* messageStartPos;
+
+	static constexpr size_t headerLen = 2;
+	static constexpr uint8_t header = 0xff;
+
+	uartReceiveByte++;
+	size_t uartReceivePos = (uartReceiveByte - uartReceiveBuf);
+	if(uartReceivePos >= 2 &&
+			(*(uartReceiveByte-1) == header && *(uartReceiveByte-2) == header)) {
+		messageStartPos = uartReceiveByte;
 	}
+	if(uartReceiveByte - messageStartPos == AVCLanMsg::MaxMessageLenBytes) {
+		AVCLanMsg thisMessage(messageStartPos);
+
+		if(thisMessage.isValid()) {
+			//trace_printf("Sending message: %s\n", messageStr);
+			AVCLanDrvRxTx::instance->sendMessage(thisMessage);
+		} else {
+			char messageStr[256];
+			thisMessage.toString(messageStr);
+			trace_printf("Error! Want to send invalid message: %s\n", messageStr);
+		}
+
+		uartReceiveByte = uartReceiveBuf;
+	}
+
+	if(uartReceivePos == uartReceiveBufSize)
+		uartReceiveByte = uartReceiveBuf;
+
 	startUartReceive();
 }
 

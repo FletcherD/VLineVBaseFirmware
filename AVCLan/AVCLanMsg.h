@@ -57,11 +57,12 @@ public:
 		return AVCLanMsgField( { BitOffset:	44+9+(DataFieldLength*N), LengthBits: 1, IsAck: true } );
 	}
 
-	static constexpr uint8_t MaxMessageLenBytes = 32;
+	static constexpr uint8_t MaxMessageLenBytes = 64;
 	uint8_t messageBuf[MaxMessageLenBytes];
 
 	AVCLanMsg();
 	AVCLanMsg(const AVCLanMsg&);
+	AVCLanMsg(const uint8_t*);
 	AVCLanMsg(bool broadcast,
 			uint16_t masterAddress,
 			uint16_t slaveAddress,
@@ -81,7 +82,6 @@ public:
 	uint32_t getMessageLength() const;
 	bool isValid() const;
 	size_t toString(char*) const;
-	//static AVCLanMsg fromString(const char* str);
 };
 
 #endif /* AVCLAN_AVCLANMSG_H_ */

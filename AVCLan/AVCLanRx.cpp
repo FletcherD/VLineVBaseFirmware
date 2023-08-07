@@ -31,7 +31,8 @@ void AVCLanRx::onTimerCallback() {
 	if((interruptType & 1UL) || event.time > T_Timeout)
 	{
 		state = &AVCLanRx::state_Idle;
-		messageEnd();
+		resetBuffer();
+		endReceive();
 	}
 
 	(this->*state)(event);
@@ -56,6 +57,7 @@ void AVCLanRx::state_StartBit(InputEvent e) {
 }
 void AVCLanRx::state_WaitForBit(InputEvent e) {
 	if(e.type != FALLING_EDGE || e.time > T_Bit) {
+		//trace_printf("%d %d", e.time, e.type);
 		onBitError();
 		return;
 	}
@@ -63,6 +65,7 @@ void AVCLanRx::state_WaitForBit(InputEvent e) {
 }
 void AVCLanRx::state_MeasureBit(InputEvent e) {
 	if(e.type != RISING_EDGE || e.time > T_Bit) {
+		//trace_printf("%d %d", e.time, e.type);
 		onBitError();
 		return;
 	}
@@ -73,34 +76,60 @@ void AVCLanRx::state_MeasureBit(InputEvent e) {
 
 void AVCLanRx::resetBuffer() {
 	receiveBitPos = 0;
+	msgDataLength = 0;
+	for(size_t i = 0; i != AVCLanMsg::MaxMessageLenBytes; i++)
+		thisMsg.messageBuf[i] = 0;
 }
 
 void AVCLanRx::receiveBit(bool bitVal) {
 	thisMsg.setBit(receiveBitPos, bitVal);
-	receiveBitPos++;
 
-	if (receiveBitPos >= AVCLanMsg::Data(0).BitOffset
-		&& receiveBitPos == thisMsg.getMessageLength())
+	/* Because we have a very strict time budget,
+	 * we calculate the expected message length on the fly
+	 * so we know when we're done with minimal overhead
+	 */
+	if(receiveBitPos >= AVCLanMsg::DataLength.BitOffset)
 	{
-		// Message is done
-		state = &AVCLanRx::state_Idle;
-		messageEnd();
+		uint8_t dataLenBitPos = (receiveBitPos - AVCLanMsg::DataLength.BitOffset);
+		if(dataLenBitPos < AVCLanMsg::DataLength.LengthBits) {
+			msgDataLength |= (bitVal << (AVCLanMsg::DataLength.LengthBits - dataLenBitPos - 1));
+		} else {
+			size_t thisMessageLength = AVCLanMsg::Data(0).BitOffset + (AVCLanMsg::DataFieldLength*msgDataLength);
+
+			if((receiveBitPos+1) == thisMessageLength) {
+				// Message is done
+				state = &AVCLanRx::state_Idle;
+				messageEnd();
+			}
+		}
 	}
+
+	receiveBitPos++;
 }
 
 void AVCLanRx::messageEnd() {
 	if (receiveBitPos == 0)
 		return;
 
-	if(!thisMsg.isValid() || receiveBitPos != thisMsg.getMessageLength()) {
+	if(!thisMsg.isValid()) {
+		char messageStr[256];
+		char* pos = messageStr;
+		for(size_t i = 0; i < AVCLanMsg::MaxMessageLenBytes; i++) {
+			pos += sprintf(pos, "%02x ", thisMsg.messageBuf[i]);
+		}
+		trace_printf("Invalid message received: %s", messageStr);
 		onBitError();
 		return;
 	}
 
-	resetBuffer();
-	timer.setIrqEnabled(false);
+	longestMsg = (receiveBitPos>longestMsg ? receiveBitPos : longestMsg);
+
+	totalMsgCount++;
+	//timer.setIrqEnabled(false);
 	messageReceived(thisMsg);
-	timer.setIrqEnabled(true);
+	//timer.setIrqEnabled(true);
+	resetBuffer();
+	endReceive();
 }
 
 void AVCLanRx::onBitError() {

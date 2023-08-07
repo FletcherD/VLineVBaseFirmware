@@ -31,6 +31,10 @@ AVCLanMsg::AVCLanMsg(const AVCLanMsg& otherMessage)
 {
 	memcpy(messageBuf, otherMessage.messageBuf, MaxMessageLenBytes);
 }
+AVCLanMsg::AVCLanMsg(const uint8_t* otherBuf)
+{
+	memcpy(messageBuf, otherBuf, MaxMessageLenBytes);
+}
 
 AVCLanMsg::AVCLanMsg(bool broadcast,
 			uint16_t masterAddress,
@@ -90,11 +94,6 @@ FieldValue AVCLanMsg::getField(AVCLanMsgField field) const
 {
 	uint8_t lenBytes = sizeof(FieldValue);
 	uint8_t startByte = field.BitOffset / 8;
-	/*
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-	startByte = MaxMessageLenBytes - startByte - lenBytes;
-#endif
-*/
 	FieldValue bitMask = (1UL<<field.LengthBits) - 1;
 	uint8_t bitShift = (lenBytes*8) - field.LengthBits - (field.BitOffset%8);
 
@@ -110,11 +109,6 @@ void AVCLanMsg::setField(AVCLanMsgField field, FieldValue value)
 {
 	uint8_t lenBytes = sizeof(value);
 	uint8_t startByte = field.BitOffset / 8;
-	/*
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-	startByte = MaxMessageLenBytes - startByte - lenBytes;
-#endif
-*/
 	FieldValue bitMask = (1UL<<field.LengthBits) - 1;
 	uint8_t bitShift = (lenBytes*8) - field.LengthBits - (field.BitOffset%8);
 
@@ -166,15 +160,14 @@ size_t AVCLanMsg::toString(char* str) const
 	uint8_t dataLen = getField(AVCLanMsg::DataLength);
 
 	char* pos = str;
-	pos += sprintf(pos, "%c %03x %03x %c %01x %d \t",
+	pos += sprintf(pos, "%c %03x %03x %01x %d \t",
 		(getField(AVCLanMsg::Broadcast)==AVCLanMsg::BROADCAST ? 'B' : '-'),
 		getField(AVCLanMsg::MasterAddress),
 		getField(AVCLanMsg::SlaveAddress),
-		(getField(AVCLanMsg::SlaveAddress_A)==AVCLanMsg::ACK ? 'A' : 'a'),
 		getField(AVCLanMsg::Control),
 		dataLen);
-	// Prevent overflow
-	dataLen = (dataLen>21 ? 21 : dataLen);
+	// TODO Prevent overflow
+	//dataLen = (dataLen>21 ? 21 : dataLen);
 	for(uint8_t i = 0; i != dataLen; i++) {
 		pos += sprintf(pos, "%02x ", getField(AVCLanMsg::Data(i)));
 	}

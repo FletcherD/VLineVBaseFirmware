@@ -50,8 +50,16 @@ class AVCLanRx : public virtual AVCLanDrvBase {
 		virtual void endReceive() {};
 		virtual void messageReceived(AVCLanMsg) {};
 
+		// Because we have a very strict time budget,
+		// calculate the length on the fly
+		// so AVCLanRx knows when it is done
+		uint8_t msgDataLength = 0;
+
 	public:
 		uint32_t bitErrorCount = 0;
+		uint32_t totalMsgCount = 0;
+
+		size_t longestMsg = 0;
 
 		AVCLanRx(p_timer);
 		virtual ~AVCLanRx() {};

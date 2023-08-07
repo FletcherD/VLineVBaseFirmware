@@ -12,6 +12,7 @@ p_timer::p_timer(uint8_t timerN) : timerN(timerN), lpcTimer(LpcTimers[timerN])
 	TIM_Init(lpcTimer, TIM_TIMER_MODE, &lpcTimerConfig);
 
 	NVIC_EnableIRQ(LpcTimerIRQs[timerN]);
+	NVIC_SetPriority(LpcTimerIRQs[timerN], 0);
 	TIM_Cmd(lpcTimer, FunctionalState::ENABLE);
 }
 

@@ -5,6 +5,7 @@
 #include "AVCLanTx.h"
 
 #include <functional>
+#include <queue>
 
 class AVCLanDrvRxTx : public AVCLanRx, AVCLanTx
 {
@@ -21,15 +22,15 @@ class AVCLanDrvRxTx : public AVCLanRx, AVCLanTx
 		TRANSMIT,
 		IDLE
 	};
-	AVCLanMode operatingMode = IDLE;
 
 public:
+	AVCLanMode operatingMode = IDLE;
 	static AVCLanDrvRxTx* instance;
 
 	AVCLanDrvRxTx(p_timer timer);
 	~AVCLanDrvRxTx();
 
-	std::function<void(AVCLanMsg)> messageReceivedCallback;
+	std::queue<AVCLanMsg> receiveQueue;
 
 	void onTimerCallback();
 

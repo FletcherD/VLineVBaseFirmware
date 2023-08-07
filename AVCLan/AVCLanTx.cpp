@@ -39,12 +39,14 @@ void AVCLanTx::state_PeriodOff() {
 void AVCLanTx::state_PeriodOn() {
 	setTxPinState(false);
 
-	if(AVCLanMsg::isAckBit(sendBitPos)) {
+	/*
+	if(sendBitPos == AVCLanMsg::SlaveAddress_A.BitOffset) {
 		Time pulseTime = (T_Bit * sendBitPos) + T_BitMeasure;
 		timer.updateTimerAbsolute(startTime + pulseTime);
 		state = &AVCLanTx::state_GetAck;
 		return;
 	}
+	*/
 
 	sendBitPos++;
 	Time pulseTime = T_Bit * sendBitPos;

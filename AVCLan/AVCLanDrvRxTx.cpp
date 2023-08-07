@@ -2,6 +2,7 @@
 
 #include <VCoreCommunication.h>
 #include <functional>
+#include "diag/trace.h"
 
 AVCLanDrvRxTx* AVCLanDrvRxTx::instance;
 
@@ -66,13 +67,16 @@ void AVCLanDrvRxTx::startIdle() {
 }
 
 void AVCLanDrvRxTx::messageReceived(AVCLanMsg message) {
-	AVCLanMsg messageCopy(message);
-
+/*
 	char messageStr[128];
-	messageCopy.toString(messageStr);
-	uartOut.printf("%s\r\n", messageStr);
+	message.toString(messageStr);
+	trace_printf("%d %s", timer.getTicks(), messageStr);
+*/
 
-	std::invoke(messageReceivedCallback, messageCopy);
+	receiveQueue.push(message);
+	while(receiveQueue.size() > 8) {
+		receiveQueue.pop();
+	}
 }
 
 extern "C" {

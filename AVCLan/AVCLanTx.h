@@ -14,7 +14,7 @@ extern "C" {
 #include "AVCLanDrv.h"
 #include "AVCLanMsg.h"
 
-#include <array>
+#include <vector>
 
 class AVCLanTx : public virtual AVCLanDrvBase {
 	private:
@@ -35,11 +35,6 @@ class AVCLanTx : public virtual AVCLanDrvBase {
 		uint32_t sendLengthBits;
 		uint32_t sendBitPos;
 		Time startTime;
-
-
-		uint32_t sendX[256];
-		uint8_t sendY[256];
-		uint32_t sendI = 0;
 
 		bool getNextBit();
 
