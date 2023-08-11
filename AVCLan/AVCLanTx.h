@@ -28,6 +28,7 @@ class AVCLanTx : public virtual AVCLanDrvBase {
 		void state_PeriodOn();
 		void state_PeriodOff();
 		void state_GetAck();
+		void state_EndPause();
 
 		// ------------------------
 

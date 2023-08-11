@@ -25,7 +25,9 @@ void AVCLanTx::state_StartBit() {
 
 void AVCLanTx::state_PeriodOff() {
 	if (sendBitPos == sendLengthBits) {
-		messageDone();
+		setTxPinState(true);
+		timer.updateTimer(T_Bit*4);
+		state = &AVCLanTx::state_EndPause;
 		return;
 	}
 
@@ -54,6 +56,12 @@ void AVCLanTx::state_PeriodOn() {
 	state = &AVCLanTx::state_PeriodOff;
 }
 
+void AVCLanTx::state_EndPause() {
+
+	// TODO: why often get bit error on RX after sending message?
+	messageDone();
+}
+
 void AVCLanTx::state_GetAck() {
 	uint32_t rxIn = GPIO_PortRead(AVC_RX_PIN.Portnum);
 	rxIn = (rxIn & (1UL << AVC_RX_PIN.Pinnum));
@@ -68,6 +76,7 @@ void AVCLanTx::state_GetAck() {
 void AVCLanTx::messageDone() {
 	sendQueue.pop();
 	if(sendQueue.empty()) {
+		setTxPinState(false);
 		state = &AVCLanTx::state_Idle;
 		endTransmit();
 	} else {
