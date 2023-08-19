@@ -1,5 +1,5 @@
-#ifndef AVCLANRX_H_
-#define AVCLANRX_H_
+#ifndef DRIVERRX_H_
+#define DRIVERRX_H_
 
 #include "cmsis_device.h"
 extern "C" {
@@ -11,10 +11,10 @@ extern "C" {
 #include "uart.h"
 #include "util.h"
 
-#include "AVCLanDrv.h"
-#include "AVCLanMsg.h"
+#include "DriverBase.h"
+#include <MessageRaw.h>
 
-class AVCLanRx : public virtual AVCLanDrvBase {
+class DriverRx : public virtual DriverBase {
 	private:
 		typedef uint32_t Time;
 		enum InputType {
@@ -28,7 +28,7 @@ class AVCLanRx : public virtual AVCLanDrvBase {
 		Time lastEventTime;
 
 		// AVC-LAN RX state machine
-		typedef void (AVCLanRx::*State)(InputEvent);
+		typedef void (DriverRx::*State)(InputEvent);
 		State state;
 
 		void state_Idle(InputEvent i);
@@ -38,7 +38,7 @@ class AVCLanRx : public virtual AVCLanDrvBase {
 
 		// ------------------------
 
-		AVCLanMsg thisMsg;
+		MessageRaw thisMsg;
 		uint32_t receiveBitPos;
 
 		void receiveBit(bool bit);
@@ -48,7 +48,7 @@ class AVCLanRx : public virtual AVCLanDrvBase {
 		void onBitError();
 
 		virtual void endReceive() {};
-		virtual void messageReceived(AVCLanMsg) {};
+		virtual void messageReceived(MessageRaw) {};
 
 		// Because we have a very strict time budget,
 		// calculate the length on the fly
@@ -61,8 +61,8 @@ class AVCLanRx : public virtual AVCLanDrvBase {
 
 		size_t longestMsg = 0;
 
-		AVCLanRx(p_timer);
-		virtual ~AVCLanRx() {};
+		DriverRx(p_timer);
+		virtual ~DriverRx() {};
 
 		void onTimerCallback();
 

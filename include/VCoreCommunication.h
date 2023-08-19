@@ -1,5 +1,5 @@
 #include "uart.h"
-#include "AVCLanDrvRxTx.h"
+#include "Driver.h"
 
 class VCoreCommunication {
 	static constexpr size_t uartReceiveBufSize = 128;
@@ -7,7 +7,7 @@ class VCoreCommunication {
 	static uint8_t* uartReceiveByte;
 
 public:
-	static void onMessageReceived(AVCLanMsg message);
+	static void onMessageReceived(MessageRaw message);
 
 	static void startUartReceive();
 

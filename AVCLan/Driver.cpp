@@ -1,63 +1,62 @@
-#include "AVCLanDrvRxTx.h"
-
+#include <Driver.h>
 #include <VCoreCommunication.h>
 #include <functional>
 #include "diag/trace.h"
 
-AVCLanDrvRxTx* AVCLanDrvRxTx::instance;
+Driver* Driver::instance;
 
-AVCLanDrvRxTx::AVCLanDrvRxTx(p_timer timer)
-: AVCLanDrvBase(timer),
-  AVCLanTx(timer),
-  AVCLanRx(timer)
+Driver::Driver(p_timer timer)
+: DriverBase(timer),
+  DriverTx(timer),
+  DriverRx(timer)
 {
-	AVCLanDrvRxTx::instance = this;
+	Driver::instance = this;
 }
 
-AVCLanDrvRxTx::~AVCLanDrvRxTx() {
+Driver::~Driver() {
 }
 
-void AVCLanDrvRxTx::onTimerCallback() {
+void Driver::onTimerCallback() {
 	if(operatingMode == IDLE) {
 		startReceive();
-		AVCLanRx::onTimerCallback();
+		DriverRx::onTimerCallback();
 	} else if(operatingMode == RECEIVE) {
-		AVCLanRx::onTimerCallback();
+		DriverRx::onTimerCallback();
 	} else if(operatingMode == TRANSMIT) {
-		AVCLanTx::onTimerCallback();
+		DriverTx::onTimerCallback();
 	}
 
 	timer.clearInterrupt();
 }
 
-void AVCLanDrvRxTx::sendMessage(AVCLanMsg message) {
-	AVCLanTx::queueMessage(message);
+void Driver::sendMessage(MessageRaw message) {
+	DriverTx::queueMessage(message);
 	if( operatingMode == IDLE ) {
 		startTransmit();
 	}
 }
 
-void AVCLanDrvRxTx::endReceive() {
+void Driver::endReceive() {
 	startIdle();
 }
-void AVCLanDrvRxTx::endTransmit() {
+void Driver::endTransmit() {
 	startIdle();
 }
 
-void AVCLanDrvRxTx::startTransmit() {
+void Driver::startTransmit() {
 	operatingMode = TRANSMIT;
 	timer.setCaptureInterruptEnabled(false);
 	timer.setTimerInterruptEnabled(true);
-	AVCLanTx::startTransmit();
+	DriverTx::startTransmit();
 }
-void AVCLanDrvRxTx::startReceive() {
+void Driver::startReceive() {
 	operatingMode = RECEIVE;
 	timer.setCaptureInterruptEnabled(true);
 	timer.setTimerInterruptEnabled(true);
 }
 
-void AVCLanDrvRxTx::startIdle() {
-	if(AVCLanTx::isMessageWaiting()) {
+void Driver::startIdle() {
+	if(DriverTx::isMessageWaiting()) {
 		startTransmit();
 	} else {
 		operatingMode = IDLE;
@@ -66,7 +65,7 @@ void AVCLanDrvRxTx::startIdle() {
 	}
 }
 
-void AVCLanDrvRxTx::messageReceived(AVCLanMsg message) {
+void Driver::messageReceived(MessageRaw message) {
 /*
 	char messageStr[128];
 	message.toString(messageStr);
@@ -81,6 +80,6 @@ void AVCLanDrvRxTx::messageReceived(AVCLanMsg message) {
 
 extern "C" {
 void TIMER2_IRQHandler(void) {
-	AVCLanDrvRxTx::instance->onTimerCallback();
+	Driver::instance->onTimerCallback();
 }
 }

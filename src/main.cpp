@@ -1,4 +1,4 @@
-#include <AVCLanDrvRxTx.h>
+#include <Driver.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <VCoreCommunication.h>
@@ -30,7 +30,7 @@ main (int argc, char* argv[])
 	power.turn_on(power::AudioAmp);
 
 	p_timer timer = p_timer(2);
-	AVCLanDrvRxTx avcLan(timer);
+	Driver avcLan(timer);
 
 	VCoreCommunication::uartVCore.receiveComplete = &VCoreCommunication::uartReceiveComplete;
 	VCoreCommunication::startUartReceive();

@@ -1,5 +1,5 @@
-#ifndef AVCLANTX_H_
-#define AVCLANTX_H_
+#ifndef DRIVERTX_H_
+#define DRIVERTX_H_
 
 #include "cmsis_device.h"
 extern "C" {
@@ -11,16 +11,16 @@ extern "C" {
 #include "uart.h"
 #include "util.h"
 
-#include "AVCLanDrv.h"
-#include "AVCLanMsg.h"
+#include "DriverBase.h"
+#include <MessageRaw.h>
 
 #include <vector>
 
-class AVCLanTx : public virtual AVCLanDrvBase {
+class DriverTx : public virtual DriverBase {
 	private:
 		typedef uint32_t Time;
 
-		typedef void (AVCLanTx::*State)();
+		typedef void (DriverTx::*State)();
 		State state;
 
 		void state_Idle();
@@ -32,7 +32,7 @@ class AVCLanTx : public virtual AVCLanDrvBase {
 
 		// ------------------------
 
-		std::queue<AVCLanMsg> sendQueue;
+		std::queue<MessageRaw> sendQueue;
 		uint32_t sendLengthBits;
 		uint32_t sendBitPos;
 		Time startTime;
@@ -46,12 +46,12 @@ class AVCLanTx : public virtual AVCLanDrvBase {
 		virtual void endTransmit() {};
 
 	public:
-		AVCLanMsg::AckValue ackResult;
+		AckValue ackResult;
 
-		AVCLanTx(p_timer);
-		virtual ~AVCLanTx() {};
+		DriverTx(p_timer);
+		virtual ~DriverTx() {};
 
-		void queueMessage(AVCLanMsg);
+		void queueMessage(MessageRaw);
 
 		bool isMessageWaiting();
 

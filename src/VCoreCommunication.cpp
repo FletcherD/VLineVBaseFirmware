@@ -7,12 +7,12 @@ uart VCoreCommunication::uartVCore(0, 921600);
 uint8_t* VCoreCommunication::uartReceiveByte = uartReceiveBuf;
 uint8_t VCoreCommunication::uartReceiveBuf[uartReceiveBufSize];
 
-void VCoreCommunication::onMessageReceived(AVCLanMsg message) {
+void VCoreCommunication::onMessageReceived(MessageRaw message) {
 	static uint32_t totalMsgs = 0;
 
 	static constexpr size_t headerLen = 2;
 	static constexpr uint8_t header = 0xff;
-	static constexpr size_t messageLen = headerLen + AVCLanMsg::MaxMessageLenBytes;
+	static constexpr size_t messageLen = headerLen + MessageRaw::MaxMessageLenBytes;
 
 	uart::SendData uartSendData;
 	uartSendData.size = messageLen;
@@ -20,7 +20,7 @@ void VCoreCommunication::onMessageReceived(AVCLanMsg message) {
 	for(size_t i = 0; i < headerLen; i++) {
 		uartSendData.data[i] = header;
 	}
-	for(uint8_t i = 0; i != AVCLanMsg::MaxMessageLenBytes; i++) {
+	for(uint8_t i = 0; i != MessageRaw::MaxMessageLenBytes; i++) {
 		size_t j = i+headerLen;
 		uartSendData.data[j] = message.messageBuf[i];
 	}
@@ -46,12 +46,12 @@ void VCoreCommunication::uartReceiveComplete() {
 			(*(uartReceiveByte-1) == header && *(uartReceiveByte-2) == header)) {
 		messageStartPos = uartReceiveByte;
 	}
-	if(uartReceiveByte - messageStartPos == AVCLanMsg::MaxMessageLenBytes) {
-		AVCLanMsg thisMessage(messageStartPos);
+	if(uartReceiveByte - messageStartPos == MessageRaw::MaxMessageLenBytes) {
+		MessageRaw thisMessage(messageStartPos);
 
 		if(thisMessage.isValid()) {
 			//trace_printf("Sending message: %s\n", messageStr);
-			AVCLanDrvRxTx::instance->sendMessage(thisMessage);
+			Driver::instance->sendMessage(thisMessage);
 		} else {
 			char messageStr[256];
 			thisMessage.toString(messageStr);

@@ -11,9 +11,9 @@ extern "C" {
 #include "uart.h"
 #include "util.h"
 
-#include "AVCLanMsg.h"
+#include <MessageRaw.h>
 
-class AVCLanDrvBase {
+class DriverBase {
 	protected:
 		p_timer timer;
 
@@ -77,7 +77,7 @@ class AVCLanDrvBase {
 		void setEnabled(bool isOn)	{ gpioPinWrite(AVC_EN_PIN, !isOn); }
 
 	public:
-		AVCLanDrvBase(p_timer);
+		DriverBase(p_timer);
 };
 
 #endif
