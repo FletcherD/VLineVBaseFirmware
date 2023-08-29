@@ -1,4 +1,9 @@
 #include <Driver.h>
+<<<<<<< HEAD
+=======
+#include <Protocol.h>
+
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 #include <stdio.h>
 #include <stdlib.h>
 #include <VCoreCommunication.h>
@@ -30,7 +35,16 @@ main (int argc, char* argv[])
 	power.turn_on(power::AudioAmp);
 
 	p_timer timer = p_timer(2);
+<<<<<<< HEAD
 	Driver avcLan(timer);
+=======
+
+	Driver avcLan(timer);
+	Protocol avcLanProtocol(avcLan);
+
+	Device exampleDevice(0x1D3, {0xB0, 0x43, 0x24, 0x31, 0x25});
+	avcLanProtocol.addDevice(exampleDevice);
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 
 	VCoreCommunication::uartVCore.receiveComplete = &VCoreCommunication::uartReceiveComplete;
 	VCoreCommunication::startUartReceive();
@@ -39,20 +53,24 @@ main (int argc, char* argv[])
 		uint32_t waitUntil = timer.getTicks() + 1000000;
 		while(timer.getTicks() < waitUntil) {
 			while(!avcLan.receiveQueue.empty()) {
-				VCoreCommunication::onMessageReceived(avcLan.receiveQueue.front());
+				MessageRaw messageRaw = avcLan.receiveQueue.front();
+
+				VCoreCommunication::onMessageReceived(messageRaw);
+				avcLanProtocol.onMessageRaw(messageRaw);
+
 				avcLan.receiveQueue.pop();
 			}
 		}
-		trace_printf("Bit Errors: %d - Total Msgs: %d - Longest msg: %d - Mode: %d", avcLan.bitErrorCount, avcLan.totalMsgCount, avcLan.longestMsg, avcLan.operatingMode);
+		trace_printf("Bit Errors: %d - Total Msgs: %d - Mode: %d", avcLan.bitErrorCount, avcLan.totalMsgCount, avcLan.operatingMode);
 		//trace_printf("RXCount: %d", VCoreCommunication::uartVCore.USARTdrv->GetRxCount());
 		//VCoreCommunication::uartVCore.printf("Idle %d\r\n", t++);
 		//uartOut.printf("Idle %d\r\n", t++);
 		//trace_printf("TX Send Bit: %d", avcLan.sendBitPos);
 
-		//AVCLanMsg messageBeep(AVCLanMsg::DIRECT, 0x110, 0x440, 0xf, std::vector<uint8_t>({0x0, 0x5e, 0x29, 0x60, 0x80}) );
+		//MessageRaw messageBeep(UNICAST, 0x110, 0x440, 0xf, {0x0, 0x5e, 0x29, 0x60, 0x80} );
 		//AVCLanMsg messagePing(AVCLanMsg::BROADCAST, 0x110, 0xfff, 0xf, std::vector<uint8_t>({0x12, 0x01, 0x20, 0x69}) );
 		//AVCLanMsg messageGetDevices(AVCLanMsg::BROADCAST, 0x110, 0xfff, 0xf, std::vector<uint8_t>({0x12, 0x01, 0x00}) );
-		//avcLan.sendMessage(messagePing);
+		//avcLan.sendMessage(messageBeep);
 	}
 }
 

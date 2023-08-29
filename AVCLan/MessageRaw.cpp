@@ -65,11 +65,14 @@ MessageRaw::MessageRaw(bool broadcast,
 bool MessageRaw::getBit(uint32_t bitPos) const
 {
 	uint8_t whichByte = (bitPos / 8);
+<<<<<<< HEAD
 	/*
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 	whichByte = MaxMessageLenBytes - whichByte - 1;
 #endif
 */
+=======
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 	uint8_t whichBit  = (bitPos % 8);
 	return messageBuf[whichByte] & (0x80>>whichBit);
 }
@@ -77,6 +80,7 @@ bool MessageRaw::getBit(uint32_t bitPos) const
 void MessageRaw::setBit(uint32_t bitPos, bool value)
 {
 	uint8_t whichByte = (bitPos / 8);
+<<<<<<< HEAD
 	/*
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 	whichByte = MaxMessageLenBytes - whichByte - 1;
@@ -85,6 +89,11 @@ void MessageRaw::setBit(uint32_t bitPos, bool value)
 	uint8_t whichBit  = (bitPos % 8);
 	if(value) {
 		messageBuf[whichByte] |= (0x80>>whichBit);
+=======
+	uint8_t whichBit  = (bitPos % 8);
+	if(value) {
+		messageBuf[whichByte] |=  (0x80>>whichBit);
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 	} else {
 		messageBuf[whichByte] &= ~(0x80>>whichBit);
 	}
@@ -101,6 +110,10 @@ FieldValue MessageRaw::getField(MessageField field) const
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 	value = swapBytes(value);
 #endif
+<<<<<<< HEAD
+=======
+
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 	value = (value >> bitShift) & bitMask;
 	return value;
 }
@@ -112,6 +125,7 @@ void MessageRaw::setField(MessageField field, FieldValue value)
 	FieldValue bitMask = (1UL<<field.LengthBits) - 1;
 	uint8_t bitShift = (lenBytes*8) - field.LengthBits - (field.BitOffset%8);
 
+<<<<<<< HEAD
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 	swapBytes(value);
 #endif
@@ -120,6 +134,16 @@ void MessageRaw::setField(MessageField field, FieldValue value)
 	value = value << bitShift;
 
 	FieldValue* valuePtr = (uint32_t*)(messageBuf+startByte);
+=======
+	bitMask = bitMask << bitShift;
+	value = value << bitShift;
+
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	value = swapBytes(value);
+#endif
+
+	FieldValue* valuePtr = (FieldValue*)(messageBuf+startByte);
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 	*valuePtr &= ~(bitMask);
 	*valuePtr |= (value);
 }
@@ -160,7 +184,11 @@ size_t MessageRaw::toString(char* str) const
 	uint8_t dataLen = getField(MessageRaw::DataLength);
 
 	char* pos = str;
+<<<<<<< HEAD
 	pos += sprintf(pos, "%c %03x %03x %01x %d \t",
+=======
+	pos += sprintf(pos, "%c %03x %03x %01x %d : ",
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 		(getField(MessageRaw::Broadcast)==BROADCAST ? 'B' : '-'),
 		getField(MessageRaw::MasterAddress),
 		getField(MessageRaw::SlaveAddress),
@@ -193,3 +221,8 @@ bool MessageRaw::isValid() const
 	}
 	return true;
 }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 93eff14 (Interim state to allow reading of the code)

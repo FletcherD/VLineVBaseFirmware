@@ -24,6 +24,7 @@ void DriverTx::state_StartBit() {
 }
 
 void DriverTx::state_PeriodOff() {
+<<<<<<< HEAD
 	if (sendBitPos == sendLengthBits) {
 		setTxPinState(true);
 		timer.updateTimer(T_Bit*4);
@@ -31,6 +32,8 @@ void DriverTx::state_PeriodOff() {
 		return;
 	}
 
+=======
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 	setTxPinState(true);
 	bool bit = sendQueue.front().getBit(sendBitPos);
 	Time pulseTime = (T_Bit * sendBitPos) + (bit ? T_Bit_1 : T_Bit_0);
@@ -51,6 +54,13 @@ void DriverTx::state_PeriodOn() {
 	*/
 
 	sendBitPos++;
+
+	if (sendBitPos == sendLengthBits) {
+		// TODO: why often get bit error on RX after sending message?
+		messageDone();
+		return;
+	}
+
 	Time pulseTime = T_Bit * sendBitPos;
 	timer.updateTimerAbsolute(startTime + pulseTime);
 	state = &DriverTx::state_PeriodOff;
@@ -58,8 +68,6 @@ void DriverTx::state_PeriodOn() {
 
 void DriverTx::state_EndPause() {
 
-	// TODO: why often get bit error on RX after sending message?
-	messageDone();
 }
 
 void DriverTx::state_GetAck() {
@@ -104,8 +112,11 @@ void DriverTx::startTransmit() {
 void DriverTx::onTimerCallback() {
 	(this->*state)();
 }
+<<<<<<< HEAD
 
 void DriverTx::setTxPinState(bool isOn)	{
 	// Active low
 	gpioPinWrite(AVC_TX_PIN, !isOn);
 }
+=======
+>>>>>>> 93eff14 (Interim state to allow reading of the code)

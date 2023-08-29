@@ -22,9 +22,8 @@ DriverRx::DriverRx(p_timer timer)
 void DriverRx::onTimerCallback() {
 	InputEvent event;
 	uint32_t eventTime = timer.lpcTimer->CR0;
-	uint32_t rxIn = GPIO_PortRead(AVC_RX_PIN.Portnum);
 	event.time = eventTime - lastEventTime;
-	event.type = (rxIn & (1UL << AVC_RX_PIN.Pinnum)) ? RISING_EDGE : FALLING_EDGE;
+	event.type = getRxPinState() ? RISING_EDGE : FALLING_EDGE;
 	lastEventTime = eventTime;
 
 	uint32_t interruptType = timer.lpcTimer->IR;
@@ -113,11 +112,15 @@ void DriverRx::messageEnd() {
 
 	if(!thisMsg.isValid()) {
 		char messageStr[256];
+		trace_printf("Invalid message received: ", messageStr);
 		char* pos = messageStr;
 		for(size_t i = 0; i < MessageRaw::MaxMessageLenBytes; i++) {
 			pos += sprintf(pos, "%02x ", thisMsg.messageBuf[i]);
+			if(i%32 == 0) {
+				trace_printf("%s", messageStr);
+				pos = messageStr;
+			}
 		}
-		trace_printf("Invalid message received: %s", messageStr);
 		onBitError();
 		return;
 	}

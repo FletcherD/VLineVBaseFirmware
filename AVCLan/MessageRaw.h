@@ -8,7 +8,11 @@
 #include "util.h"
 
 #include <vector>
+<<<<<<< HEAD
 #include <array>
+=======
+#include <map>
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 #include <string>
 
 #ifndef AVCLAN_AVCLANMSG_H_
@@ -17,7 +21,11 @@
 typedef uint32_t FieldValue;
 
 typedef enum {
+<<<<<<< HEAD
     DIRECT    = 1,
+=======
+    UNICAST    = 1,
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
     BROADCAST = 0
 } BroadcastValue;
 typedef enum {
@@ -40,6 +48,7 @@ public:
 			{ return BitOffset == other.BitOffset; }
 	};
 
+<<<<<<< HEAD
 	static constexpr MessageField Broadcast 			= {BitOffset: 0,	LengthBits: 1,	IsAck: false };
 	static constexpr MessageField MasterAddress 		= {BitOffset: 1,	LengthBits: 12,	IsAck: false };
 	static constexpr MessageField MasterAddress_P 	= {BitOffset: 13,	LengthBits: 1,	IsAck: false };
@@ -50,11 +59,27 @@ public:
 	static constexpr MessageField Control_P 			= {BitOffset: 32,	LengthBits: 1,	IsAck: false };
 	static constexpr MessageField Control_A 			= {BitOffset: 33, 	LengthBits: 1,	IsAck: true	};
 	static constexpr MessageField DataLength 			= {BitOffset: 34,	LengthBits: 8,	IsAck: false };
+=======
+	static constexpr MessageField Broadcast 		= {BitOffset: 0,	LengthBits: 1,	IsAck: false };
+	static constexpr MessageField MasterAddress 	= {BitOffset: 1,	LengthBits: 12,	IsAck: false };
+	static constexpr MessageField MasterAddress_P 	= {BitOffset: 13,	LengthBits: 1,	IsAck: false };
+	static constexpr MessageField SlaveAddress	 	= {BitOffset: 14,	LengthBits: 12,	IsAck: false };
+	static constexpr MessageField SlaveAddress_P 	= {BitOffset: 26,	LengthBits: 1,	IsAck: false };
+	static constexpr MessageField SlaveAddress_A 	= {BitOffset: 27,	LengthBits: 1,	IsAck: true };
+	static constexpr MessageField Control 			= {BitOffset: 28,	LengthBits: 4,	IsAck: false };
+	static constexpr MessageField Control_P 		= {BitOffset: 32,	LengthBits: 1,	IsAck: false };
+	static constexpr MessageField Control_A 		= {BitOffset: 33, 	LengthBits: 1,	IsAck: true	};
+	static constexpr MessageField DataLength 		= {BitOffset: 34,	LengthBits: 8,	IsAck: false };
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 	static constexpr MessageField DataLength_P 		= {BitOffset: 42,	LengthBits: 1,	IsAck: false };
 	static constexpr MessageField DataLength_A 		= {BitOffset: 43,	LengthBits: 1,	IsAck: true	};
 	static constexpr uint8_t DataFieldLength = 10;
 	static constexpr MessageField Data(uint8_t N) {
+<<<<<<< HEAD
 		return MessageField( { BitOffset: 44+  (DataFieldLength*N), LengthBits: 8, IsAck: false } );
+=======
+		return MessageField( { BitOffset:	44 + (DataFieldLength*N), LengthBits: 8, IsAck: false } );
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 	}
 	static constexpr MessageField Data_P(uint8_t N) {
 		return MessageField( { BitOffset:	44+8+(DataFieldLength*N), LengthBits: 1, IsAck: false } );
@@ -101,4 +126,8 @@ struct Message {
 	std::vector<DataValue> operands;
 };
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 #endif /* AVCLAN_AVCLANMSG_H_ */

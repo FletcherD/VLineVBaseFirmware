@@ -22,8 +22,8 @@ class DriverBase {
 		// Times in timer ticks
 		const uint32_t T_StartBit	= timer.uS(	170	);
 		const uint32_t T_Bit		= timer.uS(	T_Bit_uS );
-		const uint32_t T_Bit_1		= timer.uS(		T_Bit_uS   / 2 );
-		const uint32_t T_Bit_0		= timer.uS(	4. *T_Bit_uS ) / 5;
+		const uint32_t T_Bit_1		= timer.uS(		T_Bit_uS / 2. );
+		const uint32_t T_Bit_0		= timer.uS(	4.* T_Bit_uS / 5. );
 		const uint32_t T_BitMeasure	= (T_Bit_1 + T_Bit_0) / 2;
 		const uint32_t T_EndWait	= timer.uS(	100	);
 		const uint32_t T_Timeout	= timer.uS( 200 );
@@ -72,9 +72,21 @@ class DriverBase {
 				GpioDir:	GPIO_DIR_OUTPUT
 		};
 
-		void setStandby(bool isOn)	{ gpioPinWrite(AVC_STB_PIN, isOn); }
-		// Active low
-		void setEnabled(bool isOn)	{ gpioPinWrite(AVC_EN_PIN, !isOn); }
+		bool getRxPinState() {
+			return gpioPinRead(AVC_RX_PIN);
+		}
+		void setTxPinState(bool isOn) {
+			// Active low
+			gpioPinWrite(AVC_TX_PIN, !isOn);
+		}
+
+		void setStandby(bool isOn)	{
+			gpioPinWrite(AVC_STB_PIN, isOn);
+		}
+		void setEnabled(bool isOn)	{
+			// Active low
+			gpioPinWrite(AVC_EN_PIN, !isOn);
+		}
 
 	public:
 		DriverBase(p_timer);

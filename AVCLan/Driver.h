@@ -17,9 +17,15 @@ class Driver : public DriverRx, DriverTx
 	void messageReceived(MessageRaw);
 
 	enum AVCLanMode {
+<<<<<<< HEAD
 		RECEIVE,
 		TRANSMIT,
 		IDLE
+=======
+		IDLE,
+		RECEIVE,
+		TRANSMIT,
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 	};
 
 public:

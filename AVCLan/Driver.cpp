@@ -30,6 +30,12 @@ void Driver::onTimerCallback() {
 }
 
 void Driver::sendMessage(MessageRaw message) {
+<<<<<<< HEAD
+=======
+	char messageStr[256];
+	message.toString(messageStr);
+	trace_printf("Sending message: %s", messageStr);
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 	DriverTx::queueMessage(message);
 	if( operatingMode == IDLE ) {
 		startTransmit();

@@ -41,8 +41,6 @@ class DriverTx : public virtual DriverBase {
 
 		void messageDone();
 
-		void setTxPinState(bool isOn);
-
 		virtual void endTransmit() {};
 
 	public:
