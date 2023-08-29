@@ -24,16 +24,6 @@ void DriverTx::state_StartBit() {
 }
 
 void DriverTx::state_PeriodOff() {
-<<<<<<< HEAD
-	if (sendBitPos == sendLengthBits) {
-		setTxPinState(true);
-		timer.updateTimer(T_Bit*4);
-		state = &DriverTx::state_EndPause;
-		return;
-	}
-
-=======
->>>>>>> 93eff14 (Interim state to allow reading of the code)
 	setTxPinState(true);
 	bool bit = sendQueue.front().getBit(sendBitPos);
 	Time pulseTime = (T_Bit * sendBitPos) + (bit ? T_Bit_1 : T_Bit_0);
@@ -112,11 +102,3 @@ void DriverTx::startTransmit() {
 void DriverTx::onTimerCallback() {
 	(this->*state)();
 }
-<<<<<<< HEAD
-
-void DriverTx::setTxPinState(bool isOn)	{
-	// Active low
-	gpioPinWrite(AVC_TX_PIN, !isOn);
-}
-=======
->>>>>>> 93eff14 (Interim state to allow reading of the code)

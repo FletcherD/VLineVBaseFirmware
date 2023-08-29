@@ -20,13 +20,6 @@ bool isMessageForAddress(const Message, Address);
 
 class Protocol {
 private:
-<<<<<<< HEAD
-	Driver driver;
-
-	std::vector<Device> devices;
-public:
-	Protocol(Driver);
-=======
 	Driver& driver;
 
 	std::vector<Device> devices;
@@ -34,7 +27,6 @@ public:
 	Protocol(Driver&);
 
 	void addDevice(Device device);
->>>>>>> 93eff14 (Interim state to allow reading of the code)
 
 	void onMessageRaw(const MessageRaw);
 	void sendMessage(const Message);

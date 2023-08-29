@@ -6,17 +6,6 @@
  */
 #include "Device.h"
 
-<<<<<<< HEAD
-Device::Device(Address address)
-	: address(address)
-{
-	messageHandlerMap[Operations::RegisterDevicesRequest] = &Device::handler_RegisterDevicesRequest;
-}
-
-void
-Device::handler_RegisterDevicesRequest(Message message) {
-
-=======
 Device::Device(Address address, std::vector<LogicalDevice> devices)
 	: address(address),
 	  devices(devices)
@@ -73,5 +62,4 @@ Device::createResponseMessage(Message messageIn)
 	msg.srcDevice = messageIn.dstDevice;
 	msg.dstDevice = messageIn.srcDevice;
 	return msg;
->>>>>>> 93eff14 (Interim state to allow reading of the code)
 }

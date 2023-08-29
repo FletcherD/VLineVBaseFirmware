@@ -10,6 +10,22 @@
 
 #include "MessageRaw.h"
 #include <map>
+<<<<<<< HEAD
+
+class Operations {
+public:
+	static constexpr Opcode RegisterDevicesRequest 	= 0x00;
+	static constexpr Opcode LanInit 				= 0x01;
+	static constexpr Opcode DeviceMapping 			= 0x02;
+	static constexpr Opcode RegisterDevices 		= 0x10;
+	static constexpr Opcode DevicesRequest 			= 0x12;
+	static constexpr Opcode Ping 					= 0x20;
+	static constexpr Opcode Pong 					= 0x30;
+};
+
+class Device {
+public:
+=======
 #include <functional>
 
 class Device {
@@ -27,17 +43,31 @@ public:
 	static constexpr Opcode DisableFunctionRequest	= 0x43;
 	static constexpr Opcode DisableFunctionResponse	= 0x53;
 
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 	Address address;
 	std::vector<LogicalDevice> devices;
 
 	typedef void (Device::*MessageHandler)(Message);
-
+<<<<<<< HEAD
+private:
+=======
 protected:
-
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 	std::map<LogicalDevice, Address> deviceAddressMap;
 	std::map<Opcode, MessageHandler> messageHandlerMap;
 
 public:
+<<<<<<< HEAD
+	Device(Address);
+
+	void onMessage(Message);
+
+	void sendMessage(Message);
+
+	// Message handlers
+
+	void handler_RegisterDevicesRequest(Message);
+=======
 	Device(Address, std::vector<LogicalDevice> devices);
 
 	void onMessage(Message);
@@ -49,6 +79,7 @@ public:
 	void handler_RegisterDevicesRequest(Message);
 	void handler_DeviceMapping(Message);
 	void handler_Ping(Message);
+>>>>>>> 93eff14 (Interim state to allow reading of the code)
 };
 
 #endif /* AVCLANDEVICE_H_ */

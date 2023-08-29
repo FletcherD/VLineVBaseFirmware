@@ -1,9 +1,6 @@
 #include <Driver.h>
-<<<<<<< HEAD
-=======
 #include <Protocol.h>
 
->>>>>>> 93eff14 (Interim state to allow reading of the code)
 #include <stdio.h>
 #include <stdlib.h>
 #include <VCoreCommunication.h>
@@ -35,16 +32,12 @@ main (int argc, char* argv[])
 	power.turn_on(power::AudioAmp);
 
 	p_timer timer = p_timer(2);
-<<<<<<< HEAD
-	Driver avcLan(timer);
-=======
 
 	Driver avcLan(timer);
 	Protocol avcLanProtocol(avcLan);
 
 	Device exampleDevice(0x1D3, {0xB0, 0x43, 0x24, 0x31, 0x25});
 	avcLanProtocol.addDevice(exampleDevice);
->>>>>>> 93eff14 (Interim state to allow reading of the code)
 
 	VCoreCommunication::uartVCore.receiveComplete = &VCoreCommunication::uartReceiveComplete;
 	VCoreCommunication::startUartReceive();
