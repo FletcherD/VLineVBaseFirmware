@@ -6,11 +6,11 @@
  */
 #include "Device.h"
 
-Device::Device(Address address, std::vector<LogicalDevice> devices)
+Device::Device(Address address, std::vector<Function> functions)
 	: address(address),
-	  devices(devices)
+	  functions(functions)
 {
-	messageHandlerMap[ListDevicesRequest] = &Device::handler_RegisterDevicesRequest;
+	messageHandlerMap[ListFunctionsRequest] = &Device::handler_ListFunctionsRequest;
 	messageHandlerMap[PingRequest] = &Device::handler_Ping;
 }
 
@@ -24,11 +24,11 @@ Device::onMessage(Message messageIn)
 }
 
 void
-Device::handler_RegisterDevicesRequest(Message messageIn)
+Device::handler_ListFunctionsRequest(Message messageIn)
 {
 	Message responseMsg = createResponseMessage(messageIn);
-	responseMsg.opcode = ListDevicesResponse;
-	responseMsg.operands = devices;
+	responseMsg.opcode = ListFunctionsResponse;
+	responseMsg.operands = functions;
 	std::invoke(sendMessageCallback, responseMsg);
 }
 
@@ -42,12 +42,12 @@ Device::handler_Ping(Message messageIn)
 }
 
 void
-Device::handler_DeviceMapping(Message messageIn)
+Device::handler_FunctionMapping(Message messageIn)
 {
 	for(size_t i = 0; i < messageIn.operands.size(); i+=2) {
-		LogicalDevice logicalDev = messageIn.operands[i+1] & 0xF;
+		Function logicalDev = messageIn.operands[i+1] & 0xF;
 		Address networkDev = messageIn.operands[i] << 4 | messageIn.operands[i+1] >> 4;
-		deviceAddressMap[logicalDev] = networkDev;
+		functionAddressMap[logicalDev] = networkDev;
 	}
 }
 

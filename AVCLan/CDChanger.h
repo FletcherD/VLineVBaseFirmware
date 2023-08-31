@@ -13,7 +13,7 @@
 class CDChanger : public Device {
 public:
 	static constexpr Address address = 0x1D3;
-	const std::vector<LogicalDevice> devices = {0xB0, 0x43, 0x24, 0x31, 0x25};
+	const std::vector<Function> devices = {0xB0, 0x43, 0x24, 0x31, 0x25};
 
 	static constexpr Opcode CdInserted 			= 0x50;
 	static constexpr Opcode CdRemoved 			= 0x51;

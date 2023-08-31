@@ -13,10 +13,20 @@
 #include <functional>
 
 class Device {
+	/*
+	 * Implements a AVC-LAN device.
+	 * When a message is received, it will be sent to this device
+	 * if the slave address of the message matches the device address.
+	 * The device can have handlers for various message opcodes.
+	 * This is the base class; it implements several AVC-LAN functions
+	 * that all devices are required to implement,
+	 * such as Ping and ListFunctionsRequest.
+	 * Devices derived from this will implement those messages automatically.
+	 */
 public:
 	// TODO: 0x00 means master, 0x10 means slave. Rename?
-	static constexpr Opcode ListDevicesRequest 		= 0x00;
-	static constexpr Opcode ListDevicesResponse 	= 0x10;
+	static constexpr Opcode ListFunctionsRequest 	= 0x00;
+	static constexpr Opcode ListFunctionsResponse 	= 0x10;
 	static constexpr Opcode RestartLan 				= 0x01;
 	static constexpr Opcode DeviceMappingResponse 	= 0x02;
 	static constexpr Opcode DeviceMappingRequest 	= 0x12;
@@ -28,17 +38,17 @@ public:
 	static constexpr Opcode DisableFunctionResponse	= 0x53;
 
 	Address address;
-	std::vector<LogicalDevice> devices;
+	std::vector<Function> functions;
 
 	typedef void (Device::*MessageHandler)(Message);
 
 protected:
 
-	std::map<LogicalDevice, Address> deviceAddressMap;
+	std::map<Function, Address> functionAddressMap;
 	std::map<Opcode, MessageHandler> messageHandlerMap;
 
 public:
-	Device(Address, std::vector<LogicalDevice> devices);
+	Device(Address, std::vector<Function> functions);
 
 	void onMessage(Message);
 	std::function<void(Message)> sendMessageCallback;
@@ -46,8 +56,8 @@ public:
 
 	// Message handlers -------------------
 
-	void handler_RegisterDevicesRequest(Message);
-	void handler_DeviceMapping(Message);
+	void handler_ListFunctionsRequest(Message);
+	void handler_FunctionMapping(Message);
 	void handler_Ping(Message);
 };
 

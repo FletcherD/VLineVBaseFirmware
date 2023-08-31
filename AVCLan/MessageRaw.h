@@ -27,7 +27,7 @@ typedef enum {
 typedef uint8_t ControlValue;
 typedef uint8_t DataValue;
 typedef uint8_t Opcode;
-typedef uint8_t LogicalDevice;
+typedef uint8_t Function;
 typedef uint16_t Address;
 
 class MessageRaw {
@@ -107,8 +107,8 @@ struct Message {
 	Address masterAddress;
 	Address slaveAddress;
 	ControlValue control;
-	LogicalDevice srcDevice;
-	LogicalDevice dstDevice;
+	Function srcDevice;
+	Function dstDevice;
 	DataValue opcode;
 	std::vector<DataValue> operands;
 };
