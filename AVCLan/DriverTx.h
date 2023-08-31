@@ -20,6 +20,12 @@ class DriverTx : public virtual DriverBase {
 	private:
 		typedef uint32_t Time;
 
+		/* The driver is implemented using a simple state machine.
+		 * Each state is a function, and the current state is stored in a function pointer.
+		 * When the timer tells us a certain amount of time has passed,
+		 * we set the output pin appropriately and move to the next state.
+		 */
+
 		typedef void (DriverTx::*State)();
 		State state;
 

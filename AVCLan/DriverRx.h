@@ -27,6 +27,14 @@ class DriverRx : public virtual DriverBase {
 		};
 		Time lastEventTime;
 
+		/* The driver is implemented using a simple state machine.
+		 * Each state is a function, and the current state is stored in a function pointer.
+		 * When a transition on the line is detected, the current state is called
+		 * with an Event object containing data about the transition.
+		 * Based on the time since the last transition, and the current line level,
+		 * We decide whether to receive a bit, timeout the message, etc.
+		 */
+
 		// AVC-LAN RX state machine
 		typedef void (DriverRx::*State)(InputEvent);
 		State state;
