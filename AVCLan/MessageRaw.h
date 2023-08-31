@@ -31,7 +31,20 @@ typedef uint8_t LogicalDevice;
 typedef uint16_t Address;
 
 class MessageRaw {
+	/*
+	 * This is a raw AVC-LAN message.
+	 * The message is stored as a raw buffer of bits.
+	 * This is needed for speed purposes when sending or receiving;
+	 * we have a very strict time budget when Rx or Tx is in progress.
+	 * Fields in the message can be get or set
+	 * using the getField() or setField() methods.
+	 */
 public:
+
+	static constexpr uint8_t MaxMessageLenBytes = 64;
+	uint8_t messageBuf[MaxMessageLenBytes];
+
+	// Info about Message Fields
 	struct MessageField {
 		uint8_t 	BitOffset;
 		uint8_t 	LengthBits;
@@ -63,8 +76,7 @@ public:
 		return MessageField( { BitOffset:	44+9+(DataFieldLength*N), LengthBits: 1, IsAck: true } );
 	}
 
-	static constexpr uint8_t MaxMessageLenBytes = 64;
-	uint8_t messageBuf[MaxMessageLenBytes];
+	// ---------------------------
 
 	MessageRaw();
 	MessageRaw(const MessageRaw&);

@@ -8,6 +8,15 @@
 
 class Driver : public DriverRx, DriverTx
 {
+	/* This Driver class derives from both the DriverRX and DriverTX class,
+	 * and coordinates both. When the driver is in the IDLE state,
+	 * we are free to start transmitting a message.
+	 * If a transition on the RX line is detected, we go into the RECEIVE state
+	 * until the message is complete.
+	 * If we request to send a message while the driver is not IDLE,
+	 * it goes into a queue until we're ready to send it.
+	 */
+
 	void startTransmit();
 	void endTransmit();
 	void startReceive();

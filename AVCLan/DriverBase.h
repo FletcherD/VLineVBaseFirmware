@@ -14,6 +14,11 @@ extern "C" {
 #include <MessageRaw.h>
 
 class DriverBase {
+	/*
+	 * The DriverBase class contains things used by both Rx and Tx,
+	 * such as the timing information of bits,
+	 * and the GPIO pins used for RX and TX.
+	 */
 	protected:
 		p_timer timer;
 
