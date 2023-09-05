@@ -3,20 +3,20 @@
 #include "diag/trace.h"
 
 DriverRx::DriverRx(p_timer timer)
-	: DriverBase(timer),
-	  receiveBitPos(0)
+	: DriverBase(timer)
 {
+	resetBuffer();
 	state = &DriverRx::state_Idle;
 
-	pinConfigure(AVC_RX_PIN);
-	pinConfigure(AVC_STB_PIN);
-	pinConfigure(AVC_EN_PIN);
 	setEnabled(true);
 	setStandby(false);
+	pinConfigure(AVC_EN_PIN);
+	pinConfigure(AVC_RX_PIN);
+	pinConfigure(AVC_STB_PIN);
 
 	lastEventTime = timer.getTicks();
 	timer.setupCaptureInterrupt();
-	timer.setupTimerInterrupt(T_Timeout);
+	//timer.setupTimerInterrupt(T_Timeout);
 }
 
 void DriverRx::onTimerCallback() {
@@ -26,31 +26,34 @@ void DriverRx::onTimerCallback() {
 	event.type = getRxPinState() ? RISING_EDGE : FALLING_EDGE;
 	lastEventTime = eventTime;
 
+	/*
 	uint32_t interruptType = timer.lpcTimer->IR;
-	if((interruptType & 1UL) || event.time > T_Timeout)
+	if(event.time > T_Timeout)
 	{
+		trace_printf("Timeout %d %d", event.time, event.type);
 		state = &DriverRx::state_Idle;
 		resetBuffer();
-		endReceive();
 	}
+	*/
 
 	(this->*state)(event);
 
-	timer.updateTimer(T_Timeout);
+	//timer.updateTimer(T_Timeout);
 }
 
 void DriverRx::state_Idle(InputEvent e) {
 	if(e.type == FALLING_EDGE) {
+		//resetBuffer();
 		state = &DriverRx::state_StartBit;
 	}
 }
 void DriverRx::state_StartBit(InputEvent e) {
 	if(e.type == RISING_EDGE) {
-		if(e.time < (T_StartBit / 2)) {
+		if(e.time < (T_StartBit / 2) || e.time > (T_StartBit * 2)) {
+			// Not really a start bit
 			state = &DriverRx::state_Idle;
 			return;
 		}
-		resetBuffer();
 		state = &DriverRx::state_WaitForBit;
 	}
 }
@@ -76,46 +79,44 @@ void DriverRx::state_MeasureBit(InputEvent e) {
 void DriverRx::resetBuffer() {
 	receiveBitPos = 0;
 	msgDataLength = 0;
-	for(size_t i = 0; i != MessageRaw::MaxMessageLenBytes; i++)
-		thisMsg.messageBuf[i] = 0;
+	thisMsg.reset(new MessageRaw);
 }
 
 void DriverRx::receiveBit(bool bitVal) {
-	thisMsg.setBit(receiveBitPos, bitVal);
+	thisMsg->setBit(receiveBitPos, bitVal);
 
 	/* Because we have a very strict time budget,
 	 * we calculate the expected message length on the fly
 	 * so we know when we're done with minimal overhead
 	 */
-	if(receiveBitPos >= MessageRaw::DataLength.BitOffset)
+	int32_t dataLenBitPos = ((int32_t)receiveBitPos - MessageRaw::DataLength.BitOffset);
+	receiveBitPos++;
+	if(dataLenBitPos >= 0)
 	{
-		uint8_t dataLenBitPos = (receiveBitPos - MessageRaw::DataLength.BitOffset);
 		if(dataLenBitPos < MessageRaw::DataLength.LengthBits) {
-			msgDataLength |= (bitVal << (MessageRaw::DataLength.LengthBits - dataLenBitPos - 1));
+			if(bitVal) {
+				msgDataLength |= (0x80>>dataLenBitPos);
+			}
 		} else {
-			size_t thisMessageLength = MessageRaw::Data(0).BitOffset + (MessageRaw::DataFieldLength*msgDataLength);
+			uint32_t thisMessageLength = MessageRaw::Data(0).BitOffset + (MessageRaw::DataFieldLength*msgDataLength);
 
-			if((receiveBitPos+1) == thisMessageLength) {
+			if(receiveBitPos == thisMessageLength) {
 				// Message is done
-				state = &DriverRx::state_Idle;
 				messageEnd();
 			}
 		}
 	}
-
-	receiveBitPos++;
 }
 
 void DriverRx::messageEnd() {
-	if (receiveBitPos == 0)
-		return;
 
-	if(!thisMsg.isValid()) {
+	/*
+	if(!thisMsg->isValid()) {
 		char messageStr[256];
 		trace_printf("Invalid message received: ", messageStr);
 		char* pos = messageStr;
 		for(size_t i = 0; i < MessageRaw::MaxMessageLenBytes; i++) {
-			pos += sprintf(pos, "%02x ", thisMsg.messageBuf[i]);
+			pos += sprintf(pos, "%02x ", thisMsg->messageBuf[i]);
 			if(i%32 == 0) {
 				trace_printf("%s", messageStr);
 				pos = messageStr;
@@ -124,6 +125,7 @@ void DriverRx::messageEnd() {
 		onBitError();
 		return;
 	}
+	*/
 
 	longestMsg = (receiveBitPos>longestMsg ? receiveBitPos : longestMsg);
 
@@ -131,12 +133,15 @@ void DriverRx::messageEnd() {
 	//timer.setIrqEnabled(false);
 	messageReceived(thisMsg);
 	//timer.setIrqEnabled(true);
+
+	state = &DriverRx::state_Idle;
 	resetBuffer();
 	endReceive();
 }
 
 void DriverRx::onBitError() {
 	bitErrorCount++;
+
 	state = &DriverRx::state_Idle;
 	resetBuffer();
 	endReceive();

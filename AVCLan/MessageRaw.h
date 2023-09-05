@@ -10,6 +10,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <memory>
 
 #ifndef AVCLAN_AVCLANMSG_H_
 #define AVCLAN_AVCLANMSG_H_
@@ -46,7 +47,7 @@ public:
 
 	// Info about Message Fields
 	struct MessageField {
-		uint8_t 	BitOffset;
+		uint32_t 	BitOffset;
 		uint8_t 	LengthBits;
 		bool		IsAck;
 		inline bool operator==(const MessageField& other) const
@@ -82,10 +83,10 @@ public:
 	MessageRaw(const MessageRaw&);
 	MessageRaw(const uint8_t*);
 	MessageRaw(bool broadcast,
-			uint16_t masterAddress,
-			uint16_t slaveAddress,
-			uint8_t control,
-			std::vector<uint8_t> data);
+			Address masterAddress,
+			Address slaveAddress,
+			ControlValue control,
+			std::vector<DataValue> data);
 
 	bool getBit(uint32_t bitPos) const;
 	void setBit(uint32_t bitPos, bool value);
@@ -93,7 +94,7 @@ public:
 	FieldValue getField(MessageField field) const;
 	void setField(MessageField field, FieldValue value);
 
-	static bool isAckBit(uint8_t bitPos);
+	static bool isAckBit(uint32_t bitPos);
 
 	static bool	calculateParity(FieldValue data);
 
@@ -102,15 +103,35 @@ public:
 	size_t toString(char*) const;
 };
 
+typedef std::shared_ptr<MessageRaw> MessageRawPtr;
+
 struct Message {
 	BroadcastValue broadcast;
 	Address masterAddress;
 	Address slaveAddress;
 	ControlValue control;
-	Function srcDevice;
-	Function dstDevice;
+	Function srcFunction;
+	Function dstFunction;
 	DataValue opcode;
 	std::vector<DataValue> operands;
+
+	size_t toString(char* str) const
+	{
+		char* pos = str;
+		pos += sprintf(pos, "%c %03x %03x %01x %d : %02x %02x %02x ",
+			(broadcast==BROADCAST ? 'B' : '-'),
+			masterAddress,
+			slaveAddress,
+			control,
+			operands.size()+3,
+			srcFunction,
+			dstFunction,
+			opcode );
+		for(auto it = operands.cbegin(); it != operands.cend(); it++) {
+			pos += sprintf(pos, "%02x ", *it);
+		}
+		return (pos-str);
+	}
 };
 
 #endif /* AVCLAN_AVCLANMSG_H_ */

@@ -47,14 +47,14 @@ void VCoreCommunication::uartReceiveComplete() {
 		messageStartPos = uartReceiveByte;
 	}
 	if(uartReceiveByte - messageStartPos == MessageRaw::MaxMessageLenBytes) {
-		MessageRaw thisMessage(messageStartPos);
+		MessageRawPtr thisMessage(new MessageRaw(messageStartPos));
 
-		if(thisMessage.isValid()) {
+		if(thisMessage->isValid()) {
 			//trace_printf("Sending message: %s\n", messageStr);
 			Driver::instance->sendMessage(thisMessage);
 		} else {
 			char messageStr[256];
-			thisMessage.toString(messageStr);
+			thisMessage->toString(messageStr);
 			trace_printf("Error! Want to send invalid message: %s\n", messageStr);
 		}
 

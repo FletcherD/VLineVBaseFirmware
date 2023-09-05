@@ -19,6 +19,9 @@ class DriverBase {
 	 * such as the timing information of bits,
 	 * and the GPIO pins used for RX and TX.
 	 */
+	public:
+		typedef uint32_t Time;
+
 	protected:
 		p_timer timer;
 
@@ -30,8 +33,8 @@ class DriverBase {
 		const uint32_t T_Bit_1		= timer.uS(		T_Bit_uS / 2. );
 		const uint32_t T_Bit_0		= timer.uS(	4.* T_Bit_uS / 5. );
 		const uint32_t T_BitMeasure	= (T_Bit_1 + T_Bit_0) / 2;
-		const uint32_t T_EndWait	= timer.uS(	100	);
-		const uint32_t T_Timeout	= timer.uS( 200 );
+		const uint32_t T_TxWait		= timer.uS(	100	);
+		const uint32_t T_Timeout	= timer.uS( 2000 );
 
 		// ------------------------
 

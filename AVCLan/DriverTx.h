@@ -18,8 +18,6 @@ extern "C" {
 
 class DriverTx : public virtual DriverBase {
 	private:
-		typedef uint32_t Time;
-
 		/* The driver is implemented using a simple state machine.
 		 * Each state is a function, and the current state is stored in a function pointer.
 		 * When the timer tells us a certain amount of time has passed,
@@ -38,7 +36,8 @@ class DriverTx : public virtual DriverBase {
 
 		// ------------------------
 
-		std::queue<MessageRaw> sendQueue;
+		std::queue<MessageRawPtr> sendQueue;
+		MessageRawPtr curMessage;
 		uint32_t sendLengthBits;
 		uint32_t sendBitPos;
 		Time startTime;
@@ -55,10 +54,11 @@ class DriverTx : public virtual DriverBase {
 		DriverTx(p_timer);
 		virtual ~DriverTx() {};
 
-		void queueMessage(MessageRaw);
+		void queueMessage(MessageRawPtr);
 
 		bool isMessageWaiting();
 
+		void prepareTransmit();
 		void startTransmit();
 
 		void onTimerCallback();

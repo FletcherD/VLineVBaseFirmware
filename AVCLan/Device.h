@@ -28,8 +28,8 @@ public:
 	static constexpr Opcode ListFunctionsRequest 	= 0x00;
 	static constexpr Opcode ListFunctionsResponse 	= 0x10;
 	static constexpr Opcode RestartLan 				= 0x01;
-	static constexpr Opcode DeviceMappingResponse 	= 0x02;
-	static constexpr Opcode DeviceMappingRequest 	= 0x12;
+	static constexpr Opcode FunctionMappingResponse	= 0x02;
+	static constexpr Opcode FunctionMappingRequest 	= 0x12;
 	static constexpr Opcode PingRequest 			= 0x20;
 	static constexpr Opcode PingResponse 			= 0x30;
 	static constexpr Opcode EnableFunctionRequest	= 0x42;
@@ -39,6 +39,7 @@ public:
 
 	Address address;
 	std::vector<Function> functions;
+	std::vector<Function> functionsRequested;
 
 	typedef void (Device::*MessageHandler)(Message);
 
@@ -57,7 +58,7 @@ public:
 	// Message handlers -------------------
 
 	void handler_ListFunctionsRequest(Message);
-	void handler_FunctionMapping(Message);
+	void handler_FunctionMappingResponse(Message);
 	void handler_Ping(Message);
 };
 

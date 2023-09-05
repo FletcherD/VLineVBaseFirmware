@@ -7,8 +7,8 @@ Driver* Driver::instance;
 
 Driver::Driver(p_timer timer)
 : DriverBase(timer),
-  DriverTx(timer),
-  DriverRx(timer)
+  DriverRx(timer),
+  DriverTx(timer)
 {
 	Driver::instance = this;
 }
@@ -29,46 +29,53 @@ void Driver::onTimerCallback() {
 	timer.clearInterrupt();
 }
 
-void Driver::sendMessage(MessageRaw message) {
-	char messageStr[256];
-	message.toString(messageStr);
-	trace_printf("Sending message: %s", messageStr);
+void Driver::sendMessage(MessageRawPtr message) {
 	DriverTx::queueMessage(message);
-	if( operatingMode == IDLE ) {
-		startTransmit();
-	}
-}
-
-void Driver::endReceive() {
-	startIdle();
-}
-void Driver::endTransmit() {
-	startIdle();
 }
 
 void Driver::startTransmit() {
-	operatingMode = TRANSMIT;
+	// Do the time consuming stuff first;
+	// There's a chance a message will start to come in while we prepare,
+	// and then we have to wait until it's done before we start
+	DriverTx::prepareTransmit();
+	while(operatingMode != IDLE && timer.getTicks() < canTxTime ) {}
+
 	timer.setCaptureInterruptEnabled(false);
 	timer.setTimerInterruptEnabled(true);
+	operatingMode = TRANSMIT;
 	DriverTx::startTransmit();
 }
+
+void Driver::endTransmit() {
+	canTxTime = timer.getTicks() + T_TxWait;
+	startIdle();
+}
+
 void Driver::startReceive() {
-	operatingMode = RECEIVE;
 	timer.setCaptureInterruptEnabled(true);
-	timer.setTimerInterruptEnabled(true);
+	//timer.setTimerInterruptEnabled(true);
+	timer.setTimerInterruptEnabled(false);
+	operatingMode = RECEIVE;
+}
+
+void Driver::endReceive() {
+	canTxTime = timer.getTicks() + T_TxWait;
+	startIdle();
 }
 
 void Driver::startIdle() {
-	if(DriverTx::isMessageWaiting()) {
-		startTransmit();
-	} else {
-		operatingMode = IDLE;
-		timer.setCaptureInterruptEnabled(true);
-		timer.setTimerInterruptEnabled(false);
+	timer.setCaptureInterruptEnabled(true);
+	timer.setTimerInterruptEnabled(false);
+	operatingMode = IDLE;
+}
+
+void Driver::poll() {
+	if(DriverTx::isMessageWaiting() && operatingMode == IDLE) {
+		Driver::startTransmit();
 	}
 }
 
-void Driver::messageReceived(MessageRaw message) {
+void Driver::messageReceived(MessageRawPtr message) {
 /*
 	char messageStr[128];
 	message.toString(messageStr);
@@ -76,9 +83,11 @@ void Driver::messageReceived(MessageRaw message) {
 */
 
 	receiveQueue.push(message);
+	/*
 	while(receiveQueue.size() > 8) {
 		receiveQueue.pop();
 	}
+	*/
 }
 
 extern "C" {

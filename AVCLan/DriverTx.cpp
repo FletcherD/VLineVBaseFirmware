@@ -1,5 +1,7 @@
 #include <DriverTx.h>
 
+#include "diag/trace.h"
+
 DriverTx::DriverTx(p_timer timer)
 	: DriverBase(timer),
 	  state(&DriverTx::state_Idle),
@@ -7,25 +9,25 @@ DriverTx::DriverTx(p_timer timer)
 	  sendLengthBits(0),
 	  ackResult(NAK)
 {
-	pinConfigure(AVC_TX_PIN);
 	setTxPinState(false);
+	pinConfigure(AVC_TX_PIN);
 
-	timer.setupTimerInterrupt(T_Timeout);
+	//timer.setupTimerInterrupt(T_Timeout);
 }
 
 void DriverTx::state_Idle() {
 }
 
 void DriverTx::state_StartBit() {
+	setTxPinState(false);
 	startTime = timer.getTicks() + T_Bit_1;
 	timer.updateTimerAbsolute(startTime);
-	setTxPinState(false);
 	state = &DriverTx::state_PeriodOff;
 }
 
 void DriverTx::state_PeriodOff() {
 	setTxPinState(true);
-	bool bit = sendQueue.front().getBit(sendBitPos);
+	bool bit = curMessage->getBit(sendBitPos);
 	Time pulseTime = (T_Bit * sendBitPos) + (bit ? T_Bit_1 : T_Bit_0);
 	timer.updateTimerAbsolute(startTime + pulseTime);
 	state = &DriverTx::state_PeriodOn;
@@ -73,16 +75,11 @@ void DriverTx::state_GetAck() {
 
 void DriverTx::messageDone() {
 	sendQueue.pop();
-	if(sendQueue.empty()) {
-		setTxPinState(false);
-		state = &DriverTx::state_Idle;
-		endTransmit();
-	} else {
-		startTransmit();
-	}
+	state = &DriverTx::state_Idle;
+	endTransmit();
 }
 
-void DriverTx::queueMessage(MessageRaw message) {
+void DriverTx::queueMessage(MessageRawPtr message) {
 	sendQueue.push(message);
 }
 
@@ -90,12 +87,21 @@ bool DriverTx::isMessageWaiting() {
 	return !(sendQueue.empty());
 }
 
-void DriverTx::startTransmit() {
-	sendLengthBits = sendQueue.front().getMessageLength();
-	sendBitPos = 0;
+void DriverTx::prepareTransmit() {
+	curMessage = sendQueue.front();
 
-	timer.updateTimer(T_StartBit);
+	char messageStr[256];
+	curMessage->toString(messageStr);
+	trace_printf("Sending message: %s", messageStr);
+
+	sendLengthBits = curMessage->getMessageLength();
+	sendBitPos = 0;
+}
+
+void DriverTx::startTransmit() {
 	setTxPinState(true);
+	startTime = timer.getTicks() + T_StartBit;
+	timer.updateTimerAbsolute(startTime);
 	state = &DriverTx::state_StartBit;
 }
 

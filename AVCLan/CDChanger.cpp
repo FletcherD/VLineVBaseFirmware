@@ -8,8 +8,9 @@
 #include "CDChanger.h"
 
 CDChanger::CDChanger()
-	: Device(address, devices)
+	: Device(0x1D3, {0xB0, 0x43, 0x24, 0x31, 0x25})
 {
+	functionsRequested = {0xB0, 0x29, 0x43, 0x24, 0x31, 0x25, 0x42, 0x8c};
 	messageHandlerMap[RequestStatus] 	= (MessageHandler)&CDChanger::handler_RequestStatus;
 	messageHandlerMap[RequestPlayback] 	= (MessageHandler)&CDChanger::handler_RequestPlayback;
 	messageHandlerMap[RequestPlayback2] = (MessageHandler)&CDChanger::handler_RequestPlayback2;

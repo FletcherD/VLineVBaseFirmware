@@ -6,6 +6,8 @@
  */
 #include "Protocol.h"
 
+#include "diag/trace.h"
+
 Protocol::Protocol(Driver& driver)
 	: driver(driver)
 {
@@ -17,6 +19,12 @@ void Protocol::onMessageRaw(MessageRaw messageRaw)
 	Message message = decodeMessage(messageRaw);
 	for(auto deviceIt = devices.begin(); deviceIt != devices.end(); deviceIt++) {
 		if(isMessageForAddress(message, deviceIt->address)) {
+			if(message.slaveAddress == deviceIt->address) {
+				char messageStr[256];
+				messageRaw.toString(messageStr);
+				trace_printf("Handling message: %s", messageStr);
+			}
+
 			deviceIt->onMessage(message);
 		}
 	}
@@ -24,7 +32,7 @@ void Protocol::onMessageRaw(MessageRaw messageRaw)
 
 void Protocol::sendMessage(Message message)
 {
-	MessageRaw messageRaw = encodeMessage(message);
+	MessageRawPtr messageRaw = encodeMessage(message);
 	driver.sendMessage(messageRaw);
 }
 
@@ -43,8 +51,8 @@ Message decodeMessage(const MessageRaw message)
 	r.control 			= message.getField(MessageRaw::Control);
 	uint8_t dataLen 	= message.getField(MessageRaw::DataLength);
 	uint8_t dataPos = (r.broadcast==BROADCAST ? 0 : 1);
-	r.srcDevice			= message.getField(MessageRaw::Data(dataPos++));
-	r.dstDevice			= message.getField(MessageRaw::Data(dataPos++));
+	r.srcFunction			= message.getField(MessageRaw::Data(dataPos++));
+	r.dstFunction			= message.getField(MessageRaw::Data(dataPos++));
 	r.opcode 			= message.getField(MessageRaw::Data(dataPos++));
 	r.operands 			= std::vector<DataValue>();
 	while(dataPos != dataLen) {
@@ -54,25 +62,25 @@ Message decodeMessage(const MessageRaw message)
 }
 
 // TODO:: parity bits
-MessageRaw encodeMessage(const Message message)
+MessageRawPtr encodeMessage(const Message message)
 {
 	std::vector<DataValue> data;
 	if(message.broadcast==UNICAST) {
 		data.push_back(0x00);
 	}
-	data.push_back(message.srcDevice);
-	data.push_back(message.dstDevice);
+	data.push_back(message.srcFunction);
+	data.push_back(message.dstFunction);
 	data.push_back(message.opcode);
 	for(auto opIt = message.operands.cbegin(); opIt != message.operands.cend(); opIt++) {
 		data.push_back(*opIt);
 	}
-	MessageRaw r(
+	MessageRawPtr rPtr(new MessageRaw(
 			message.broadcast,
 			message.masterAddress,
 			message.slaveAddress,
 			message.control,
-			data);
-	return r;
+			data) );
+	return rPtr;
 }
 
 bool isMessageForAddress(const Message message, Address address) {

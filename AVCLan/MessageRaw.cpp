@@ -23,7 +23,7 @@ constexpr MessageRaw::MessageField MessageRaw::DataLength_P;
 constexpr MessageRaw::MessageField MessageRaw::DataLength_A;
 
 MessageRaw::MessageRaw()
-: messageBuf{0}
+	: messageBuf{0}
 {
 }
 
@@ -37,28 +37,28 @@ MessageRaw::MessageRaw(const uint8_t* otherBuf)
 }
 
 MessageRaw::MessageRaw(bool broadcast,
-			uint16_t masterAddress,
-			uint16_t slaveAddress,
-			uint8_t control,
-			std::vector<uint8_t> data)
+			Address masterAddress,
+			Address slaveAddress,
+			ControlValue control,
+			std::vector<DataValue> data)
 : messageBuf{0}
 {
-	setField(MessageRaw::Broadcast, 			broadcast);
-	setField(MessageRaw::MasterAddress, 		masterAddress);
+	setField(MessageRaw::Broadcast, 		broadcast);
+	setField(MessageRaw::MasterAddress, 	masterAddress);
 	setField(MessageRaw::MasterAddress_P, 	calculateParity(masterAddress));
 	setField(MessageRaw::SlaveAddress, 		slaveAddress);
 	setField(MessageRaw::SlaveAddress_P, 	calculateParity(slaveAddress));
 	setField(MessageRaw::SlaveAddress_A, 	AckValue::NAK);
 	setField(MessageRaw::Control, 			control);
-	setField(MessageRaw::Control_P, 			calculateParity(control));
-	setField(MessageRaw::Control_A, 			AckValue::NAK);
+	setField(MessageRaw::Control_P, 		calculateParity(control));
+	setField(MessageRaw::Control_A, 		AckValue::NAK);
 	setField(MessageRaw::DataLength, 		data.size());
 	setField(MessageRaw::DataLength_P, 		calculateParity(data.size()));
 	setField(MessageRaw::DataLength_A, 		AckValue::NAK);
 	for(uint8_t i = 0; i < data.size(); i++) {
 		setField(MessageRaw::Data(i), 		data[i]);
-		setField(MessageRaw::Data_P(i), 		calculateParity(data[i]));
-		setField(MessageRaw::Data_A(i), 		AckValue::NAK);
+		setField(MessageRaw::Data_P(i), 	calculateParity(data[i]));
+		setField(MessageRaw::Data_A(i), 	AckValue::NAK);
 	}
 }
 
@@ -88,6 +88,7 @@ FieldValue MessageRaw::getField(MessageField field) const
 	uint8_t bitShift = (lenBytes*8) - field.LengthBits - (field.BitOffset%8);
 
 	FieldValue value = *(FieldValue*)(messageBuf+startByte);
+
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 	value = swapBytes(value);
 #endif
@@ -132,7 +133,7 @@ bool MessageRaw::calculateParity(FieldValue data)
 	return parity;
 }
 
-bool MessageRaw::isAckBit(uint8_t bitPos)
+bool MessageRaw::isAckBit(uint32_t bitPos)
 {
 	if(bitPos == MessageRaw::SlaveAddress_A.BitOffset)
 		return true;
@@ -178,7 +179,7 @@ bool MessageRaw::isValid() const
 	uint8_t dataLen = getField(DataLength);
 	if(calculateParity(dataLen) != getField(DataLength_P))
 		return false;
-	for(size_t i = 0; i != dataLen; i++) {
+	for(uint8_t i = 0; i != dataLen; i++) {
 		if(calculateParity(getField(Data(i))) != getField(Data_P(i)))
 			return false;
 	}

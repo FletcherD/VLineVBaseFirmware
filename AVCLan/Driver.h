@@ -23,13 +23,15 @@ class Driver : public DriverRx, DriverTx
 	void endReceive();
 	void startIdle();
 
-	void messageReceived(MessageRaw);
+	void messageReceived(MessageRawPtr);
 
 	enum AVCLanMode {
 		IDLE,
 		RECEIVE,
 		TRANSMIT,
 	};
+
+	Time canTxTime;
 
 public:
 	AVCLanMode operatingMode = IDLE;
@@ -38,7 +40,7 @@ public:
 	Driver(p_timer timer);
 	~Driver();
 
-	std::queue<MessageRaw> receiveQueue;
+	std::queue<MessageRawPtr> receiveQueue;
 
 	/* All receive and transmit functions use the on-chip timer peripheral.
 	 * To receive bits, we use the capture function;
@@ -51,7 +53,9 @@ public:
 
 	void onTimerCallback();
 
-	void sendMessage(MessageRaw);
+	void sendMessage(MessageRawPtr);
+
+	void poll();
 };
 
 #endif

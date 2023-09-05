@@ -6,12 +6,19 @@
  */
 #include "Device.h"
 
+#include "diag/trace.h"
+
 Device::Device(Address address, std::vector<Function> functions)
 	: address(address),
 	  functions(functions)
 {
 	messageHandlerMap[ListFunctionsRequest] = &Device::handler_ListFunctionsRequest;
 	messageHandlerMap[PingRequest] = &Device::handler_Ping;
+
+	trace_printf("Creating device with functions: ");
+	for(auto it = functions.cbegin(); it != functions.cend(); it++) {
+		trace_printf("%02x ", *it);
+	}
 }
 
 void
@@ -30,6 +37,12 @@ Device::handler_ListFunctionsRequest(Message messageIn)
 	responseMsg.opcode = ListFunctionsResponse;
 	responseMsg.operands = functions;
 	std::invoke(sendMessageCallback, responseMsg);
+
+	responseMsg = createResponseMessage(messageIn);
+	responseMsg.dstFunction = 0x12;
+	responseMsg.opcode = FunctionMappingRequest;
+	responseMsg.operands = functionsRequested;
+	std::invoke(sendMessageCallback, responseMsg);
 }
 
 void
@@ -42,7 +55,7 @@ Device::handler_Ping(Message messageIn)
 }
 
 void
-Device::handler_FunctionMapping(Message messageIn)
+Device::handler_FunctionMappingResponse(Message messageIn)
 {
 	for(size_t i = 0; i < messageIn.operands.size(); i+=2) {
 		Function logicalDev = messageIn.operands[i+1] & 0xF;
@@ -59,7 +72,7 @@ Device::createResponseMessage(Message messageIn)
 	msg.masterAddress = address;
 	msg.slaveAddress = messageIn.masterAddress;
 	msg.control = 0xF;
-	msg.srcDevice = messageIn.dstDevice;
-	msg.dstDevice = messageIn.srcDevice;
+	msg.srcFunction = messageIn.dstFunction;
+	msg.dstFunction = messageIn.srcFunction;
 	return msg;
 }

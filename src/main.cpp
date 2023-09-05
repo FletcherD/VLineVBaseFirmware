@@ -1,5 +1,6 @@
 #include <Driver.h>
 #include <Protocol.h>
+#include <CDChanger.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,23 +37,28 @@ main (int argc, char* argv[])
 	Driver avcLan(timer);
 	Protocol avcLanProtocol(avcLan);
 
-	Device exampleDevice(0x1D3, {0xB0, 0x43, 0x24, 0x31, 0x25});
+	CDChanger exampleDevice;
 	avcLanProtocol.addDevice(exampleDevice);
 
-	VCoreCommunication::uartVCore.receiveComplete = &VCoreCommunication::uartReceiveComplete;
-	VCoreCommunication::startUartReceive();
+	//VCoreCommunication::uartVCore.receiveComplete = &VCoreCommunication::uartReceiveComplete;
+	//VCoreCommunication::startUartReceive();
+
+	//MessageRaw messageRaw(UNICAST, 0x123, 0x1d3, 0xf, {0x00, 0x12, 0x01, 0x00});
+	//avcLanProtocol.onMessageRaw(messageRaw);
 
 	while(1) {
 		uint32_t waitUntil = timer.getTicks() + 1000000;
 		while(timer.getTicks() < waitUntil) {
 			while(!avcLan.receiveQueue.empty()) {
-				MessageRaw messageRaw = avcLan.receiveQueue.front();
+				MessageRaw& messageRaw = *avcLan.receiveQueue.front();
 
 				VCoreCommunication::onMessageReceived(messageRaw);
 				avcLanProtocol.onMessageRaw(messageRaw);
 
 				avcLan.receiveQueue.pop();
 			}
+
+			avcLan.poll();
 		}
 		trace_printf("Bit Errors: %d - Total Msgs: %d - Mode: %d", avcLan.bitErrorCount, avcLan.totalMsgCount, avcLan.operatingMode);
 		//trace_printf("RXCount: %d", VCoreCommunication::uartVCore.USARTdrv->GetRxCount());

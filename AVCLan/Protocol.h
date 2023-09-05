@@ -14,7 +14,7 @@
 #include <vector>
 
 Message decodeMessage(const MessageRaw);
-MessageRaw encodeMessage(const Message);
+MessageRawPtr encodeMessage(const Message);
 
 bool isMessageForAddress(const Message, Address);
 

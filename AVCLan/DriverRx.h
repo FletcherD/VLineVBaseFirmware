@@ -16,7 +16,6 @@ extern "C" {
 
 class DriverRx : public virtual DriverBase {
 	private:
-		typedef uint32_t Time;
 		enum InputType {
 			RISING_EDGE,
 			FALLING_EDGE
@@ -46,7 +45,7 @@ class DriverRx : public virtual DriverBase {
 
 		// ------------------------
 
-		MessageRaw thisMsg;
+		MessageRawPtr thisMsg;
 		uint32_t receiveBitPos;
 
 		void receiveBit(bool bit);
@@ -56,7 +55,7 @@ class DriverRx : public virtual DriverBase {
 		void onBitError();
 
 		virtual void endReceive() {};
-		virtual void messageReceived(MessageRaw) {};
+		virtual void messageReceived(MessageRawPtr) {};
 
 		// Because we have a very strict time budget,
 		// calculate the length on the fly
@@ -67,7 +66,7 @@ class DriverRx : public virtual DriverBase {
 		uint32_t bitErrorCount = 0;
 		uint32_t totalMsgCount = 0;
 
-		size_t longestMsg = 0;
+		uint32_t longestMsg = 0;
 
 		DriverRx(p_timer);
 		virtual ~DriverRx() {};
