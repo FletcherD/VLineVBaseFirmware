@@ -45,21 +45,26 @@ void DriverRx::state_Idle(InputEvent e) {
 	if(e.type == FALLING_EDGE) {
 		//resetBuffer();
 		state = &DriverRx::state_StartBit;
+	} else {
+		trace_printf("state_Idle %d %d", e.type, e.time);
 	}
 }
 void DriverRx::state_StartBit(InputEvent e) {
 	if(e.type == RISING_EDGE) {
 		if(e.time < (T_StartBit / 2) || e.time > (T_StartBit * 2)) {
 			// Not really a start bit
+			//trace_printf("%d", e.time);
 			state = &DriverRx::state_Idle;
 			return;
 		}
 		state = &DriverRx::state_WaitForBit;
+	} else {
+		trace_printf("state_StartBit %d %d", e.type, e.time);
 	}
 }
 void DriverRx::state_WaitForBit(InputEvent e) {
 	if(e.type != FALLING_EDGE || e.time > T_Bit) {
-		//trace_printf("%d %d", e.time, e.type);
+		trace_printf("state_WaitForBit %d %d", e.type, e.time);
 		onBitError();
 		return;
 	}
@@ -67,7 +72,7 @@ void DriverRx::state_WaitForBit(InputEvent e) {
 }
 void DriverRx::state_MeasureBit(InputEvent e) {
 	if(e.type != RISING_EDGE || e.time > T_Bit) {
-		//trace_printf("%d %d", e.time, e.type);
+		trace_printf("state_MeasureBit %d %d", e.type, e.time);
 		onBitError();
 		return;
 	}

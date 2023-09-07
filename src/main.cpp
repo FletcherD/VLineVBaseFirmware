@@ -60,7 +60,7 @@ main (int argc, char* argv[])
 
 			avcLan.poll();
 		}
-		trace_printf("Bit Errors: %d - Total Msgs: %d - Mode: %d", avcLan.bitErrorCount, avcLan.totalMsgCount, avcLan.operatingMode);
+		//trace_printf("Bit Errors: %d - Total Msgs: %d - Mode: %d", avcLan.bitErrorCount, avcLan.totalMsgCount, avcLan.operatingMode);
 		//trace_printf("RXCount: %d", VCoreCommunication::uartVCore.USARTdrv->GetRxCount());
 		//VCoreCommunication::uartVCore.printf("Idle %d\r\n", t++);
 		//uartOut.printf("Idle %d\r\n", t++);

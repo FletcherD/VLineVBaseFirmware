@@ -11,8 +11,6 @@ DriverTx::DriverTx(p_timer timer)
 {
 	setTxPinState(false);
 	pinConfigure(AVC_TX_PIN);
-
-	//timer.setupTimerInterrupt(T_Timeout);
 }
 
 void DriverTx::state_Idle() {
@@ -48,7 +46,6 @@ void DriverTx::state_PeriodOn() {
 	sendBitPos++;
 
 	if (sendBitPos == sendLengthBits) {
-		// TODO: why often get bit error on RX after sending message?
 		messageDone();
 		return;
 	}
@@ -56,10 +53,6 @@ void DriverTx::state_PeriodOn() {
 	Time pulseTime = T_Bit * sendBitPos;
 	timer.updateTimerAbsolute(startTime + pulseTime);
 	state = &DriverTx::state_PeriodOff;
-}
-
-void DriverTx::state_EndPause() {
-
 }
 
 void DriverTx::state_GetAck() {
@@ -89,11 +82,6 @@ bool DriverTx::isMessageWaiting() {
 
 void DriverTx::prepareTransmit() {
 	curMessage = sendQueue.front();
-
-	char messageStr[256];
-	curMessage->toString(messageStr);
-	trace_printf("Sending message: %s", messageStr);
-
 	sendLengthBits = curMessage->getMessageLength();
 	sendBitPos = 0;
 }

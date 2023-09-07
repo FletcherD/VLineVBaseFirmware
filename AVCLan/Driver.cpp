@@ -3,6 +3,8 @@
 #include <functional>
 #include "diag/trace.h"
 
+#define NO_TX
+
 Driver* Driver::instance;
 
 Driver::Driver(p_timer timer)
@@ -40,10 +42,14 @@ void Driver::startTransmit() {
 	DriverTx::prepareTransmit();
 	while(operatingMode != IDLE && timer.getTicks() < canTxTime ) {}
 
+#ifdef NO_TX
+	DriverTx::messageDone();
+#else
 	timer.setCaptureInterruptEnabled(false);
 	timer.setTimerInterruptEnabled(true);
 	operatingMode = TRANSMIT;
 	DriverTx::startTransmit();
+#endif
 }
 
 void Driver::endTransmit() {
@@ -52,9 +58,6 @@ void Driver::endTransmit() {
 }
 
 void Driver::startReceive() {
-	timer.setCaptureInterruptEnabled(true);
-	//timer.setTimerInterruptEnabled(true);
-	timer.setTimerInterruptEnabled(false);
 	operatingMode = RECEIVE;
 }
 
@@ -76,18 +79,7 @@ void Driver::poll() {
 }
 
 void Driver::messageReceived(MessageRawPtr message) {
-/*
-	char messageStr[128];
-	message.toString(messageStr);
-	trace_printf("%d %s", timer.getTicks(), messageStr);
-*/
-
 	receiveQueue.push(message);
-	/*
-	while(receiveQueue.size() > 8) {
-		receiveQueue.pop();
-	}
-	*/
 }
 
 extern "C" {

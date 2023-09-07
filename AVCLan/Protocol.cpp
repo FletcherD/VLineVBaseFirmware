@@ -19,11 +19,13 @@ void Protocol::onMessageRaw(MessageRaw messageRaw)
 	Message message = decodeMessage(messageRaw);
 	for(auto deviceIt = devices.begin(); deviceIt != devices.end(); deviceIt++) {
 		if(isMessageForAddress(message, deviceIt->address)) {
+			/*
 			if(message.slaveAddress == deviceIt->address) {
 				char messageStr[256];
 				messageRaw.toString(messageStr);
 				trace_printf("Handling message: %s", messageStr);
 			}
+			*/
 
 			deviceIt->onMessage(message);
 		}
@@ -51,8 +53,8 @@ Message decodeMessage(const MessageRaw message)
 	r.control 			= message.getField(MessageRaw::Control);
 	uint8_t dataLen 	= message.getField(MessageRaw::DataLength);
 	uint8_t dataPos = (r.broadcast==BROADCAST ? 0 : 1);
-	r.srcFunction			= message.getField(MessageRaw::Data(dataPos++));
-	r.dstFunction			= message.getField(MessageRaw::Data(dataPos++));
+	r.srcFunction		= message.getField(MessageRaw::Data(dataPos++));
+	r.dstFunction		= message.getField(MessageRaw::Data(dataPos++));
 	r.opcode 			= message.getField(MessageRaw::Data(dataPos++));
 	r.operands 			= std::vector<DataValue>();
 	while(dataPos != dataLen) {

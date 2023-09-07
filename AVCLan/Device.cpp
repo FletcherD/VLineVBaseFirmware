@@ -14,11 +14,6 @@ Device::Device(Address address, std::vector<Function> functions)
 {
 	messageHandlerMap[ListFunctionsRequest] = &Device::handler_ListFunctionsRequest;
 	messageHandlerMap[PingRequest] = &Device::handler_Ping;
-
-	trace_printf("Creating device with functions: ");
-	for(auto it = functions.cbegin(); it != functions.cend(); it++) {
-		trace_printf("%02x ", *it);
-	}
 }
 
 void

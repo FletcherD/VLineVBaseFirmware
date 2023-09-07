@@ -44,6 +44,8 @@ class DriverTx : public virtual DriverBase {
 
 		bool getNextBit();
 
+	//TODO remove
+	public:
 		void messageDone();
 
 		virtual void endTransmit() {};
