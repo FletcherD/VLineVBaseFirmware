@@ -71,7 +71,6 @@ void DriverTx::state_GetAck() {
 
 void DriverTx::messageDone() {
 	state = &DriverTx::state_Idle;
-	sendQueue.pop();
 	endTransmit();
 }
 
@@ -85,6 +84,7 @@ bool DriverTx::isMessageWaiting() {
 
 void DriverTx::prepareTransmit() {
 	curMessage = sendQueue.front();
+	sendQueue.pop();
 	sendLengthBits = curMessage->getMessageLength();
 	sendBitPos = 0;
 }

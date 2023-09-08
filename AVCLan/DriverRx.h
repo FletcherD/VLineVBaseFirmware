@@ -42,6 +42,7 @@ class DriverRx : public virtual DriverBase {
 		void state_StartBit(InputEvent i);
 		void state_WaitForBit(InputEvent i);
 		void state_MeasureBit(InputEvent i);
+		void state_Ack(InputEvent i);
 
 		// ------------------------
 
@@ -61,12 +62,15 @@ class DriverRx : public virtual DriverBase {
 		// calculate the length on the fly
 		// so AVCLanRx knows when it is done
 		uint8_t msgDataLength = 0;
+		Address msgSlaveAddress = 0;
 
 	public:
 		uint32_t bitErrorCount = 0;
 		uint32_t totalMsgCount = 0;
 
 		uint32_t longestMsg = 0;
+
+		bool receiveBitToValue(bool bitVal, MessageRaw::MessageField field, FieldValue* valuePtr);
 
 		DriverRx(p_timer);
 		virtual ~DriverRx() {};
