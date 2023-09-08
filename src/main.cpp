@@ -21,9 +21,6 @@
 int
 main (int argc, char* argv[])
 {
-	uartOut.printf("Hello Arm World!\r\n");
-	uartOut.printf("System clock: %u Hz\r\n", SystemCoreClock);
-
 	power power;
 	power.turn_on(power::Usb5V);
 	power.turn_on(power::VCore3P3V);
@@ -43,33 +40,19 @@ main (int argc, char* argv[])
 	//VCoreCommunication::uartVCore.receiveComplete = &VCoreCommunication::uartReceiveComplete;
 	//VCoreCommunication::startUartReceive();
 
-	//MessageRaw messageRaw(UNICAST, 0x123, 0x1d3, 0xf, {0x00, 0x12, 0x01, 0x00});
-	//avcLanProtocol.onMessageRaw(messageRaw);
-
 	while(1) {
-		uint32_t waitUntil = timer.getTicks() + 1000000;
-		while(timer.getTicks() < waitUntil) {
-			while(!avcLan.receiveQueue.empty()) {
-				MessageRaw& messageRaw = *avcLan.receiveQueue.front();
+		while(!avcLan.receiveQueue.empty()) {
+			MessageRaw& messageRaw = *avcLan.receiveQueue.front();
 
-				VCoreCommunication::onMessageReceived(messageRaw);
-				avcLanProtocol.onMessageRaw(messageRaw);
+			//VCoreCommunication::onMessageReceived(messageRaw);
+			avcLanProtocol.onMessageRaw(messageRaw);
 
-				avcLan.receiveQueue.pop();
-			}
-
-			avcLan.poll();
+			avcLan.receiveQueue.pop();
 		}
-		//trace_printf("Bit Errors: %d - Total Msgs: %d - Mode: %d", avcLan.bitErrorCount, avcLan.totalMsgCount, avcLan.operatingMode);
-		//trace_printf("RXCount: %d", VCoreCommunication::uartVCore.USARTdrv->GetRxCount());
-		//VCoreCommunication::uartVCore.printf("Idle %d\r\n", t++);
-		//uartOut.printf("Idle %d\r\n", t++);
-		//trace_printf("TX Send Bit: %d", avcLan.sendBitPos);
 
-		//MessageRaw messageBeep(UNICAST, 0x110, 0x440, 0xf, {0x0, 0x5e, 0x29, 0x60, 0x80} );
-		//AVCLanMsg messagePing(AVCLanMsg::BROADCAST, 0x110, 0xfff, 0xf, std::vector<uint8_t>({0x12, 0x01, 0x20, 0x69}) );
-		//AVCLanMsg messageGetDevices(AVCLanMsg::BROADCAST, 0x110, 0xfff, 0xf, std::vector<uint8_t>({0x12, 0x01, 0x00}) );
-		//avcLan.sendMessage(messageBeep);
+		avcLan.poll();
+		//}
+		//trace_printf("Bit Errors: %d - Total Msgs: %d - Mode: %d", avcLan.bitErrorCount, avcLan.totalMsgCount, avcLan.operatingMode);
 	}
 }
 

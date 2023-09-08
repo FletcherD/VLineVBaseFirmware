@@ -25,15 +25,15 @@ class Driver : public DriverRx, DriverTx
 
 	void messageReceived(MessageRawPtr);
 
+	Time canTxTime;
+
+public:
+
 	enum AVCLanMode {
 		IDLE,
 		RECEIVE,
 		TRANSMIT,
 	};
-
-	Time canTxTime;
-
-public:
 	AVCLanMode operatingMode = IDLE;
 	static Driver* instance;
 

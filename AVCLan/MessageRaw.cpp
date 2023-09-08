@@ -185,3 +185,21 @@ bool MessageRaw::isValid() const
 	}
 	return true;
 }
+
+size_t Message::toString(char* str) const
+{
+	char* pos = str;
+	pos += sprintf(pos, "%c %03x %03x %01x %d : %02x %02x %02x ",
+		(broadcast==BROADCAST ? 'B' : '-'),
+		masterAddress,
+		slaveAddress,
+		control,
+		operands.size()+3,
+		srcFunction,
+		dstFunction,
+		opcode );
+	for(auto it = operands.cbegin(); it != operands.cend(); it++) {
+		pos += sprintf(pos, "%02x ", *it);
+	}
+	return (pos-str);
+}

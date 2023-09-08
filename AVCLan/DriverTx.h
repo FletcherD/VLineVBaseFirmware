@@ -46,6 +46,7 @@ class DriverTx : public virtual DriverBase {
 
 	//TODO remove
 	public:
+
 		void messageDone();
 
 		virtual void endTransmit() {};

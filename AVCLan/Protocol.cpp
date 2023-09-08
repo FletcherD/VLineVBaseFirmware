@@ -11,7 +11,6 @@
 Protocol::Protocol(Driver& driver)
 	: driver(driver)
 {
-
 }
 
 void Protocol::onMessageRaw(MessageRaw messageRaw)
@@ -19,14 +18,6 @@ void Protocol::onMessageRaw(MessageRaw messageRaw)
 	Message message = decodeMessage(messageRaw);
 	for(auto deviceIt = devices.begin(); deviceIt != devices.end(); deviceIt++) {
 		if(isMessageForAddress(message, deviceIt->address)) {
-			/*
-			if(message.slaveAddress == deviceIt->address) {
-				char messageStr[256];
-				messageRaw.toString(messageStr);
-				trace_printf("Handling message: %s", messageStr);
-			}
-			*/
-
 			deviceIt->onMessage(message);
 		}
 	}
@@ -63,7 +54,6 @@ Message decodeMessage(const MessageRaw message)
 	return r;
 }
 
-// TODO:: parity bits
 MessageRawPtr encodeMessage(const Message message)
 {
 	std::vector<DataValue> data;

@@ -34,7 +34,7 @@ typedef uint16_t Address;
 class MessageRaw {
 	/*
 	 * This is a raw AVC-LAN message.
-	 * The message is stored as a raw buffer of bits.
+	 * The message is stored as a raw buffer of bytes.
 	 * This is needed for speed purposes when sending or receiving;
 	 * we have a very strict time budget when Rx or Tx is in progress.
 	 * Fields in the message can be get or set
@@ -50,8 +50,6 @@ public:
 		uint32_t 	BitOffset;
 		uint8_t 	LengthBits;
 		bool		IsAck;
-		inline bool operator==(const MessageField& other) const
-			{ return BitOffset == other.BitOffset; }
 	};
 
 	static constexpr MessageField Broadcast 		= {BitOffset: 0,	LengthBits: 1,	IsAck: false };
@@ -68,13 +66,13 @@ public:
 	static constexpr MessageField DataLength_A 		= {BitOffset: 43,	LengthBits: 1,	IsAck: true	};
 	static constexpr uint8_t DataFieldLength = 10;
 	static constexpr MessageField Data(uint8_t N) {
-		return MessageField( { BitOffset:	44 + (DataFieldLength*N), LengthBits: 8, IsAck: false } );
+		return MessageField( { BitOffset:	44U + (DataFieldLength*N), LengthBits: 8, IsAck: false } );
 	}
 	static constexpr MessageField Data_P(uint8_t N) {
-		return MessageField( { BitOffset:	44+8+(DataFieldLength*N), LengthBits: 1, IsAck: false } );
+		return MessageField( { BitOffset:	44U+8+(DataFieldLength*N), LengthBits: 1, IsAck: false } );
 	}
 	static constexpr MessageField Data_A(uint8_t N) {
-		return MessageField( { BitOffset:	44+9+(DataFieldLength*N), LengthBits: 1, IsAck: true } );
+		return MessageField( { BitOffset:	44U+9+(DataFieldLength*N), LengthBits: 1, IsAck: true } );
 	}
 
 	// ---------------------------
@@ -115,23 +113,7 @@ struct Message {
 	DataValue opcode;
 	std::vector<DataValue> operands;
 
-	size_t toString(char* str) const
-	{
-		char* pos = str;
-		pos += sprintf(pos, "%c %03x %03x %01x %d : %02x %02x %02x ",
-			(broadcast==BROADCAST ? 'B' : '-'),
-			masterAddress,
-			slaveAddress,
-			control,
-			operands.size()+3,
-			srcFunction,
-			dstFunction,
-			opcode );
-		for(auto it = operands.cbegin(); it != operands.cend(); it++) {
-			pos += sprintf(pos, "%02x ", *it);
-		}
-		return (pos-str);
-	}
+	size_t toString(char* str) const;
 };
 
 #endif /* AVCLAN_AVCLANMSG_H_ */

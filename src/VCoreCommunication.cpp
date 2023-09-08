@@ -2,7 +2,7 @@
 
 #include "diag/trace.h"
 
-uart VCoreCommunication::uartVCore(0, 921600);
+uart VCoreCommunication::uartVCore(0, 1500000);
 
 uint8_t* VCoreCommunication::uartReceiveByte = uartReceiveBuf;
 uint8_t VCoreCommunication::uartReceiveBuf[uartReceiveBufSize];

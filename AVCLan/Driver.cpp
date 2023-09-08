@@ -3,8 +3,6 @@
 #include <functional>
 #include "diag/trace.h"
 
-#define NO_TX
-
 Driver* Driver::instance;
 
 Driver::Driver(p_timer timer)
@@ -13,6 +11,8 @@ Driver::Driver(p_timer timer)
   DriverTx(timer)
 {
 	Driver::instance = this;
+
+	canTxTime = timer.getTicks();
 }
 
 Driver::~Driver() {
@@ -40,7 +40,7 @@ void Driver::startTransmit() {
 	// There's a chance a message will start to come in while we prepare,
 	// and then we have to wait until it's done before we start
 	DriverTx::prepareTransmit();
-	while(operatingMode != IDLE && timer.getTicks() < canTxTime ) {}
+	while(operatingMode != IDLE || timer.getTicks() < canTxTime) {}
 
 #ifdef NO_TX
 	DriverTx::messageDone();

@@ -18,22 +18,25 @@ void DriverTx::state_Idle() {
 
 void DriverTx::state_StartBit() {
 	setTxPinState(false);
+
 	startTime = timer.getTicks() + T_Bit_1;
 	timer.updateTimerAbsolute(startTime);
+
 	state = &DriverTx::state_PeriodOff;
 }
 
 void DriverTx::state_PeriodOff() {
 	setTxPinState(true);
+
 	bool bit = curMessage->getBit(sendBitPos);
 	Time pulseTime = (T_Bit * sendBitPos) + (bit ? T_Bit_1 : T_Bit_0);
 	timer.updateTimerAbsolute(startTime + pulseTime);
+
 	state = &DriverTx::state_PeriodOn;
 }
 
 void DriverTx::state_PeriodOn() {
 	setTxPinState(false);
-
 	/*
 	if(sendBitPos == AVCLanMsg::SlaveAddress_A.BitOffset) {
 		Time pulseTime = (T_Bit * sendBitPos) + T_BitMeasure;
@@ -42,7 +45,6 @@ void DriverTx::state_PeriodOn() {
 		return;
 	}
 	*/
-
 	sendBitPos++;
 
 	if (sendBitPos == sendLengthBits) {
@@ -52,6 +54,7 @@ void DriverTx::state_PeriodOn() {
 
 	Time pulseTime = T_Bit * sendBitPos;
 	timer.updateTimerAbsolute(startTime + pulseTime);
+
 	state = &DriverTx::state_PeriodOff;
 }
 
@@ -67,8 +70,8 @@ void DriverTx::state_GetAck() {
 }
 
 void DriverTx::messageDone() {
-	sendQueue.pop();
 	state = &DriverTx::state_Idle;
+	sendQueue.pop();
 	endTransmit();
 }
 
