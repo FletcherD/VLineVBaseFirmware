@@ -17,7 +17,7 @@ Device::Device(Address address, std::vector<Function> functions)
 }
 
 void
-Device::onMessage(Message messageIn)
+Device::onMessage(AVCLanMessage messageIn)
 {
 	if(messageHandlerMap.count(messageIn.opcode) != 0) {
 		MessageHandler handler = messageHandlerMap[messageIn.opcode];
@@ -26,48 +26,48 @@ Device::onMessage(Message messageIn)
 }
 
 void
-Device::handler_ListFunctionsRequest(Message messageIn)
+Device::handler_ListFunctionsRequest(AVCLanMessage messageIn)
 {
-	Message responseMsg = createResponseMessage(messageIn);
-	responseMsg.opcode = ListFunctionsResponse;
-	responseMsg.operands = functions;
-	std::invoke(sendMessageCallback, responseMsg);
+	AVCLanMessage listFnResponse = createResponseMessage(messageIn);
+	listFnResponse.opcode = ListFunctionsResponse;
+	listFnResponse.setOperands(functions);
+	std::invoke(sendMessageCallback, listFnResponse);
 
-	responseMsg = createResponseMessage(messageIn);
-	responseMsg.dstFunction = 0x12;
-	responseMsg.opcode = FunctionMappingRequest;
-	responseMsg.operands = functionsRequested;
-	std::invoke(sendMessageCallback, responseMsg);
+	AVCLanMessage fnMapRequest = createResponseMessage(messageIn);
+	fnMapRequest.dstFunction = 0x12;
+	fnMapRequest.opcode = FunctionMappingRequest;
+	fnMapRequest.setOperands(functionsRequested);
+	std::invoke(sendMessageCallback, fnMapRequest);
 }
 
 void
-Device::handler_Ping(Message messageIn)
+Device::handler_Ping(AVCLanMessage messageIn)
 {
-	Message responseMsg = createResponseMessage(messageIn);
+	AVCLanMessage responseMsg = createResponseMessage(messageIn);
 	responseMsg.opcode = PingResponse;
-	responseMsg.operands = {messageIn.operands[0], 0xff};
+	responseMsg.setOperands({messageIn.operands[0], 0xff});
 	std::invoke(sendMessageCallback, responseMsg);
 }
 
 void
-Device::handler_FunctionMappingResponse(Message messageIn)
+Device::handler_FunctionMappingResponse(AVCLanMessage messageIn)
 {
-	for(size_t i = 0; i < messageIn.operands.size(); i+=2) {
+	for(size_t i = 0; i < messageIn.nOperands; i+=2) {
 		Function logicalDev = messageIn.operands[i+1] & 0xF;
 		Address networkDev = messageIn.operands[i] << 4 | messageIn.operands[i+1] >> 4;
 		functionAddressMap[logicalDev] = networkDev;
 	}
 }
 
-Message
-Device::createResponseMessage(Message messageIn)
+AVCLanMessage
+Device::createResponseMessage(AVCLanMessage messageIn)
 {
-	Message msg;
-	msg.broadcast = UNICAST;
-	msg.masterAddress = address;
-	msg.slaveAddress = messageIn.masterAddress;
-	msg.control = 0xF;
-	msg.srcFunction = messageIn.dstFunction;
-	msg.dstFunction = messageIn.srcFunction;
-	return msg;
+	IEBusMessage ieBusMessage = {
+		broadcast: UNICAST,
+		masterAddress: address,
+		slaveAddress: messageIn.masterAddress,
+		control: 0xf,
+	};
+	AVCLanMessage avcLanMessage(ieBusMessage);
+	return avcLanMessage;
 }

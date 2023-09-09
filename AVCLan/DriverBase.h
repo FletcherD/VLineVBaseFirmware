@@ -11,7 +11,7 @@ extern "C" {
 #include "uart.h"
 #include "util.h"
 
-#include <MessageRaw.h>
+#include "IEBusMessage.h"
 
 class DriverBase {
 	/*

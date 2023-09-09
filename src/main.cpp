@@ -42,10 +42,11 @@ main (int argc, char* argv[])
 
 	while(1) {
 		while(!avcLan.receiveQueue.empty()) {
-			MessageRaw& messageRaw = *avcLan.receiveQueue.front();
+			std::shared_ptr<IEBusMessage> ieBusMessage = avcLan.receiveQueue.front();
 
+			AVCLanMessage avcLanMessage(*ieBusMessage);
 			//VCoreCommunication::onMessageReceived(messageRaw);
-			avcLanProtocol.onMessageRaw(messageRaw);
+			avcLanProtocol.onMessage(avcLanMessage);
 
 			avcLan.receiveQueue.pop();
 		}

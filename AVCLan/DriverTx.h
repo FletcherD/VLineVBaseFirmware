@@ -12,9 +12,10 @@ extern "C" {
 #include "util.h"
 
 #include "DriverBase.h"
-#include <MessageRaw.h>
+#include "IEBusMessage.h"
 
 #include <vector>
+#include <memory>
 
 class DriverTx : public virtual DriverBase {
 	private:
@@ -36,13 +37,17 @@ class DriverTx : public virtual DriverBase {
 
 		// ------------------------
 
-		std::queue<MessageRawPtr> sendQueue;
-		MessageRawPtr curMessage;
+		std::shared_ptr<IEBusMessage> curMessage;
+		const IEBusMessageField* curField;
+		uint32_t curBit;
+		bool parity;
+
 		uint32_t sendLengthBits;
-		uint32_t sendBitPos;
 		Time startTime;
 
-		bool getNextBit();
+		std::queue<std::shared_ptr<IEBusMessage>> sendQueue;
+
+		bool getBit();
 
 	//TODO remove
 	public:
@@ -57,7 +62,7 @@ class DriverTx : public virtual DriverBase {
 		DriverTx(p_timer);
 		virtual ~DriverTx() {};
 
-		void queueMessage(MessageRawPtr);
+		void queueMessage(std::shared_ptr<IEBusMessage>);
 
 		bool isMessageWaiting();
 

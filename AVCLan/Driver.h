@@ -23,7 +23,7 @@ class Driver : public DriverRx, DriverTx
 	void endReceive();
 	void startIdle();
 
-	void messageReceived(MessageRawPtr);
+	void messageReceived(std::shared_ptr<IEBusMessage>);
 
 	Time canTxTime;
 
@@ -40,7 +40,7 @@ public:
 	Driver(p_timer timer);
 	~Driver();
 
-	std::queue<MessageRawPtr> receiveQueue;
+	std::queue<std::shared_ptr<IEBusMessage>> receiveQueue;
 
 	/* All receive and transmit functions use the on-chip timer peripheral.
 	 * To receive bits, we use the capture function;
@@ -53,7 +53,7 @@ public:
 
 	void onTimerCallback();
 
-	void sendMessage(MessageRawPtr);
+	void sendMessage(std::shared_ptr<IEBusMessage>);
 
 	void poll();
 };

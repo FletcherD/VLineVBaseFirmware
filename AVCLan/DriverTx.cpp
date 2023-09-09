@@ -1,11 +1,11 @@
 #include <DriverTx.h>
-
 #include "diag/trace.h"
+#include "IEBusMessage.h"
 
 DriverTx::DriverTx(p_timer timer)
 	: DriverBase(timer),
 	  state(&DriverTx::state_Idle),
-	  sendBitPos(0),
+	  curBit(0),
 	  sendLengthBits(0),
 	  ackResult(NAK)
 {
@@ -28,8 +28,8 @@ void DriverTx::state_StartBit() {
 void DriverTx::state_PeriodOff() {
 	setTxPinState(true);
 
-	bool bit = curMessage->getBit(sendBitPos);
-	Time pulseTime = (T_Bit * sendBitPos) + (bit ? T_Bit_1 : T_Bit_0);
+	bool bit = getBit();
+	Time pulseTime = (T_Bit * curBit) + (bit ? T_Bit_1 : T_Bit_0);
 	timer.updateTimerAbsolute(startTime + pulseTime);
 
 	state = &DriverTx::state_PeriodOn;
@@ -45,14 +45,14 @@ void DriverTx::state_PeriodOn() {
 		return;
 	}
 	*/
-	sendBitPos++;
+	curBit++;
 
-	if (sendBitPos == sendLengthBits) {
+	if (curBit == sendLengthBits) {
 		messageDone();
 		return;
 	}
 
-	Time pulseTime = T_Bit * sendBitPos;
+	Time pulseTime = T_Bit * curBit;
 	timer.updateTimerAbsolute(startTime + pulseTime);
 
 	state = &DriverTx::state_PeriodOff;
@@ -63,10 +63,38 @@ void DriverTx::state_GetAck() {
 	rxIn = (rxIn & (1UL << AVC_RX_PIN.Pinnum));
 	ackResult = (rxIn ? NAK : ACK);
 
-	sendBitPos++;
-	Time pulseTime = T_Bit * sendBitPos;
+	curBit++;
+	Time pulseTime = T_Bit * curBit;
 	timer.updateTimerAbsolute(startTime + pulseTime);
 	state = &DriverTx::state_PeriodOff;
+}
+
+bool DriverTx::getBit() {
+	bool bitVal;
+	int32_t fieldBitPos = (int32_t)curBit - curField->bitOffset;
+
+	if(curField->isParity) {
+		bitVal = parity;
+		parity = false;
+	}
+	else if(curField->isAck) {
+		bitVal = AckValue::NAK;
+	}
+	else {
+		uint8_t whichBit = (curField->bitLength - fieldBitPos - 1);
+		uint16_t* valuePtr = (uint16_t*)(curMessage.get() + curField->valueOffset);
+		bitVal = (*valuePtr) & (1UL<<whichBit);
+		if(bitVal)
+			parity = !parity;
+	}
+
+	curBit++;
+
+	if(fieldBitPos == curField->bitLength) {
+		curField++;
+	}
+
+	return bitVal;
 }
 
 void DriverTx::messageDone() {
@@ -74,7 +102,7 @@ void DriverTx::messageDone() {
 	endTransmit();
 }
 
-void DriverTx::queueMessage(MessageRawPtr message) {
+void DriverTx::queueMessage(std::shared_ptr<IEBusMessage> message) {
 	sendQueue.push(message);
 }
 
@@ -84,9 +112,12 @@ bool DriverTx::isMessageWaiting() {
 
 void DriverTx::prepareTransmit() {
 	curMessage = sendQueue.front();
-	sendQueue.pop();
 	sendLengthBits = curMessage->getMessageLength();
-	sendBitPos = 0;
+	sendQueue.pop();
+
+	curField = IEBusFields.cbegin();
+	curBit = 0;
+	parity = false;
 }
 
 void DriverTx::startTransmit() {

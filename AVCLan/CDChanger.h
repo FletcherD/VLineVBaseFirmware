@@ -32,13 +32,13 @@ public:
 
 	CDChanger();
 
-	void handler_RequestStatus(Message);
-	void handler_RequestPlayback(Message);
-	void handler_RequestPlayback2(Message);
-	void handler_RequestLoader(Message);
-	void handler_RequestLoader2(Message);
-	void handler_RequestToc(Message);
-	void handler_RequestTrackName(Message);
+	void handler_RequestStatus(AVCLanMessage);
+	void handler_RequestPlayback(AVCLanMessage);
+	void handler_RequestPlayback2(AVCLanMessage);
+	void handler_RequestLoader(AVCLanMessage);
+	void handler_RequestLoader2(AVCLanMessage);
+	void handler_RequestToc(AVCLanMessage);
+	void handler_RequestTrackName(AVCLanMessage);
 };
 
 #endif /* CDCHANGER_H_ */

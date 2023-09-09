@@ -13,6 +13,8 @@ Driver::Driver(p_timer timer)
 	Driver::instance = this;
 
 	canTxTime = timer.getTicks();
+
+	startIdle();
 }
 
 Driver::~Driver() {
@@ -31,7 +33,7 @@ void Driver::onTimerCallback() {
 	timer.clearInterrupt();
 }
 
-void Driver::sendMessage(MessageRawPtr message) {
+void Driver::sendMessage(std::shared_ptr<IEBusMessage> message) {
 	DriverTx::queueMessage(message);
 }
 
@@ -78,7 +80,7 @@ void Driver::poll() {
 	}
 }
 
-void Driver::messageReceived(MessageRawPtr message) {
+void Driver::messageReceived(std::shared_ptr<IEBusMessage> message) {
 	receiveQueue.push(message);
 }
 

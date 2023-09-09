@@ -7,16 +7,13 @@
 #ifndef PROTOCOL_H_
 #define PROTOCOL_H_
 
-#include "MessageRaw.h"
+#include "AVCLanMessage.h"
 #include "Driver.h"
 #include "Device.h"
 
 #include <vector>
 
-Message decodeMessage(const MessageRaw);
-MessageRawPtr encodeMessage(const Message);
-
-bool isMessageForAddress(const Message, Address);
+bool isMessageForAddress(const AVCLanMessage, Address);
 
 class Protocol {
 private:
@@ -28,8 +25,8 @@ public:
 
 	void addDevice(Device device);
 
-	void onMessageRaw(const MessageRaw);
-	void sendMessage(const Message);
+	void onMessage(const IEBusMessage);
+	void sendMessage(const AVCLanMessage);
 };
 
 #endif /* PROTOCOL_H_ */

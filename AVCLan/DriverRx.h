@@ -12,7 +12,9 @@ extern "C" {
 #include "util.h"
 
 #include "DriverBase.h"
-#include <MessageRaw.h>
+#include "IEBusMessage.h"
+
+#include <memory>
 
 class DriverRx : public virtual DriverBase {
 	private:
@@ -46,8 +48,9 @@ class DriverRx : public virtual DriverBase {
 
 		// ------------------------
 
-		MessageRawPtr thisMsg;
-		uint32_t receiveBitPos;
+		std::shared_ptr<IEBusMessage> curMessage;
+		const IEBusMessageField* curField;
+		uint32_t curBit;
 
 		void receiveBit(bool bit);
 		void resetBuffer();
@@ -56,13 +59,7 @@ class DriverRx : public virtual DriverBase {
 		void onBitError();
 
 		virtual void endReceive() {};
-		virtual void messageReceived(MessageRawPtr) {};
-
-		// Because we have a very strict time budget,
-		// calculate the length on the fly
-		// so AVCLanRx knows when it is done
-		uint8_t msgDataLength = 0;
-		Address msgSlaveAddress = 0;
+		virtual void messageReceived(std::shared_ptr<IEBusMessage>) {};
 
 	public:
 		uint32_t bitErrorCount = 0;
@@ -70,13 +67,13 @@ class DriverRx : public virtual DriverBase {
 
 		uint32_t longestMsg = 0;
 
-		bool receiveBitToValue(bool bitVal, MessageRaw::MessageField field, FieldValue* valuePtr);
+		uint32_t eTime[512];
+		uint32_t eTimeI = 0;
 
 		DriverRx(p_timer);
 		virtual ~DriverRx() {};
 
 		void onTimerCallback();
-
 };
 
 #endif

@@ -8,7 +8,7 @@
 #ifndef AVCLANDEVICE_H_
 #define AVCLANDEVICE_H_
 
-#include "MessageRaw.h"
+#include "AVCLanMessage.h"
 #include <map>
 #include <functional>
 
@@ -41,7 +41,7 @@ public:
 	std::vector<Function> functions;
 	std::vector<Function> functionsRequested;
 
-	typedef void (Device::*MessageHandler)(Message);
+	typedef void (Device::*MessageHandler)(AVCLanMessage);
 
 protected:
 
@@ -51,15 +51,15 @@ protected:
 public:
 	Device(Address, std::vector<Function> functions);
 
-	void onMessage(Message);
-	std::function<void(Message)> sendMessageCallback;
-	Message createResponseMessage(Message messageIn);
+	void onMessage(AVCLanMessage);
+	std::function<void(AVCLanMessage)> sendMessageCallback;
+	AVCLanMessage createResponseMessage(AVCLanMessage messageIn);
 
 	// Message handlers -------------------
 
-	void handler_ListFunctionsRequest(Message);
-	void handler_FunctionMappingResponse(Message);
-	void handler_Ping(Message);
+	void handler_ListFunctionsRequest(AVCLanMessage);
+	void handler_FunctionMappingResponse(AVCLanMessage);
+	void handler_Ping(AVCLanMessage);
 };
 
 #endif /* AVCLANDEVICE_H_ */

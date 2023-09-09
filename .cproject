@@ -58,6 +58,7 @@
 									<listOptionValue builtIn="false" value="&quot;../system/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../include&quot;"/>
 									<listOptionValue builtIn="false" value="../AVCLan"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc/AVCLan}&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs.860698448" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
@@ -77,6 +78,7 @@
 									<listOptionValue builtIn="false" value="&quot;../system/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../include&quot;"/>
 									<listOptionValue builtIn="false" value="../AVCLan"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc/AVCLan}&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.1102089115" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="true" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
@@ -97,6 +99,7 @@
 									<listOptionValue builtIn="false" value="&quot;../system/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../include&quot;"/>
 									<listOptionValue builtIn="false" value="../AVCLan"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc/AVCLan}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions.1665701899" name="Do not use exceptions (-fno-exceptions)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions" useByScannerDiscovery="true" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti.939848423" name="Do not use RTTI (-fno-rtti)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti" useByScannerDiscovery="true" value="true" valueType="boolean"/>
@@ -199,6 +202,7 @@
 									<listOptionValue builtIn="false" value="&quot;../system/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../include&quot;"/>
 									<listOptionValue builtIn="false" value="../AVCLan"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc/AVCLan}&quot;"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input.212511611" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input"/>
 							</tool>
@@ -211,6 +215,7 @@
 									<listOptionValue builtIn="false" value="&quot;../system/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../include&quot;"/>
 									<listOptionValue builtIn="false" value="../AVCLan"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc/AVCLan}&quot;"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.769045482" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input"/>
 							</tool>
@@ -223,6 +228,7 @@
 									<listOptionValue builtIn="false" value="&quot;../system/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../include&quot;"/>
 									<listOptionValue builtIn="false" value="../AVCLan"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc/AVCLan}&quot;"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.1583481918" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input"/>
 							</tool>
@@ -320,6 +326,7 @@
 									<listOptionValue builtIn="false" value="../system/driver/CMSIS-Driver"/>
 									<listOptionValue builtIn="false" value="../system/driver"/>
 									<listOptionValue builtIn="false" value="../AVCLan"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc/AVCLan}&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs.1703860380" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="NDEBUG"/>
@@ -337,6 +344,7 @@
 									<listOptionValue builtIn="false" value="../system/driver/CMSIS-Driver"/>
 									<listOptionValue builtIn="false" value="../system/driver"/>
 									<listOptionValue builtIn="false" value="../AVCLan"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc/AVCLan}&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.1520322536" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="true" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="NDEBUG"/>
@@ -355,6 +363,7 @@
 									<listOptionValue builtIn="false" value="../system/driver/CMSIS-Driver"/>
 									<listOptionValue builtIn="false" value="../system/driver"/>
 									<listOptionValue builtIn="false" value="../AVCLan"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc/AVCLan}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions.2123775953" name="Do not use exceptions (-fno-exceptions)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions" useByScannerDiscovery="true" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti.764607074" name="Do not use RTTI (-fno-rtti)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti" useByScannerDiscovery="true" value="true" valueType="boolean"/>
@@ -452,6 +461,7 @@
 									<listOptionValue builtIn="false" value="../system/driver/CMSIS-Driver"/>
 									<listOptionValue builtIn="false" value="../system/driver"/>
 									<listOptionValue builtIn="false" value="../AVCLan"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc/AVCLan}&quot;"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input.516753734" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input"/>
 							</tool>
@@ -464,6 +474,7 @@
 									<listOptionValue builtIn="false" value="../system/driver/CMSIS-Driver"/>
 									<listOptionValue builtIn="false" value="../system/driver"/>
 									<listOptionValue builtIn="false" value="../AVCLan"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc/AVCLan}&quot;"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.30702527" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input"/>
 							</tool>
@@ -476,6 +487,7 @@
 									<listOptionValue builtIn="false" value="../system/driver/CMSIS-Driver"/>
 									<listOptionValue builtIn="false" value="../system/driver"/>
 									<listOptionValue builtIn="false" value="../AVCLan"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lpc/AVCLan}&quot;"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.1026269119" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input"/>
 							</tool>

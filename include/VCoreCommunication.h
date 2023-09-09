@@ -7,7 +7,7 @@ class VCoreCommunication {
 	static uint8_t* uartReceiveByte;
 
 public:
-	static void onMessageReceived(MessageRaw message);
+	static void onMessageReceived(std::shared_ptr<IEBusMessage> message);
 
 	static void startUartReceive();
 

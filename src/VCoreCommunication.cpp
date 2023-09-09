@@ -7,6 +7,7 @@ uart VCoreCommunication::uartVCore(0, 1500000);
 uint8_t* VCoreCommunication::uartReceiveByte = uartReceiveBuf;
 uint8_t VCoreCommunication::uartReceiveBuf[uartReceiveBufSize];
 
+/*
 void VCoreCommunication::onMessageReceived(MessageRaw message) {
 	static uint32_t totalMsgs = 0;
 
@@ -66,4 +67,4 @@ void VCoreCommunication::uartReceiveComplete() {
 
 	startUartReceive();
 }
-
+*/
