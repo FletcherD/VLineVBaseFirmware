@@ -51,6 +51,7 @@ class DriverRx : public virtual DriverBase {
 		std::shared_ptr<IEBusMessage> curMessage;
 		const IEBusMessageField* curField;
 		uint32_t curBit;
+		bool curParity;
 
 		void receiveBit(bool bit);
 		void resetBuffer();

@@ -20,7 +20,9 @@ DriverRx::DriverRx(p_timer timer)
 }
 
 void DriverRx::onTimerCallback() {
-	uint32_t eventTime = timer.lpcTimer->CR0;
+	uint32_t interruptType = timer.lpcTimer->IR;
+	uint32_t eventTime =
+			(interruptType & (1UL<<TIM_CR0_INT) ? timer.lpcTimer->CR0 : timer.lpcTimer->MR0);
 
 	InputEvent event;
 	event.time = eventTime - lastEventTime;
@@ -98,36 +100,39 @@ void DriverRx::state_Ack(InputEvent e) {
 	timer.setTimerInterruptEnabled(false);
 
 	state = &DriverRx::state_WaitForBit;
-
-	curBit++;
+	receiveBit(ACK);
 }
 
 void DriverRx::resetBuffer() {
 	curMessage.reset(new IEBusMessage);
 	curField = IEBusFields.cbegin();
 	curBit = 0;
+	curParity = false;
 }
 
 void DriverRx::receiveBit(bool bitVal) {
-	int32_t fieldBitPos = (int32_t)curBit - curField->bitOffset;
-
 	if(curField->isParity) {
-
+		if(bitVal != curParity) {
+			// TODO: react to incorrect parity
+		}
+		curParity = false;
 	}
 	else if(curField->isAck) {
-
+		// Ain't matter
 	}
 	else {
 		if(bitVal) {
-			uint8_t whichBit = (curField->bitLength - fieldBitPos - 1);
-			uint16_t* valuePtr = (uint16_t*)(curMessage.get() + curField->valueOffset);
+			uint8_t whichBit = curField->bitOffset + curField->bitLength - curBit - 1;
+			uint16_t* valuePtr = (uint16_t*)((uint8_t*)curMessage.get() + curField->valueOffset);
 			*valuePtr |= (1UL<<whichBit);
+
+			curParity = !curParity;
 		}
 	}
 
 	curBit++;
 
-	if(fieldBitPos == curField->bitLength) {
+	if(curBit == (curField->bitOffset + curField->bitLength)) {
 		curField++;
 	}
 

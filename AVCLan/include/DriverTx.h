@@ -40,25 +40,20 @@ class DriverTx : public virtual DriverBase {
 		std::shared_ptr<IEBusMessage> curMessage;
 		const IEBusMessageField* curField;
 		uint32_t curBit;
-		bool parity;
+		bool curParity;
 
 		uint32_t sendLengthBits;
 		Time startTime;
 
 		std::queue<std::shared_ptr<IEBusMessage>> sendQueue;
 
-		bool getBit();
-
-	//TODO remove
-	public:
+		bool getNextBit();
 
 		void messageDone();
 
 		virtual void endTransmit() {};
 
 	public:
-		AckValue ackResult;
-
 		DriverTx(p_timer);
 		virtual ~DriverTx() {};
 

@@ -41,19 +41,23 @@ main (int argc, char* argv[])
 	//VCoreCommunication::startUartReceive();
 
 	while(1) {
-		while(!avcLan.receiveQueue.empty()) {
-			std::shared_ptr<IEBusMessage> ieBusMessage = avcLan.receiveQueue.front();
+		uint32_t waitUntil = timer.getTicks() + 1000000;
+		while(timer.getTicks() < waitUntil) {
+			while(!avcLan.receiveQueue.empty()) {
+				std::shared_ptr<IEBusMessage> ieBusMessage = avcLan.receiveQueue.front();
 
-			AVCLanMessage avcLanMessage(*ieBusMessage);
-			//VCoreCommunication::onMessageReceived(messageRaw);
-			avcLanProtocol.onMessage(avcLanMessage);
+				AVCLanMessage avcLanMessage(*ieBusMessage);
+				//VCoreCommunication::onMessageReceived(messageRaw);
+				avcLanProtocol.onMessage(avcLanMessage);
 
-			avcLan.receiveQueue.pop();
+				avcLan.receiveQueue.pop();
+			}
+
+			avcLan.poll();
 		}
 
-		avcLan.poll();
 		//}
-		//trace_printf("Bit Errors: %d - Total Msgs: %d - Mode: %d", avcLan.bitErrorCount, avcLan.totalMsgCount, avcLan.operatingMode);
+		trace_printf("Bit Errors: %d - Total Msgs: %d - Mode: %d", avcLan.bitErrorCount, avcLan.totalMsgCount, avcLan.operatingMode);
 	}
 }
 

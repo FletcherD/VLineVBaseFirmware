@@ -4,10 +4,7 @@
 
 DriverTx::DriverTx(p_timer timer)
 	: DriverBase(timer),
-	  state(&DriverTx::state_Idle),
-	  curBit(0),
-	  sendLengthBits(0),
-	  ackResult(NAK)
+	  state(&DriverTx::state_Idle)
 {
 	setTxPinState(false);
 	pinConfigure(AVC_TX_PIN);
@@ -28,8 +25,8 @@ void DriverTx::state_StartBit() {
 void DriverTx::state_PeriodOff() {
 	setTxPinState(true);
 
-	bool bit = getBit();
-	Time pulseTime = (T_Bit * curBit) + (bit ? T_Bit_1 : T_Bit_0);
+	bool bitVal = getNextBit();
+	Time pulseTime = (T_Bit * (curBit-1)) + (bitVal ? T_Bit_1 : T_Bit_0);
 	timer.updateTimerAbsolute(startTime + pulseTime);
 
 	state = &DriverTx::state_PeriodOn;
@@ -45,7 +42,6 @@ void DriverTx::state_PeriodOn() {
 		return;
 	}
 	*/
-	curBit++;
 
 	if (curBit == sendLengthBits) {
 		messageDone();
@@ -58,39 +54,28 @@ void DriverTx::state_PeriodOn() {
 	state = &DriverTx::state_PeriodOff;
 }
 
-void DriverTx::state_GetAck() {
-	uint32_t rxIn = GPIO_PortRead(AVC_RX_PIN.Portnum);
-	rxIn = (rxIn & (1UL << AVC_RX_PIN.Pinnum));
-	ackResult = (rxIn ? NAK : ACK);
-
-	curBit++;
-	Time pulseTime = T_Bit * curBit;
-	timer.updateTimerAbsolute(startTime + pulseTime);
-	state = &DriverTx::state_PeriodOff;
-}
-
-bool DriverTx::getBit() {
+bool DriverTx::getNextBit() {
 	bool bitVal;
-	int32_t fieldBitPos = (int32_t)curBit - curField->bitOffset;
 
 	if(curField->isParity) {
-		bitVal = parity;
-		parity = false;
+		bitVal = curParity;
+		curParity = false;
 	}
 	else if(curField->isAck) {
 		bitVal = AckValue::NAK;
 	}
 	else {
-		uint8_t whichBit = (curField->bitLength - fieldBitPos - 1);
-		uint16_t* valuePtr = (uint16_t*)(curMessage.get() + curField->valueOffset);
+		uint8_t whichBit = curField->bitOffset + curField->bitLength - curBit - 1;
+		uint16_t* valuePtr = (uint16_t*)((uint8_t*)curMessage.get() + curField->valueOffset);
 		bitVal = (*valuePtr) & (1UL<<whichBit);
-		if(bitVal)
-			parity = !parity;
+		if(bitVal) {
+			curParity = !curParity;
+		}
 	}
 
 	curBit++;
 
-	if(fieldBitPos == curField->bitLength) {
+	if(curBit == (curField->bitOffset + curField->bitLength)) {
 		curField++;
 	}
 
@@ -117,7 +102,7 @@ void DriverTx::prepareTransmit() {
 
 	curField = IEBusFields.cbegin();
 	curBit = 0;
-	parity = false;
+	curParity = false;
 }
 
 void DriverTx::startTransmit() {

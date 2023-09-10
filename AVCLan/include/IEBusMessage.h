@@ -37,12 +37,12 @@ struct IEBusMessageField {
 struct IEBusMessage {
 	static constexpr size_t MaxDataBytes = 32;
 
-	BroadcastValue broadcast;
-	Address masterAddress;
-	Address slaveAddress;
-	ControlValue control;
-	uint8_t dataLength;
-	DataValue data[MaxDataBytes];
+	BroadcastValue broadcast	= BROADCAST;
+	Address masterAddress		= 0;
+	Address slaveAddress		= 0;
+	ControlValue control		= 0;
+	uint8_t dataLength			= 0;
+	DataValue data[MaxDataBytes]{0};
 
 	uint32_t getMessageLength() const;
 };
