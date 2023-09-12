@@ -57,12 +57,13 @@ class DriverTx : public virtual DriverBase {
 		DriverTx(p_timer);
 		virtual ~DriverTx() {};
 
-		void queueMessage(std::shared_ptr<IEBusMessage>);
+		void queueMessage(const std::shared_ptr<IEBusMessage>&);
 
 		bool isMessageWaiting();
 
 		void prepareTransmit();
-		void startTransmit();
+
+    virtual void startTransmit();
 
 		void onTimerCallback();
 };

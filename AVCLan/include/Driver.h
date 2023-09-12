@@ -23,7 +23,7 @@ class Driver : public DriverRx, DriverTx
 	void endReceive();
 	void startIdle();
 
-	void messageReceived(std::shared_ptr<IEBusMessage>);
+	void messageReceived(const std::shared_ptr<IEBusMessage>&);
 
 	Time canTxTime;
 
@@ -53,7 +53,7 @@ public:
 
 	void onTimerCallback();
 
-	void sendMessage(std::shared_ptr<IEBusMessage>);
+	void sendMessage(const std::shared_ptr<IEBusMessage>&);
 
 	void poll();
 };

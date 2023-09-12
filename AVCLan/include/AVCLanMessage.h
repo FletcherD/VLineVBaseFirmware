@@ -26,15 +26,16 @@ public:
 	AVCLanMessage(IEBusMessage m)
 	: IEBusMessage(m),
 	  dIndex(broadcast==BROADCAST ? 0 : 1),
-	  nOperands(dataLength - dIndex - 3),
 	  srcFunction(data[dIndex++]),
 	  dstFunction(data[dIndex++]),
 	  opcode(data[dIndex++]),
-	  operands(data+dIndex)
+	  operands(data+dIndex),
+	  nOperands(dataLength - dIndex - 3)
 	  {}
 
-	void setOperands(std::vector<DataValue> oIn)
+	void setOperands(const std::vector<DataValue>& oIn)
 	{
+        dataLength = (broadcast==BROADCAST ? 0 : 1) + 3 + oIn.size();
 		std::copy(oIn.cbegin(), oIn.cend(), operands);
 	}
 };

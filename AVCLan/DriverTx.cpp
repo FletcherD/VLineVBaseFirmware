@@ -59,15 +59,15 @@ bool DriverTx::getNextBit() {
 
 	if(curField->isParity) {
 		bitVal = curParity;
-		curParity = false;
 	}
 	else if(curField->isAck) {
 		bitVal = AckValue::NAK;
 	}
 	else {
 		uint8_t whichBit = curField->bitOffset + curField->bitLength - curBit - 1;
-		uint16_t* valuePtr = (uint16_t*)((uint8_t*)curMessage.get() + curField->valueOffset);
+		auto* valuePtr = (uint16_t*)((uint8_t*)curMessage.get() + curField->valueOffset);
 		bitVal = (*valuePtr) & (1UL<<whichBit);
+
 		if(bitVal) {
 			curParity = !curParity;
 		}
@@ -77,6 +77,9 @@ bool DriverTx::getNextBit() {
 
 	if(curBit == (curField->bitOffset + curField->bitLength)) {
 		curField++;
+        if((!curField->isAck) && (!curField->isParity)) {
+            curParity = false;
+        }
 	}
 
 	return bitVal;
@@ -87,7 +90,7 @@ void DriverTx::messageDone() {
 	endTransmit();
 }
 
-void DriverTx::queueMessage(std::shared_ptr<IEBusMessage> message) {
+void DriverTx::queueMessage(const std::shared_ptr<IEBusMessage>& message) {
 	sendQueue.push(message);
 }
 

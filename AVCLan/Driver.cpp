@@ -1,7 +1,4 @@
 #include <Driver.h>
-#include <VCoreCommunication.h>
-#include <functional>
-#include "diag/trace.h"
 
 Driver* Driver::instance;
 
@@ -17,8 +14,7 @@ Driver::Driver(p_timer timer)
 	startIdle();
 }
 
-Driver::~Driver() {
-}
+Driver::~Driver() = default;
 
 void Driver::onTimerCallback() {
 	if(operatingMode == IDLE) {
@@ -33,12 +29,12 @@ void Driver::onTimerCallback() {
 	timer.clearInterrupt();
 }
 
-void Driver::sendMessage(std::shared_ptr<IEBusMessage> message) {
+void Driver::sendMessage(const std::shared_ptr<IEBusMessage>& message) {
 	DriverTx::queueMessage(message);
 }
 
 void Driver::startTransmit() {
-	// Do the time consuming stuff first;
+	// Do the time-consuming stuff first;
 	// There's a chance a message will start to come in while we prepare,
 	// and then we have to wait until it's done before we start
 	DriverTx::prepareTransmit();
@@ -80,7 +76,7 @@ void Driver::poll() {
 	}
 }
 
-void Driver::messageReceived(std::shared_ptr<IEBusMessage> message) {
+void Driver::messageReceived(const std::shared_ptr<IEBusMessage>& message) {
 	receiveQueue.push(message);
 }
 

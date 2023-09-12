@@ -24,7 +24,7 @@ void DriverRx::onTimerCallback() {
 	uint32_t eventTime =
 			(interruptType & (1UL<<TIM_CR0_INT) ? timer.lpcTimer->CR0 : timer.lpcTimer->MR0);
 
-	InputEvent event;
+	InputEvent event{};
 	event.time = eventTime - lastEventTime;
 	event.type = getRxPinState() ? RISING_EDGE : FALLING_EDGE;
 	lastEventTime = eventTime;
@@ -40,7 +40,7 @@ void DriverRx::state_Idle(InputEvent e) {
 		state = &DriverRx::state_StartBit;
 	} else {
 		endReceive();
-		trace_printf("state_Idle %d T: %d Bit: %d", e.type, e.time, curBit);
+		//trace_printf("state_Idle %d T: %d Bit: %d", e.type, e.time, curBit);
 	}
 }
 
@@ -55,14 +55,14 @@ void DriverRx::state_StartBit(InputEvent e) {
 		}
 		state = &DriverRx::state_WaitForBit;
 	} else {
-		trace_printf("state_StartBit %d T: %d Bit: %d", e.type, e.time, curBit);
+		//trace_printf("state_StartBit %d T: %d Bit: %d", e.type, e.time, curBit);
 		endReceive();
 	}
 }
 
 void DriverRx::state_WaitForBit(InputEvent e) {
 	if(e.type != FALLING_EDGE || e.time > T_Bit) {
-		trace_printf("state_WaitForBit %d T: %d Bit: %d", e.type, e.time, curBit);
+		//trace_printf("state_WaitForBit %d T: %d Bit: %d", e.type, e.time, curBit);
 		onBitError();
 		return;
 	}
@@ -84,12 +84,12 @@ void DriverRx::state_WaitForBit(InputEvent e) {
 
 void DriverRx::state_MeasureBit(InputEvent e) {
 	if(e.type != RISING_EDGE || e.time > T_Bit) {
-		trace_printf("state_MeasureBit %d T: %d Bit: %d", e.type, e.time, curBit);
+		//trace_printf("state_MeasureBit %d T: %d Bit: %d", e.type, e.time, curBit);
 		onBitError();
 		return;
 	}
 	state = &DriverRx::state_WaitForBit;
-	bool bitVal = (e.time > T_BitMeasure) ? false : true;
+	bool bitVal = (e.time <= T_BitMeasure);
 	receiveBit(bitVal);
 }
 
@@ -115,15 +115,13 @@ void DriverRx::receiveBit(bool bitVal) {
 		if(bitVal != curParity) {
 			// TODO: react to incorrect parity
 		}
-		curParity = false;
 	}
 	else if(curField->isAck) {
-		// Ain't matter
 	}
 	else {
 		if(bitVal) {
 			uint8_t whichBit = curField->bitOffset + curField->bitLength - curBit - 1;
-			uint16_t* valuePtr = (uint16_t*)((uint8_t*)curMessage.get() + curField->valueOffset);
+			auto* valuePtr = (uint16_t*)((uint8_t*)curMessage.get() + curField->valueOffset);
 			*valuePtr |= (1UL<<whichBit);
 
 			curParity = !curParity;
@@ -134,6 +132,9 @@ void DriverRx::receiveBit(bool bitVal) {
 
 	if(curBit == (curField->bitOffset + curField->bitLength)) {
 		curField++;
+        if((!curField->isAck) && (!curField->isParity)) {
+            curParity = false;
+        }
 	}
 
 	// Check if this message is done

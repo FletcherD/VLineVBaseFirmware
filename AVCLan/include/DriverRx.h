@@ -49,9 +49,9 @@ class DriverRx : public virtual DriverBase {
 		// ------------------------
 
 		std::shared_ptr<IEBusMessage> curMessage;
-		const IEBusMessageField* curField;
-		uint32_t curBit;
-		bool curParity;
+		const IEBusMessageField* curField{};
+		uint32_t curBit{};
+		bool curParity{};
 
 		void receiveBit(bool bit);
 		void resetBuffer();
@@ -60,7 +60,7 @@ class DriverRx : public virtual DriverBase {
 		void onBitError();
 
 		virtual void endReceive() {};
-		virtual void messageReceived(std::shared_ptr<IEBusMessage>) {};
+		virtual void messageReceived(const std::shared_ptr<IEBusMessage>&) {};
 
 	public:
 		uint32_t bitErrorCount = 0;
@@ -68,13 +68,13 @@ class DriverRx : public virtual DriverBase {
 
 		uint32_t longestMsg = 0;
 
-		uint32_t eTime[512];
+		uint32_t eTime[512]{};
 		uint32_t eTimeI = 0;
 
-		DriverRx(p_timer);
-		virtual ~DriverRx() {};
+		explicit DriverRx(p_timer);
+		virtual ~DriverRx() = default;
 
-		void onTimerCallback();
+    virtual void onTimerCallback();
 };
 
 #endif

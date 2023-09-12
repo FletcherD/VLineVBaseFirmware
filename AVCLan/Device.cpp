@@ -6,11 +6,13 @@
  */
 #include "Device.h"
 
+#include <utility>
+
 #include "diag/trace.h"
 
 Device::Device(Address address, std::vector<Function> functions)
 	: address(address),
-	  functions(functions)
+	  functions(std::move(functions))
 {
 	messageHandlerMap[ListFunctionsRequest] = &Device::handler_ListFunctionsRequest;
 	messageHandlerMap[PingRequest] = &Device::handler_Ping;
@@ -63,11 +65,13 @@ AVCLanMessage
 Device::createResponseMessage(AVCLanMessage messageIn)
 {
 	IEBusMessage ieBusMessage = {
-		broadcast: UNICAST,
-		masterAddress: address,
-		slaveAddress: messageIn.masterAddress,
-		control: 0xf,
+		.broadcast		= UNICAST,
+		.masterAddress	= address,
+		.slaveAddress	= messageIn.masterAddress,
+		.control		= 0xf,
 	};
 	AVCLanMessage avcLanMessage(ieBusMessage);
+	avcLanMessage.srcFunction = messageIn.dstFunction;
+	avcLanMessage.dstFunction = messageIn.srcFunction;
 	return avcLanMessage;
 }

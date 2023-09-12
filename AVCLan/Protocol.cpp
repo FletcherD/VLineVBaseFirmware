@@ -16,9 +16,9 @@ Protocol::Protocol(Driver& driver)
 void Protocol::onMessage(IEBusMessage ieBusMessage)
 {
 	AVCLanMessage avcLanMessage(ieBusMessage);
-	for(auto deviceIt = devices.begin(); deviceIt != devices.end(); deviceIt++) {
-		if(isMessageForAddress(avcLanMessage, deviceIt->address)) {
-			deviceIt->onMessage(avcLanMessage);
+	for(auto & device : devices) {
+		if(isMessageForAddress(avcLanMessage, device.address)) {
+			device.onMessage(avcLanMessage);
 		}
 	}
 }
@@ -31,7 +31,7 @@ void Protocol::sendMessage(AVCLanMessage avcLanMessage)
 
 void Protocol::addDevice(Device device)
 {
-	device.sendMessageCallback = std::bind(&Protocol::sendMessage, this, std::placeholders::_1);
+	device.sendMessageCallback = [this](auto && PH1) { sendMessage(std::forward<decltype(PH1)>(PH1)); };
 	devices.push_back(device);
 }
 
