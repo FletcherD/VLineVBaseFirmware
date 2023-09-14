@@ -134,4 +134,4 @@ uart::signalEvent(uint32_t event)
 	}
 }
 
-uart uartOut(3, 1500000);
+//uart uartOut(3, 1500000);

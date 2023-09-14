@@ -52,42 +52,42 @@ class power
 {
 public:
 	static constexpr PinCfgType VCore5V = {
-		Portnum: 	1,
-		Pinnum:		15,
-		Funcnum:	PIN_FUNC_0,
-		Pinmode:	PIN_PINMODE_TRISTATE,
+		PortNum: 	1,
+		PinNum:		15,
+		FuncNum:	PIN_FUNC_0,
+		PinMode:	PIN_PINMODE_TRISTATE,
 		OpenDrain:	PIN_PINMODE_NORMAL,
 		GpioDir:	GPIO_DIR_OUTPUT
 	};
 	static constexpr PinCfgType VCore3P3V = {
-		Portnum: 	1,
-		Pinnum:		29,
-		Funcnum:	PIN_FUNC_0,
-		Pinmode:	PIN_PINMODE_TRISTATE,
+		PortNum: 	1,
+		PinNum:		29,
+		FuncNum:	PIN_FUNC_0,
+		PinMode:	PIN_PINMODE_TRISTATE,
 		OpenDrain:	PIN_PINMODE_NORMAL,
 		GpioDir:	GPIO_DIR_OUTPUT
 	};
 	static constexpr PinCfgType VBase5V = {
-		Portnum: 	1,
-		Pinnum:		19,
-		Funcnum:	PIN_FUNC_0,
-		Pinmode:	PIN_PINMODE_TRISTATE,
+		PortNum: 	1,
+		PinNum:		19,
+		FuncNum:	PIN_FUNC_0,
+		PinMode:	PIN_PINMODE_TRISTATE,
 		OpenDrain:	PIN_PINMODE_NORMAL,
 		GpioDir:	GPIO_DIR_OUTPUT
 	};
 	static constexpr PinCfgType Usb5V = {
-		Portnum: 	1,
-		Pinnum:		27,
-		Funcnum:	PIN_FUNC_0,
-		Pinmode:	PIN_PINMODE_TRISTATE,
+		PortNum: 	1,
+		PinNum:		27,
+		FuncNum:	PIN_FUNC_0,
+		PinMode:	PIN_PINMODE_TRISTATE,
 		OpenDrain:	PIN_PINMODE_NORMAL,
 		GpioDir:	GPIO_DIR_OUTPUT
 	};
 	static constexpr PinCfgType AudioAmp = {
-		Portnum: 	1,
-		Pinnum:		14,
-		Funcnum:	PIN_FUNC_0,
-		Pinmode:	PIN_PINMODE_TRISTATE,
+		PortNum: 	1,
+		PinNum:		14,
+		FuncNum:	PIN_FUNC_0,
+		PinMode:	PIN_PINMODE_TRISTATE,
 		OpenDrain:	PIN_PINMODE_NORMAL,
 		GpioDir:	GPIO_DIR_OUTPUT
 	};

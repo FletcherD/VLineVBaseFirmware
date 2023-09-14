@@ -1,4 +1,5 @@
 #include <DriverRx.h>
+#include <iterator>
 #include "diag/trace.h"
 #include "IEBusMessage.h"
 
@@ -10,9 +11,9 @@ DriverRx::DriverRx(p_timer timer)
 
 	setEnabled(true);
 	setStandby(false);
-	pinConfigure(AVC_EN_PIN);
-	pinConfigure(AVC_RX_PIN);
-	pinConfigure(AVC_STB_PIN);
+	pinConfigure(AvcEnablePin);
+	pinConfigure(AvcRxPin);
+	pinConfigure(AvcStandbyPin);
 
 	lastEventTime = timer.getTicks();
 	timer.setupCaptureInterrupt();
@@ -26,12 +27,10 @@ void DriverRx::onTimerCallback() {
 
 	InputEvent event{};
 	event.time = eventTime - lastEventTime;
-	event.type = getRxPinState() ? RISING_EDGE : FALLING_EDGE;
+	event.type = getRxState() ? RISING_EDGE : FALLING_EDGE;
 	lastEventTime = eventTime;
 
 	(this->*state)(event);
-
-	//timer.updateTimer(T_Timeout);
 }
 
 void DriverRx::state_Idle(InputEvent e) {
@@ -67,8 +66,10 @@ void DriverRx::state_WaitForBit(InputEvent e) {
 		return;
 	}
 
+	nextBit();
+
 	if(curMessage->slaveAddress == 0x1d3 && curField->isAck) {
-		setTxPinState(true);
+		setTxState(true);
 
 		timer.setCaptureInterruptEnabled(false);
 		timer.setTimerInterruptEnabled(true);
@@ -91,16 +92,25 @@ void DriverRx::state_MeasureBit(InputEvent e) {
 	state = &DriverRx::state_WaitForBit;
 	bool bitVal = (e.time <= T_BitMeasure);
 	receiveBit(bitVal);
+
+	checkMessageDone();
 }
 
 void DriverRx::state_Ack(InputEvent e) {
-	setTxPinState(false);
+	setTxState(false);
 
 	timer.setCaptureInterruptEnabled(true);
 	timer.setTimerInterruptEnabled(false);
 
 	state = &DriverRx::state_WaitForBit;
 	receiveBit(ACK);
+	checkMessageDone();
+}
+
+void DriverRx::collisionRecover() {
+	state = &DriverRx::state_WaitForBit;
+	receiveBit(false);
+	checkMessageDone();
 }
 
 void DriverRx::resetBuffer() {
@@ -119,36 +129,29 @@ void DriverRx::receiveBit(bool bitVal) {
 	else if(curField->isAck) {
 	}
 	else {
+		uint8_t whichBit = curField->bitOffset + curField->bitLength - curBit - 1;
+		auto* valuePtr = (uint16_t*)((uint8_t*)curMessage.get() + curField->valueOffset);
 		if(bitVal) {
-			uint8_t whichBit = curField->bitOffset + curField->bitLength - curBit - 1;
-			auto* valuePtr = (uint16_t*)((uint8_t*)curMessage.get() + curField->valueOffset);
-			*valuePtr |= (1UL<<whichBit);
-
+			*valuePtr |=  (1UL<<whichBit);
 			curParity = !curParity;
+		} else {
+			*valuePtr &= ~(1UL<<whichBit);
 		}
 	}
+}
 
-	curBit++;
-
-	if(curBit == (curField->bitOffset + curField->bitLength)) {
-		curField++;
-        if((!curField->isAck) && (!curField->isParity)) {
-            curParity = false;
-        }
-	}
-
-	// Check if this message is done
-	if(curBit >= IEBusDataField(0).bitOffset) {
+void DriverRx::checkMessageDone() {
+	if(curBit+1 >= IEBusDataField(0).bitOffset) {
 		uint32_t thisMessageLength = IEBusDataField(0).bitOffset + (curMessage->dataLength * DataFieldLength);
-		if(curBit == thisMessageLength) {
-		// Message is done
-			messageEnd();
+		if(curBit+1 == thisMessageLength) {
+			// Message is done
+			messageDone();
 			return;
 		}
 	}
 }
 
-void DriverRx::messageEnd() {
+void DriverRx::messageDone() {
 	longestMsg = (curBit>longestMsg ? curBit : longestMsg);
 
 	totalMsgCount++;

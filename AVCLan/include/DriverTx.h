@@ -18,54 +18,49 @@ extern "C" {
 #include <memory>
 
 class DriverTx : public virtual DriverBase {
-	private:
-		/* The driver is implemented using a simple state machine.
-		 * Each state is a function, and the current state is stored in a function pointer.
-		 * When the timer tells us a certain amount of time has passed,
-		 * we set the output pin appropriately and move to the next state.
-		 */
+private:
+	/* The driver is implemented using a simple state machine.
+	 * Each state is a function, and the current state is stored in a function pointer.
+	 * When the timer tells us a certain amount of time has passed,
+	 * we set the output pin appropriately and move to the next state.
+	 */
 
-		typedef void (DriverTx::*State)();
-		State state;
+	typedef void (DriverTx::*State)();
+	State state;
 
-		void state_Idle();
-		void state_StartBit();
-		void state_PeriodOn();
-		void state_PeriodOff();
-		void state_GetAck();
-		void state_EndPause();
+	void state_Idle();
+	void state_StartBit();
+	void state_PeriodOn();
+	void state_PeriodOff();
+	void state_CheckCollision();
 
-		// ------------------------
+	// ------------------------
 
-		std::shared_ptr<IEBusMessage> curMessage;
-		const IEBusMessageField* curField;
-		uint32_t curBit;
-		bool curParity;
+	bool curBitValue;
 
-		uint32_t sendLengthBits;
-		Time startTime;
+	uint32_t sendLengthBits;
+	Time startTime;
 
-		std::queue<std::shared_ptr<IEBusMessage>> sendQueue;
+	std::queue<std::shared_ptr<IEBusMessage>> sendQueue;
 
-		bool getNextBit();
+	bool getBit();
+	void checkMessageDone();
+	void messageDone();
+	virtual void endTransmit() {};
 
-		void messageDone();
+public:
+	DriverTx(p_timer);
+	virtual ~DriverTx() {};
 
-		virtual void endTransmit() {};
+	void queueMessage(const std::shared_ptr<IEBusMessage>&);
 
-	public:
-		DriverTx(p_timer);
-		virtual ~DriverTx() {};
+	bool isMessageWaiting();
 
-		void queueMessage(const std::shared_ptr<IEBusMessage>&);
+	void prepareTransmit();
 
-		bool isMessageWaiting();
+	void startTransmit();
 
-		void prepareTransmit();
-
-    virtual void startTransmit();
-
-		void onTimerCallback();
+	void onTimerCallback();
 };
 
 #endif

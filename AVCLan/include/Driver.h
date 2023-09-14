@@ -6,7 +6,7 @@
 #include <functional>
 #include <queue>
 
-class Driver : public DriverRx, DriverTx
+class Driver : public DriverRx, public DriverTx
 {
 	/* This Driver class derives from both the DriverRX and DriverTX class,
 	 * and coordinates both. When the driver is in the IDLE state,
@@ -17,24 +17,10 @@ class Driver : public DriverRx, DriverTx
 	 * it goes into a queue until we're ready to send it.
 	 */
 
-	void startTransmit();
-	void endTransmit();
-	void startReceive();
-	void endReceive();
-	void startIdle();
-
 	void messageReceived(const std::shared_ptr<IEBusMessage>&);
-
-	Time canTxTime;
 
 public:
 
-	enum AVCLanMode {
-		IDLE,
-		RECEIVE,
-		TRANSMIT,
-	};
-	AVCLanMode operatingMode = IDLE;
 	static Driver* instance;
 
 	Driver(p_timer timer);
@@ -52,8 +38,6 @@ public:
 	 */
 
 	void onTimerCallback();
-
-	void sendMessage(const std::shared_ptr<IEBusMessage>&);
 
 	void poll();
 };

@@ -15,6 +15,11 @@ Protocol::Protocol(Driver& driver)
 
 void Protocol::onMessage(IEBusMessage ieBusMessage)
 {
+	/*
+	if(ieBusMessage.masterAddress == 0x110) {
+		return;
+	}
+	 */
 	AVCLanMessage avcLanMessage(ieBusMessage);
 	for(auto & device : devices) {
 		if(isMessageForAddress(avcLanMessage, device.address)) {
@@ -26,7 +31,7 @@ void Protocol::onMessage(IEBusMessage ieBusMessage)
 void Protocol::sendMessage(AVCLanMessage avcLanMessage)
 {
 	std::shared_ptr<IEBusMessage> ieBusMessage(new IEBusMessage(avcLanMessage));
-	driver.sendMessage(ieBusMessage);
+	driver.queueMessage(ieBusMessage);
 }
 
 void Protocol::addDevice(Device device)

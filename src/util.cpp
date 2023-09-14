@@ -8,14 +8,14 @@ template<> uint16_t swapBytes(uint16_t num) {
 }
 
 void pinConfigure(PinCfgType pinCfg) {
+	GPIO_SetDir(pinCfg.PortNum, pinCfg.PinNum, pinCfg.GpioDir);
 	PIN_Configure(
-			pinCfg.Portnum,
-			pinCfg.Pinnum,
-			pinCfg.Funcnum,
-			pinCfg.Pinmode,
+			pinCfg.PortNum,
+			pinCfg.PinNum,
+			pinCfg.FuncNum,
+			pinCfg.PinMode,
 			pinCfg.OpenDrain
 			);
-	GPIO_SetDir(pinCfg.Portnum, pinCfg.Pinnum, pinCfg.GpioDir);
 }
 
 uint32_t pinMask(uint8_t pinNum) {
@@ -23,8 +23,8 @@ uint32_t pinMask(uint8_t pinNum) {
 }
 
 uint32_t gpioPinRead(PinCfgType pinCfg) {
-	return GPIO_PinRead(pinCfg.Portnum, pinCfg.Pinnum);
+	return GPIO_PinRead(pinCfg.PortNum, pinCfg.PinNum);
 }
 void gpioPinWrite(PinCfgType pinCfg, bool value) {
-	GPIO_PinWrite(pinCfg.Portnum, pinCfg.Pinnum, value);
+	GPIO_PinWrite(pinCfg.PortNum, pinCfg.PinNum, value);
 }

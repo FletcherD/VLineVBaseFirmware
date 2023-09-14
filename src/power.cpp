@@ -35,12 +35,12 @@ void
 power::turn_on(PinCfgType powerPin)
 {
 	// Power pins are all active low
-	GPIO_PinWrite(powerPin.Portnum, powerPin.Pinnum, 0);
+	GPIO_PinWrite(powerPin.PortNum, powerPin.PinNum, 0);
 }
 
 void
 power::turn_off(PinCfgType powerPin)
 {
-	GPIO_PinWrite(powerPin.Portnum, powerPin.Pinnum, 1);
+	GPIO_PinWrite(powerPin.PortNum, powerPin.PinNum, 1);
 }
 // ----------------------------------------------------------------------------

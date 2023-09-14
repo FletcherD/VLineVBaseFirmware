@@ -29,50 +29,9 @@ void Driver::onTimerCallback() {
 	timer.clearInterrupt();
 }
 
-void Driver::sendMessage(const std::shared_ptr<IEBusMessage>& message) {
-	DriverTx::queueMessage(message);
-}
-
-void Driver::startTransmit() {
-	// Do the time-consuming stuff first;
-	// There's a chance a message will start to come in while we prepare,
-	// and then we have to wait until it's done before we start
-	DriverTx::prepareTransmit();
-	while(operatingMode != IDLE || timer.getTicks() < canTxTime) {}
-
-#ifdef NO_TX
-	DriverTx::messageDone();
-#else
-	timer.setCaptureInterruptEnabled(false);
-	timer.setTimerInterruptEnabled(true);
-	operatingMode = TRANSMIT;
-	DriverTx::startTransmit();
-#endif
-}
-
-void Driver::endTransmit() {
-	canTxTime = timer.getTicks() + T_TxWait;
-	startIdle();
-}
-
-void Driver::startReceive() {
-	operatingMode = RECEIVE;
-}
-
-void Driver::endReceive() {
-	canTxTime = timer.getTicks() + T_TxWait;
-	startIdle();
-}
-
-void Driver::startIdle() {
-	timer.setCaptureInterruptEnabled(true);
-	timer.setTimerInterruptEnabled(false);
-	operatingMode = IDLE;
-}
-
 void Driver::poll() {
 	if(DriverTx::isMessageWaiting() && operatingMode == IDLE) {
-		Driver::startTransmit();
+		sendMessage();
 	}
 }
 

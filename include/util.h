@@ -16,13 +16,13 @@ template<typename T> T swapBytes(T num) {
 }
 
 typedef struct {
-	uint8_t Portnum;	/**< Port Number, should be PINSEL_PORT_x,
+	uint8_t PortNum;	/**< Port Number, should be PINSEL_PORT_x,
 						where x should be in range from 0 to 4 */
-	uint8_t Pinnum;		/**< Pin Number, should be PINSEL_PIN_x,
+	uint8_t PinNum;		/**< Pin Number, should be PINSEL_PIN_x,
 						where x should be in range from 0 to 31 */
-	uint8_t Funcnum;	/**< Function Number, should be PINSEL_FUNC_x,
+	uint8_t FuncNum;	/**< Function Number, should be PINSEL_FUNC_x,
 						where x should be in range from 0 to 3 */
-	uint8_t Pinmode;	/**< Pin Mode, should be:
+	uint8_t PinMode;	/**< Pin Mode, should be:
 						- PINSEL_PINMODE_PULLUP: Internal pull-up resistor
 						- PINSEL_PINMODE_TRISTATE: Tri-state
 						- PINSEL_PINMODE_PULLDOWN: Internal pull-down resistor */

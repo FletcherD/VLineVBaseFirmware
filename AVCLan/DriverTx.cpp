@@ -6,15 +6,15 @@ DriverTx::DriverTx(p_timer timer)
 	: DriverBase(timer),
 	  state(&DriverTx::state_Idle)
 {
-	setTxPinState(false);
-	pinConfigure(AVC_TX_PIN);
+	setTxState(false);
+	pinConfigure(AvcTxPin);
 }
 
 void DriverTx::state_Idle() {
 }
 
 void DriverTx::state_StartBit() {
-	setTxPinState(false);
+	setTxState(false);
 
 	startTime = timer.getTicks() + T_Bit_1;
 	timer.updateTimerAbsolute(startTime);
@@ -23,17 +23,17 @@ void DriverTx::state_StartBit() {
 }
 
 void DriverTx::state_PeriodOff() {
-	setTxPinState(true);
+	setTxState(true);
 
-	bool bitVal = getNextBit();
-	Time pulseTime = (T_Bit * (curBit-1)) + (bitVal ? T_Bit_1 : T_Bit_0);
+	curBitValue = getBit();
+	Time pulseTime = (T_Bit * curBit) + (curBitValue ? T_Bit_1 : T_Bit_0);
 	timer.updateTimerAbsolute(startTime + pulseTime);
 
 	state = &DriverTx::state_PeriodOn;
 }
 
 void DriverTx::state_PeriodOn() {
-	setTxPinState(false);
+	setTxState(false);
 	/*
 	if(sendBitPos == AVCLanMsg::SlaveAddress_A.BitOffset) {
 		Time pulseTime = (T_Bit * sendBitPos) + T_BitMeasure;
@@ -43,18 +43,44 @@ void DriverTx::state_PeriodOn() {
 	}
 	*/
 
-	if (curBit == sendLengthBits) {
-		messageDone();
-		return;
+	if(curBitValue) {
+		Time checkTime = (T_Bit * curBit) + T_BitMeasure;
+		timer.updateTimerAbsolute(startTime + checkTime);
+		state = &DriverTx::state_CheckCollision;
+	} else {
+		nextBit();
+		checkMessageDone();
+
+		Time pulseTime = T_Bit * curBit;
+		timer.updateTimerAbsolute(startTime + pulseTime);
+		state = &DriverTx::state_PeriodOff;
 	}
+}
+
+void DriverTx::state_CheckCollision() {
+	bool lineState = getRxState();
+	if(!lineState) {
+		// Someone else has set the line
+		if(curField->isAck) {
+			// We've been ACKed
+		} else {
+			// There's been a collision
+			// We were never sending a message... we were receiving a message the whole time!
+			startReceive();
+			collisionRecover();
+			return;
+		}
+	}
+
+	nextBit();
+	checkMessageDone();
 
 	Time pulseTime = T_Bit * curBit;
 	timer.updateTimerAbsolute(startTime + pulseTime);
-
 	state = &DriverTx::state_PeriodOff;
 }
 
-bool DriverTx::getNextBit() {
+bool DriverTx::getBit() {
 	bool bitVal;
 
 	if(curField->isParity) {
@@ -73,16 +99,16 @@ bool DriverTx::getNextBit() {
 		}
 	}
 
-	curBit++;
-
-	if(curBit == (curField->bitOffset + curField->bitLength)) {
-		curField++;
-        if((!curField->isAck) && (!curField->isParity)) {
-            curParity = false;
-        }
-	}
-
 	return bitVal;
+}
+
+void DriverTx::checkMessageDone() {
+	if (curBit == sendLengthBits) {
+		// Message sent successfully
+		sendQueue.pop();
+		messageDone();
+		return;
+	}
 }
 
 void DriverTx::messageDone() {
@@ -99,9 +125,8 @@ bool DriverTx::isMessageWaiting() {
 }
 
 void DriverTx::prepareTransmit() {
-	curMessage = sendQueue.front();
+	curMessage.reset(new IEBusMessage(*sendQueue.front()));
 	sendLengthBits = curMessage->getMessageLength();
-	sendQueue.pop();
 
 	curField = IEBusFields.cbegin();
 	curBit = 0;
@@ -109,7 +134,7 @@ void DriverTx::prepareTransmit() {
 }
 
 void DriverTx::startTransmit() {
-	setTxPinState(true);
+	setTxState(true);
 	startTime = timer.getTicks() + T_StartBit;
 	timer.updateTimerAbsolute(startTime);
 	state = &DriverTx::state_StartBit;
