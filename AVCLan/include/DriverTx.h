@@ -36,13 +36,14 @@ private:
 
 	// ------------------------
 
+	IEBusMessage curSendMessage;
 	uint32_t sendLengthBits;
 	Time startTime;
 
 	std::queue<std::shared_ptr<IEBusMessage>> sendQueue;
 
 	bool getBit();
-	void checkMessageDone();
+	bool checkMessageDone();
 	void messageDone();
 
 public:

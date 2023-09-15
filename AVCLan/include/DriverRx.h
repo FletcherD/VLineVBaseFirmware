@@ -59,9 +59,6 @@ class DriverRx : public virtual DriverBase {
 		void collisionRecover();
 
 	public:
-		uint32_t eTime[512];
-		uint32_t eTimeI = 0;
-
 		uint32_t bitErrorCount = 0;
 		uint32_t totalMsgCount = 0;
 

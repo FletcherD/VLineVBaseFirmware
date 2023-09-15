@@ -34,14 +34,6 @@ void DriverTx::state_PeriodOff() {
 
 void DriverTx::state_PeriodOn() {
 	setTxState(false);
-	/*
-	if(sendBitPos == AVCLanMsg::SlaveAddress_A.BitOffset) {
-		Time pulseTime = (T_Bit * sendBitPos) + T_BitMeasure;
-		timer.updateTimerAbsolute(startTime + pulseTime);
-		state = &AVCLanTx::state_GetAck;
-		return;
-	}
-	*/
 
 	if(curBitValue) {
 		Time checkTime = (T_Bit * curBit) + T_BitMeasure;
@@ -49,11 +41,11 @@ void DriverTx::state_PeriodOn() {
 		state = &DriverTx::state_CheckCollision;
 	} else {
 		nextBit();
-		checkMessageDone();
-
-		Time pulseTime = T_Bit * curBit;
-		timer.updateTimerAbsolute(startTime + pulseTime);
-		state = &DriverTx::state_PeriodOff;
+		if(!checkMessageDone()) {
+			Time pulseTime = T_Bit * curBit;
+			timer.updateTimerAbsolute(startTime + pulseTime);
+			state = &DriverTx::state_PeriodOff;
+		}
 	}
 }
 
@@ -66,6 +58,7 @@ void DriverTx::state_CheckCollision() {
 		} else {
 			// There's been a collision
 			// We were never sending a message... we were receiving a message the whole time!
+			curMessage.reset(new IEBusMessage(curSendMessage));
 			startReceive();
 			collisionRecover();
 			return;
@@ -73,11 +66,11 @@ void DriverTx::state_CheckCollision() {
 	}
 
 	nextBit();
-	checkMessageDone();
-
-	Time pulseTime = T_Bit * curBit;
-	timer.updateTimerAbsolute(startTime + pulseTime);
-	state = &DriverTx::state_PeriodOff;
+	if(!checkMessageDone()) {
+		Time pulseTime = T_Bit * curBit;
+		timer.updateTimerAbsolute(startTime + pulseTime);
+		state = &DriverTx::state_PeriodOff;
+	}
 }
 
 bool DriverTx::getBit() {
@@ -91,7 +84,7 @@ bool DriverTx::getBit() {
 	}
 	else {
 		uint8_t whichBit = curField->bitOffset + curField->bitLength - curBit - 1;
-		auto* valuePtr = (uint16_t*)((uint8_t*)curMessage.get() + curField->valueOffset);
+		auto* valuePtr = (uint16_t*)((uint8_t*)&curSendMessage + curField->valueOffset);
 		bitVal = (*valuePtr) & (1UL<<whichBit);
 
 		if(bitVal) {
@@ -102,13 +95,14 @@ bool DriverTx::getBit() {
 	return bitVal;
 }
 
-void DriverTx::checkMessageDone() {
+bool DriverTx::checkMessageDone() {
 	if (curBit == sendLengthBits) {
 		// Message sent successfully
 		sendQueue.pop();
 		messageDone();
-		return;
+		return true;
 	}
+	return false;
 }
 
 void DriverTx::messageDone() {
@@ -125,8 +119,8 @@ bool DriverTx::isMessageWaiting() {
 }
 
 void DriverTx::prepareTransmit() {
-	curMessage.reset(new IEBusMessage(*sendQueue.front()));
-	sendLengthBits = curMessage->getMessageLength();
+	curSendMessage = IEBusMessage(*sendQueue.front());
+	sendLengthBits = curSendMessage.getMessageLength();
 
 	curField = IEBusFields.cbegin();
 	curBit = 0;

@@ -36,8 +36,8 @@ main (int argc, char* argv[])
 	Driver avcLan(timer);
 	Protocol avcLanProtocol(avcLan);
 
-	CDChanger exampleDevice;
-	avcLanProtocol.addDevice(exampleDevice);
+	CDChanger cdChanger;
+	avcLanProtocol.addDevice(cdChanger);
 
 	//VCoreCommunication::uartVCore.receiveComplete = &VCoreCommunication::uartReceiveComplete;
 	//VCoreCommunication::startUartReceive();
@@ -60,6 +60,14 @@ main (int argc, char* argv[])
 			}
 
 			avcLan.poll();
+		}
+
+		if(cdChanger.isInitialized) {
+			cdChanger.sendPlayback();
+			if (!cdChanger.haveSentTOC) {
+				cdChanger.sendTOC();
+				cdChanger.haveSentTOC = true;
+			}
 		}
 	}
 }

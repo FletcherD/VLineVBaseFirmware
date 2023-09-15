@@ -13,7 +13,7 @@
 
 #include <vector>
 
-bool isMessageForAddress(const AVCLanMessage, Address);
+bool isMessageForAddress(const AVCLanMessage&, Address);
 
 class Protocol {
 private:
@@ -23,10 +23,10 @@ private:
 public:
 	Protocol(Driver&);
 
-	void addDevice(Device device);
+	void addDevice(Device& device);
 
-	void onMessage(const IEBusMessage);
-	void sendMessage(const AVCLanMessage);
+	void onMessage(const IEBusMessage&);
+	void sendMessage(const AVCLanMessage&);
 };
 
 #endif /* PROTOCOL_H_ */

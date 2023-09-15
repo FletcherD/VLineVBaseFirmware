@@ -33,11 +33,17 @@ public:
 	  nOperands(dataLength - 3 - (broadcast==BROADCAST ? 0 : 1))
 	  {}
 
+
 	void setOperands(const std::vector<DataValue>& oIn)
 	{
         dataLength = (broadcast==BROADCAST ? 0 : 1) + 3 + oIn.size();
 		std::copy(oIn.cbegin(), oIn.cend(), operands);
 		nOperands = oIn.size();
+	}
+
+	std::vector<DataValue> getOperands() const
+	{
+		return std::vector<DataValue>{operands, operands+nOperands};
 	}
 };
 

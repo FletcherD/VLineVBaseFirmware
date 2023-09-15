@@ -30,6 +30,8 @@ public:
 	static constexpr Opcode RestartLan 				= 0x01;
 	static constexpr Opcode FunctionMappingResponse	= 0x02;
 	static constexpr Opcode FunctionMappingRequest 	= 0x12;
+	static constexpr Opcode Function07Request		= 0x07; // TODO what is this?
+	static constexpr Opcode Function07Response	 	= 0x17; // TODO what is this?
 	static constexpr Opcode PingRequest 			= 0x20;
 	static constexpr Opcode PingResponse 			= 0x30;
 	static constexpr Opcode EnableFunctionRequest	= 0x42;
@@ -60,6 +62,13 @@ public:
 	void handler_ListFunctionsRequest(AVCLanMessage);
 	void handler_FunctionMappingResponse(AVCLanMessage);
 	void handler_Ping(AVCLanMessage);
+
+	void handler_Function07Request(AVCLanMessage);
+
+	void handler_EnableFunctionRequest(AVCLanMessage);
+	void handler_DisableFunctionRequest(AVCLanMessage);
+
+	bool isInitialized = false;
 };
 
 #endif /* AVCLANDEVICE_H_ */

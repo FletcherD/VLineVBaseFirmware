@@ -22,6 +22,9 @@ class DriverBase {
 public:
 	typedef uint32_t Time;
 
+	uint32_t eTime[512];
+	uint32_t eTimeI = 0;
+
 protected:
 	p_timer timer;
 

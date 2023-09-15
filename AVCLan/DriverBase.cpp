@@ -25,8 +25,8 @@ void DriverBase::sendMessage() {
 	// Do the time-consuming stuff first;
 	// There's a chance a message will start to come in while we prepare,
 	// and then we have to wait until it's done before we start
-	while(operatingMode != IDLE || timer.getTicks() < canTxTime) {}
 	prepareTransmit();
+	while(operatingMode != IDLE || timer.getTicks() < canTxTime) {}
 
 	timer.setCaptureInterruptEnabled(false);
 	timer.setTimerInterruptEnabled(true);

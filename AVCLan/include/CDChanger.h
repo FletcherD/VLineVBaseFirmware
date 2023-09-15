@@ -27,6 +27,8 @@ public:
 	static constexpr Opcode ReportLoader2 		= 0xF4;
 	static constexpr Opcode RequestToc 			= 0xE9;
 	static constexpr Opcode ReportToc 			= 0xF9;
+	static constexpr Opcode RequestStatusFA		= 0xEA; // TODO what is this?
+	static constexpr Opcode ReportStatusFA 		= 0xFA; // TODO what is this?
 	static constexpr Opcode RequestTrackName	= 0xED;
 	static constexpr Opcode ReportTrackName		= 0xFD;
 
@@ -39,6 +41,12 @@ public:
 	void handler_RequestLoader2(AVCLanMessage);
 	void handler_RequestToc(AVCLanMessage);
 	void handler_RequestTrackName(AVCLanMessage);
+	void handler_RequestStatusFA(AVCLanMessage);
+
+	uint8_t playbackSeconds = 0;
+	void sendPlayback();
+	bool haveSentTOC = false;
+	void sendTOC();
 };
 
 #endif /* CDCHANGER_H_ */
