@@ -56,37 +56,11 @@ main (int argc, char* argv[])
 				//VCoreCommunication::onMessageReceived(messageRaw);
 				avcLanProtocol.onMessage(avcLanMessage);
 
-                /*
-				trace_printf("%d %03x %03x %01x %d : %d",
-						ieBusMessage->broadcast,
-						ieBusMessage->masterAddress,
-						ieBusMessage->slaveAddress,
-						ieBusMessage->control,
-						ieBusMessage->dataLength,
-						ieBusMessage->data[0]);
-                 */
-
 				avcLan.receiveQueue.pop();
 			}
 
 			avcLan.poll();
 		}
-
-		/*
-        IEBusMessage ieBusMessage = {
-                .broadcast      =  UNICAST,
-                .masterAddress  =  0x1d3,
-                .slaveAddress   =  0x190,
-                .control        =  0xf
-        };
-        AVCLanMessage avcLanMessage(ieBusMessage);
-		avcLanMessage.srcFunction = 0x01;
-		avcLanMessage.dstFunction = 0x02;
-		avcLanMessage.opcode = 0x03;
-        avcLanMessage.setOperands({4,5,6,7,8,9});
-        avcLan.sendMessage(std::make_shared<IEBusMessage>(avcLanMessage));
-        */
-		//trace_printf("Bit Errors: %d - Total Msgs: %d - Mode: %d", avcLan.bitErrorCount, avcLan.totalMsgCount, avcLan.operatingMode);
 	}
 }
 

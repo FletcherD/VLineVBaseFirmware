@@ -30,6 +30,8 @@ void DriverRx::onTimerCallback() {
 	event.type = getRxState() ? RISING_EDGE : FALLING_EDGE;
 	lastEventTime = eventTime;
 
+	eTime[eTimeI++] = event.time;
+
 	(this->*state)(event);
 }
 
@@ -52,6 +54,7 @@ void DriverRx::state_StartBit(InputEvent e) {
 			endReceive();
 			return;
 		}
+
 		state = &DriverRx::state_WaitForBit;
 	} else {
 		//trace_printf("state_StartBit %d T: %d Bit: %d", e.type, e.time, curBit);
@@ -66,21 +69,7 @@ void DriverRx::state_WaitForBit(InputEvent e) {
 		return;
 	}
 
-	nextBit();
-
-	if(curMessage->slaveAddress == 0x1d3 && curField->isAck) {
-		setTxState(true);
-
-		timer.setCaptureInterruptEnabled(false);
-		timer.setTimerInterruptEnabled(true);
-
-		Time ackEndTime = lastEventTime + T_Bit_0;
-		timer.updateTimerAbsolute(ackEndTime);
-
-		state = &DriverRx::state_Ack;
-	} else {
-		state = &DriverRx::state_MeasureBit;
-	}
+	state = &DriverRx::state_MeasureBit;
 }
 
 void DriverRx::state_MeasureBit(InputEvent e) {
@@ -89,11 +78,58 @@ void DriverRx::state_MeasureBit(InputEvent e) {
 		onBitError();
 		return;
 	}
-	state = &DriverRx::state_WaitForBit;
-	bool bitVal = (e.time <= T_BitMeasure);
-	receiveBit(bitVal);
+	//state = &DriverRx::state_WaitForBit;
+	curBitValue = (e.time <= T_BitMeasure);
+	receiveBit(curBitValue);
+
+	nextBit();
+
+	TIM_CAPTURECFG_Type timerCapCfg;
+	timerCapCfg.CaptureChannel = 0;
+	timerCapCfg.FallingEdge = 0;
+	timerCapCfg.RisingEdge = 1;
+	timerCapCfg.IntOnCaption = 1;
+	TIM_ConfigCapture(timer.lpcTimer, &timerCapCfg);
+
+	state = &DriverRx::state_MeasureBit_Rising;
+
+	//checkMessageDone();
+}
+
+void DriverRx::state_MeasureBit_Rising(InputEvent e) {
+	if(e.time > T_RisingMeasure_0) {
+		curBitValue = false;
+	} else if (e.time < T_RisingMeasure_1) {
+		curBitValue = true;
+	}
+
+	state = &DriverRx::state_MeasureBit_Rising;
+
+	receiveBit(curBitValue);
+	nextBit();
+
+	if(curMessage->slaveAddress == 0x1d3 && curField->isAck) {
+		timer.setCaptureInterruptEnabled(false);
+		timer.setTimerInterruptEnabled(true);
+
+		const Time bitEndTime = lastEventTime + (curBitValue ? (T_Bit - T_Bit_1) : (T_Bit - T_Bit_0));
+		const Time ackTime = bitEndTime + T_Ack;
+		timer.updateTimerAbsolute(ackTime);
+
+		state = &DriverRx::state_WaitToAck;
+	}
 
 	checkMessageDone();
+}
+
+void DriverRx::state_WaitToAck(InputEvent i) {
+	setTxState(true);
+	curBitValue = false;
+
+	const Time ackEndTime = lastEventTime + (T_Bit - T_Bit_0) + T_Ack;
+	timer.updateTimerAbsolute(ackEndTime);
+
+	state = &DriverRx::state_Ack;
 }
 
 void DriverRx::state_Ack(InputEvent e) {
@@ -102,8 +138,15 @@ void DriverRx::state_Ack(InputEvent e) {
 	timer.setCaptureInterruptEnabled(true);
 	timer.setTimerInterruptEnabled(false);
 
-	state = &DriverRx::state_WaitForBit;
-	receiveBit(ACK);
+	TIM_CAPTURECFG_Type timerCapCfg;
+	timerCapCfg.CaptureChannel = 0;
+	timerCapCfg.FallingEdge = 0;
+	timerCapCfg.RisingEdge = 1;
+	timerCapCfg.IntOnCaption = 1;
+	TIM_ConfigCapture(timer.lpcTimer, &timerCapCfg);
+
+	state = &DriverRx::state_MeasureBit_Rising;
+	nextBit();
 	checkMessageDone();
 }
 
@@ -111,13 +154,6 @@ void DriverRx::collisionRecover() {
 	state = &DriverRx::state_WaitForBit;
 	receiveBit(false);
 	checkMessageDone();
-}
-
-void DriverRx::resetBuffer() {
-	curMessage.reset(new IEBusMessage);
-	curField = IEBusFields.cbegin();
-	curBit = 0;
-	curParity = false;
 }
 
 void DriverRx::receiveBit(bool bitVal) {
@@ -141,9 +177,9 @@ void DriverRx::receiveBit(bool bitVal) {
 }
 
 void DriverRx::checkMessageDone() {
-	if(curBit+1 >= IEBusDataField(0).bitOffset) {
+	if(curBit >= IEBusDataField(0).bitOffset) {
 		uint32_t thisMessageLength = IEBusDataField(0).bitOffset + (curMessage->dataLength * DataFieldLength);
-		if(curBit+1 == thisMessageLength) {
+		if(curBit == thisMessageLength) {
 			// Message is done
 			messageDone();
 			return;
@@ -159,6 +195,14 @@ void DriverRx::messageDone() {
 
 	state = &DriverRx::state_Idle;
 	resetBuffer();
+
+	TIM_CAPTURECFG_Type timerCapCfg;
+	timerCapCfg.CaptureChannel = 0;
+	timerCapCfg.FallingEdge = 1;
+	timerCapCfg.RisingEdge = 1;
+	timerCapCfg.IntOnCaption = 1;
+	TIM_ConfigCapture(timer.lpcTimer, &timerCapCfg);
+
 	endReceive();
 }
 

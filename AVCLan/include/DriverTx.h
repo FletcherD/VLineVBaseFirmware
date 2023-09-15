@@ -36,8 +36,6 @@ private:
 
 	// ------------------------
 
-	bool curBitValue;
-
 	uint32_t sendLengthBits;
 	Time startTime;
 
@@ -46,7 +44,6 @@ private:
 	bool getBit();
 	void checkMessageDone();
 	void messageDone();
-	virtual void endTransmit() {};
 
 public:
 	DriverTx(p_timer);

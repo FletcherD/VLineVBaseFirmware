@@ -34,8 +34,14 @@ protected:
 	const uint32_t T_Bit_1		= timer.uS(	T_Bit_uS / 2. );
 	const uint32_t T_Bit_0		= timer.uS(	4.* T_Bit_uS / 5. );
 	const uint32_t T_BitMeasure	= (T_Bit_1 + T_Bit_0) / 2;
+
+	const uint32_t T_Rising_1	= (T_Bit - T_Bit_0) + T_Bit_1;
+	const uint32_t T_Rising_0	= (T_Bit - T_Bit_1) + T_Bit_0;
+	const uint32_t T_RisingMeasure_1 = (T_Bit + T_Rising_1) / 2;
+	const uint32_t T_RisingMeasure_0 = (T_Bit + T_Rising_0) / 2;
+	const uint32_t T_Ack		= timer.uS(10);
+
 	const uint32_t T_TxWait		= timer.uS(	5000 );
-	const uint32_t T_Timeout	= timer.uS( 2000 );
 
 	// ------------------------
 
@@ -84,6 +90,7 @@ protected:
 	std::shared_ptr<IEBusMessage> curMessage;
 	const IEBusMessageField* curField;
 	uint32_t curBit;
+	bool curBitValue;
 	bool curParity;
 
 	enum AVCLanMode {
@@ -102,6 +109,8 @@ protected:
 	void startIdle();
 
 	void nextBit();
+
+	void resetBuffer();
 
 	virtual void prepareTransmit() = 0;
 	virtual void startTransmit() = 0;

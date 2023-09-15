@@ -25,8 +25,8 @@ void DriverBase::sendMessage() {
 	// Do the time-consuming stuff first;
 	// There's a chance a message will start to come in while we prepare,
 	// and then we have to wait until it's done before we start
-	prepareTransmit();
 	while(operatingMode != IDLE || timer.getTicks() < canTxTime) {}
+	prepareTransmit();
 
 	timer.setCaptureInterruptEnabled(false);
 	timer.setTimerInterruptEnabled(true);
@@ -51,6 +51,7 @@ void DriverBase::endReceive() {
 }
 
 void DriverBase::startIdle() {
+	resetBuffer();
 	timer.setCaptureInterruptEnabled(true);
 	timer.setTimerInterruptEnabled(false);
 	operatingMode = IDLE;
@@ -65,4 +66,11 @@ void DriverBase::nextBit() {
 			curParity = false;
 		}
 	}
+}
+
+void DriverBase::resetBuffer() {
+	curMessage.reset(new IEBusMessage);
+	curField = IEBusFields.cbegin();
+	curBit = 0;
+	curParity = false;
 }

@@ -44,21 +44,24 @@ class DriverRx : public virtual DriverBase {
 		void state_StartBit(InputEvent i);
 		void state_WaitForBit(InputEvent i);
 		void state_MeasureBit(InputEvent i);
+		void state_MeasureBit_Rising(InputEvent i);
+		void state_WaitToAck(InputEvent i);
 		void state_Ack(InputEvent i);
 
 		// ------------------------
 
 		void receiveBit(bool bit);
-		void resetBuffer();
 		void checkMessageDone();
 		void messageDone();
-		virtual void endReceive() {};
 		virtual void messageReceived(const std::shared_ptr<IEBusMessage>&) {};
 
 	void onBitError();
 		void collisionRecover();
 
 	public:
+		uint32_t eTime[512];
+		uint32_t eTimeI = 0;
+
 		uint32_t bitErrorCount = 0;
 		uint32_t totalMsgCount = 0;
 
