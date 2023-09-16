@@ -81,7 +81,11 @@ Device::handler_EnableFunctionRequest(AVCLanMessage messageIn)
 {
 	AVCLanMessage responseMsg = createResponseMessage(messageIn);
 	responseMsg.opcode = EnableFunctionResponse;
-	responseMsg.setOperands( messageIn.getOperands() );
+	if(messageIn.getOperands()[0] == 0x01) {
+		responseMsg.setOperands({0x01});
+	} else {
+		responseMsg.setOperands(messageIn.getOperands());
+	}
 	std::invoke(sendMessageCallback, responseMsg);
 }
 
@@ -91,6 +95,21 @@ Device::handler_DisableFunctionRequest(AVCLanMessage messageIn)
 	AVCLanMessage responseMsg = createResponseMessage(messageIn);
 	responseMsg.opcode = DisableFunctionResponse;
 	responseMsg.setOperands( messageIn.getOperands() );
+	std::invoke(sendMessageCallback, responseMsg);
+}
+
+void
+Device::sendFunctionMappingRequest()
+{
+	AVCLanMessage responseMsg(IEBusMessage{
+		.broadcast 		= UNICAST,
+		.masterAddress 	= address,
+		.slaveAddress 	= 0x110,
+	});
+	responseMsg.srcFunction = 0x01;
+	responseMsg.dstFunction = 0x12;
+	responseMsg.opcode = FunctionMappingRequest;
+	responseMsg.setOperands(functionsRequested);
 	std::invoke(sendMessageCallback, responseMsg);
 }
 

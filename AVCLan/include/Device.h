@@ -68,6 +68,8 @@ public:
 	void handler_EnableFunctionRequest(AVCLanMessage);
 	void handler_DisableFunctionRequest(AVCLanMessage);
 
+	void sendFunctionMappingRequest();
+
 	bool isInitialized = false;
 };
 

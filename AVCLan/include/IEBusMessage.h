@@ -32,7 +32,7 @@ struct IEBusMessage {
 	BroadcastValue broadcast	= BROADCAST;
 	Address masterAddress		= 0;
 	Address slaveAddress		= 0;
-	ControlValue control		= 0;
+	ControlValue control		= 0xf;
 	uint8_t dataLength			= 0;
 	DataValue data[MaxDataBytes] {0};
 

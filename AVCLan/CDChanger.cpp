@@ -17,6 +17,7 @@ CDChanger::CDChanger()
 	messageHandlerMap[RequestLoader] 	= (MessageHandler)&CDChanger::handler_RequestLoader;
 	messageHandlerMap[RequestLoader2] 	= (MessageHandler)&CDChanger::handler_RequestLoader2;
 	messageHandlerMap[RequestToc] 		= (MessageHandler)&CDChanger::handler_RequestToc;
+	messageHandlerMap[RequestStatusFA] 	= (MessageHandler)&CDChanger::handler_RequestStatusFA;
 	messageHandlerMap[RequestTrackName] = (MessageHandler)&CDChanger::handler_RequestTrackName;
 }
 
@@ -86,5 +87,18 @@ void CDChanger::handler_RequestStatusFA(AVCLanMessage messageIn) {
 	AVCLanMessage responseMsg = createResponseMessage(messageIn);
 	responseMsg.opcode = ReportStatusFA;
 	responseMsg.setOperands({0x01, 0x00, 0x77, 0x77, 0x59, 0x00, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01});
+	std::invoke(sendMessageCallback, responseMsg);
+}
+
+void CDChanger::sendCDInserted() {
+	AVCLanMessage responseMsg(IEBusMessage{
+		.broadcast 		= UNICAST,
+		.masterAddress 	= address,
+		.slaveAddress 	= 0x110,
+	});
+	responseMsg.srcFunction = 0xb0;
+	responseMsg.dstFunction = 0x12;
+	responseMsg.opcode = CdInserted;
+	responseMsg.setOperands({0x0a, 0x01});
 	std::invoke(sendMessageCallback, responseMsg);
 }

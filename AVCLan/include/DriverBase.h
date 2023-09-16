@@ -41,7 +41,7 @@ protected:
 	const uint32_t T_RisingMeasure_0 = (T_Bit + T_Rising_0) / 2;
 	const uint32_t T_Ack		= timer.uS(10);
 
-	const uint32_t T_TxWait		= timer.uS(	500 );
+	const uint32_t T_TxWait		= timer.uS(	600 );
 
 	// ------------------------
 

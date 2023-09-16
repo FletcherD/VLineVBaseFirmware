@@ -47,6 +47,7 @@ public:
 	void sendPlayback();
 	bool haveSentTOC = false;
 	void sendTOC();
+	void sendCDInserted();
 };
 
 #endif /* CDCHANGER_H_ */

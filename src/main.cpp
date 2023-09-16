@@ -67,7 +67,10 @@ main (int argc, char* argv[])
 			if (!cdChanger.haveSentTOC) {
 				cdChanger.sendTOC();
 				cdChanger.haveSentTOC = true;
+				cdChanger.sendCDInserted();
 			}
+		} else {
+			cdChanger.sendFunctionMappingRequest();
 		}
 	}
 }

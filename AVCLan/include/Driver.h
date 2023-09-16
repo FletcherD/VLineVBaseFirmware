@@ -17,6 +17,7 @@ class Driver : public DriverRx, public DriverTx
 	 * it goes into a queue until we're ready to send it.
 	 */
 
+private:
 	void messageReceived(const std::shared_ptr<IEBusMessage>&);
 
 public:
