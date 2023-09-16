@@ -1,8 +1,10 @@
 #include <DriverTx.h>
+
+#include <memory>
 #include "diag/trace.h"
 #include "IEBusMessage.h"
 
-DriverTx::DriverTx(p_timer timer)
+DriverTx::DriverTx(p_timer& timer)
 	: DriverBase(timer),
 	  state(&DriverTx::state_Idle)
 {
@@ -59,6 +61,7 @@ void DriverTx::state_CheckCollision() {
 			// There's been a collision
 			// We were never sending a message... we were receiving a message the whole time!
 			curMessage.reset(new IEBusMessage(curSendMessage));
+			sendQueue.push(std::make_shared<IEBusMessage>(curSendMessage));
 			startReceive();
 			collisionRecover();
 			return;
@@ -98,7 +101,6 @@ bool DriverTx::getBit() {
 bool DriverTx::checkMessageDone() {
 	if (curBit == sendLengthBits) {
 		// Message sent successfully
-		sendQueue.pop();
 		messageDone();
 		return true;
 	}
@@ -120,6 +122,7 @@ bool DriverTx::isMessageWaiting() {
 
 void DriverTx::prepareTransmit() {
 	curSendMessage = IEBusMessage(*sendQueue.front());
+	sendQueue.pop();
 	sendLengthBits = curSendMessage.getMessageLength();
 
 	curField = IEBusFields.cbegin();

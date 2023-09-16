@@ -23,7 +23,7 @@ public:
 
 	static Driver* instance;
 
-	Driver(p_timer timer);
+	Driver(p_timer& timer);
 	~Driver();
 
 	std::queue<std::shared_ptr<IEBusMessage>> receiveQueue;

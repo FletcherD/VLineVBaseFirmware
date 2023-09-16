@@ -22,14 +22,11 @@ class DriverBase {
 public:
 	typedef uint32_t Time;
 
-	uint32_t eTime[512];
-	uint32_t eTimeI = 0;
-
 protected:
-	p_timer timer;
+	p_timer& timer;
 
 	// 40.690104167 μs
-	static constexpr float T_Bit_uS = 256e6 / (0x600000);
+	static constexpr float T_Bit_uS = 39.578; // 256e6 / (0x600000);
 
 	// Times in timer ticks
 	const uint32_t T_StartBit	= timer.uS(	170	);
@@ -44,7 +41,7 @@ protected:
 	const uint32_t T_RisingMeasure_0 = (T_Bit + T_Rising_0) / 2;
 	const uint32_t T_Ack		= timer.uS(10);
 
-	const uint32_t T_TxWait		= timer.uS(	5000 );
+	const uint32_t T_TxWait		= timer.uS(	500 );
 
 	// ------------------------
 
@@ -121,7 +118,7 @@ protected:
 	virtual void collisionRecover() = 0;
 
 public:
-	DriverBase(p_timer);
+	DriverBase(p_timer&);
 };
 
 #endif

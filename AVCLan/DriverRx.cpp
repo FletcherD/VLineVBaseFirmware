@@ -3,7 +3,7 @@
 #include "diag/trace.h"
 #include "IEBusMessage.h"
 
-DriverRx::DriverRx(p_timer timer)
+DriverRx::DriverRx(p_timer& timer)
 	: DriverBase(timer)
 {
 	resetBuffer();
@@ -17,7 +17,6 @@ DriverRx::DriverRx(p_timer timer)
 
 	lastEventTime = timer.getTicks();
 	timer.setupCaptureInterrupt();
-	//timer.setupTimerInterrupt(T_Timeout);
 }
 
 void DriverRx::onTimerCallback() {
@@ -29,8 +28,6 @@ void DriverRx::onTimerCallback() {
 	event.time = eventTime - lastEventTime;
 	event.type = getRxState() ? RISING_EDGE : FALLING_EDGE;
 	lastEventTime = eventTime;
-
-	eTime[eTimeI++] = event.time;
 
 	(this->*state)(event);
 }

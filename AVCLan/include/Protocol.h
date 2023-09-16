@@ -19,7 +19,7 @@ class Protocol {
 private:
 	Driver& driver;
 
-	std::vector<Device> devices;
+	std::vector<std::shared_ptr<Device>> devices;
 public:
 	Protocol(Driver&);
 

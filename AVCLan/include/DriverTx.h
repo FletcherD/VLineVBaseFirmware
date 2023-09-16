@@ -47,8 +47,8 @@ private:
 	void messageDone();
 
 public:
-	DriverTx(p_timer);
-	virtual ~DriverTx() {};
+	DriverTx(p_timer&);
+	virtual ~DriverTx() = default;
 
 	void queueMessage(const std::shared_ptr<IEBusMessage>&);
 

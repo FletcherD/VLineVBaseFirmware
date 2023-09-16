@@ -2,7 +2,7 @@
 
 Driver* Driver::instance;
 
-Driver::Driver(p_timer timer)
+Driver::Driver(p_timer& timer)
 : DriverBase(timer),
   DriverRx(timer),
   DriverTx(timer)
