@@ -11,21 +11,21 @@ CDChanger::CDChanger()
 	: Device(0x1D3, {0xb0, 0x43, 0x24, 0x31, 0x25})
 {
 	functionsRequested = {0xb0, 0x29, 0x43, 0x24, 0x31, 0x25, 0x42, 0x8c};
-	messageHandlerMap[RequestStatus] 	= (MessageHandler)&CDChanger::handler_RequestStatus;
-	messageHandlerMap[RequestStatusPlayback] 	= (MessageHandler) & CDChanger::handler_RequestStatusPlayback;
-	messageHandlerMap[RequestStatusPlayback2] = (MessageHandler) & CDChanger::handler_RequestStatusPlayback2;
-	messageHandlerMap[RequestStatusLoader] 	= (MessageHandler) & CDChanger::handler_RequestStatusLoader;
-	messageHandlerMap[RequestStatusLoader2] 	= (MessageHandler) & CDChanger::handler_RequestStatusLoader2;
-	messageHandlerMap[RequestStatusToc] 		= (MessageHandler) & CDChanger::handler_RequestStatusToc;
-	messageHandlerMap[RequestStatusFA] 	= (MessageHandler)&CDChanger::handler_RequestStatusFA;
-	messageHandlerMap[RequestStatusTrackName] = (MessageHandler) & CDChanger::handler_RequestStatusTrackName;
+	addHandler(RequestStatus, (MessageHandler)&CDChanger::handler_RequestStatus);
+	addHandler(RequestStatusPlayback, (MessageHandler) & CDChanger::handler_RequestStatusPlayback);
+	addHandler(RequestStatusPlayback2, (MessageHandler) & CDChanger::handler_RequestStatusPlayback2);
+	addHandler(RequestStatusLoader, (MessageHandler) & CDChanger::handler_RequestStatusLoader);
+	addHandler(RequestStatusLoader2, (MessageHandler) & CDChanger::handler_RequestStatusLoader2);
+	addHandler(RequestStatusToc, (MessageHandler) & CDChanger::handler_RequestStatusToc);
+	addHandler(RequestStatusFA, (MessageHandler)&CDChanger::handler_RequestStatusFA);
+	addHandler(RequestStatusTrackName, (MessageHandler) & CDChanger::handler_RequestStatusTrackName);
 
-	messageHandlerMap[Function07Request] = (MessageHandler)&CDChanger::handler_Function07Request;
+	addHandler(Function07Request, (MessageHandler)&CDChanger::handler_Function07Request);
 
-	messageHandlerMap[EnableFunctionRequest] = (MessageHandler)&CDChanger::handler_EnableFunctionRequest;
-	messageHandlerMap[DisableFunctionRequest] = (MessageHandler)&CDChanger::handler_DisableFunctionRequest;
+	addHandler(EnableFunctionRequest, (MessageHandler)&CDChanger::handler_EnableFunctionRequest);
+	addHandler(DisableFunctionRequest, (MessageHandler)&CDChanger::handler_DisableFunctionRequest);
 
-	messageHandlerMap[PlayRequest] = (MessageHandler)&CDChanger::handler_PlayRequest;
+	addHandler(PlayRequest, (MessageHandler)&CDChanger::handler_PlayRequest);
 }
 
 

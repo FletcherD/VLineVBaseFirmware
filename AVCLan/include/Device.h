@@ -54,6 +54,8 @@ protected:
 public:
 	Device(Address, std::vector<Function> functions);
 
+	void addHandler(Opcode, MessageHandler);
+
 	void onMessage(AVCLanMessage);
 	std::function<void(AVCLanMessage)> sendMessageCallback;
 	AVCLanMessage createResponseMessage(AVCLanMessage messageIn);

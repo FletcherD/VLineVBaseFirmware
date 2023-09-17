@@ -38,4 +38,8 @@ public:
 	std::vector<DataValue> getOperands() const;
 };
 
+class AVCLanMessageListener {
+
+};
+
 #endif /* AVCLANMESSAGE_H_ */

@@ -14,10 +14,10 @@ Device::Device(Address address, std::vector<Function> functions)
 	: address(address),
 	  functions(std::move(functions))
 {
-	messageHandlerMap[ListFunctionsRequest] = &Device::handler_ListFunctionsRequest;
-	messageHandlerMap[RestartLan] = &Device::handler_ListFunctionsRequest;
-	messageHandlerMap[FunctionMappingResponse] = &Device::handler_FunctionMappingResponse;
-	messageHandlerMap[PingRequest] = &Device::handler_Ping;
+	addHandler(ListFunctionsRequest, &Device::handler_ListFunctionsRequest);
+	addHandler(RestartLan, &Device::handler_ListFunctionsRequest);
+	addHandler(FunctionMappingResponse, &Device::handler_FunctionMappingResponse);
+	addHandler(PingRequest, &Device::handler_Ping);
 }
 
 void
@@ -99,4 +99,8 @@ Device::createResponseMessage(AVCLanMessage messageIn)
 
 void Device::sendMessage(AVCLanMessage message) {
 	std::invoke(sendMessageCallback, message);
+}
+
+void Device::addHandler(const Opcode opcode, Device::MessageHandler handler) {
+	messageHandlerMap[opcode] = handler;
 }
