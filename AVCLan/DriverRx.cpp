@@ -187,7 +187,7 @@ void DriverRx::checkMessageDone() {
 void DriverRx::messageDone() {
 	longestMsg = (curBit>longestMsg ? curBit : longestMsg);
 
-	totalMsgCount++;
+	totalMsgsReceived++;
 	messageReceived(curMessage);
 
 	state = &DriverRx::state_Idle;

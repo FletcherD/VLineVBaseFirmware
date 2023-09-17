@@ -11,6 +11,10 @@ p_timer::p_timer(uint8_t timerN) : timerN(timerN), lpcTimer(LpcTimers[timerN])
 	lpcTimerConfig.PrescaleValue = 100;
 	TIM_Init(lpcTimer, TIM_TIMER_MODE, &lpcTimerConfig);
 
+	setCaptureInterruptEnabled(false);
+	setTimerInterruptEnabled(false);
+	clearInterrupt();
+
 	NVIC_EnableIRQ(LpcTimerIRQs[timerN]);
 	NVIC_SetPriority(LpcTimerIRQs[timerN], 0);
 	TIM_Cmd(lpcTimer, FunctionalState::ENABLE);
@@ -73,9 +77,6 @@ p_timer::setTimerInterruptEnabled(bool isEnabled)
 void
 p_timer::setupCaptureInterrupt()
 {
-	lpcTimer->MCR = 0;
-	lpcTimer->EMR = 0;
-
 	TIM_CAPTURECFG_Type timerCapCfg;
 	timerCapCfg.CaptureChannel = 0;
 	timerCapCfg.FallingEdge = 1;

@@ -8,10 +8,6 @@ Driver::Driver(p_timer& timer)
   DriverTx(timer)
 {
 	Driver::instance = this;
-
-	canTxTime = timer.getTicks();
-
-	startIdle();
 }
 
 Driver::~Driver() = default;
@@ -25,8 +21,6 @@ void Driver::onTimerCallback() {
 	} else if(operatingMode == TRANSMIT) {
 		DriverTx::onTimerCallback();
 	}
-
-	timer.clearInterrupt();
 }
 
 void Driver::poll() {
@@ -41,6 +35,9 @@ void Driver::messageReceived(const std::shared_ptr<IEBusMessage>& message) {
 
 extern "C" {
 void TIMER2_IRQHandler(void) {
-	Driver::instance->onTimerCallback();
+	if(Driver::instance != NULL) {
+		Driver::instance->onTimerCallback();
+	}
+	LPC_TIM2->IR = 0xffffffff;
 }
 }

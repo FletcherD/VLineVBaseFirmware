@@ -64,13 +64,15 @@ main (int argc, char* argv[])
 
 		if(cdChanger.isInitialized) {
 			cdChanger.sendPlayback();
+			/*
 			if (!cdChanger.haveSentTOC) {
 				cdChanger.sendTOC();
 				cdChanger.haveSentTOC = true;
 				cdChanger.sendCDInserted();
 			}
+			 */
 		} else {
-			cdChanger.sendFunctionMappingRequest();
+			//cdChanger.sendFunctionMappingRequest();
 		}
 	}
 }

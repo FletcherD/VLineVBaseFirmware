@@ -60,6 +60,7 @@ void DriverTx::state_CheckCollision() {
 		} else {
 			// There's been a collision
 			// We were never sending a message... we were receiving a message the whole time!
+			collisionCount++;
 			curMessage.reset(new IEBusMessage(curSendMessage));
 			sendQueue.push(std::make_shared<IEBusMessage>(curSendMessage));
 			startReceive();
@@ -108,6 +109,7 @@ bool DriverTx::checkMessageDone() {
 }
 
 void DriverTx::messageDone() {
+	totalMsgsSent++;
 	state = &DriverTx::state_Idle;
 	endTransmit();
 }

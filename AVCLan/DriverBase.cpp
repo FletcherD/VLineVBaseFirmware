@@ -3,6 +3,12 @@
 DriverBase::DriverBase(p_timer& timer)
 	: timer(timer)
 {
+	canTxTime = timer.getTicks();
+
+	timer.setupTimerInterrupt(1000000);
+	timer.setupCaptureInterrupt();
+
+	startIdle();
 }
 
 bool DriverBase::getRxState() {

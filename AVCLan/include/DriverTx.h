@@ -59,6 +59,9 @@ public:
 	void startTransmit();
 
 	void onTimerCallback();
+
+	uint32_t totalMsgsSent = 0;
+	uint32_t collisionCount = 0;
 };
 
 #endif

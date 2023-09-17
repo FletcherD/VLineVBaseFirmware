@@ -65,8 +65,8 @@ public:
 
 	virtual void onTimerCallback();
 
+	uint32_t totalMsgsReceived = 0;
 	uint32_t bitErrorCount = 0;
-	uint32_t totalMsgCount = 0;
 	uint32_t longestMsg = 0;
 };
 

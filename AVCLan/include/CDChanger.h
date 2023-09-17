@@ -43,6 +43,8 @@ public:
 	void handler_RequestTrackName(AVCLanMessage);
 	void handler_RequestStatusFA(AVCLanMessage);
 
+	void handler_Function07Request(AVCLanMessage);
+
 	uint8_t playbackSeconds = 0;
 	void sendPlayback();
 	bool haveSentTOC = false;

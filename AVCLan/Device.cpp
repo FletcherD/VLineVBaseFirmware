@@ -15,8 +15,8 @@ Device::Device(Address address, std::vector<Function> functions)
 	  functions(std::move(functions))
 {
 	messageHandlerMap[ListFunctionsRequest] = &Device::handler_ListFunctionsRequest;
+	messageHandlerMap[RestartLan] = &Device::handler_ListFunctionsRequest;
 	messageHandlerMap[FunctionMappingResponse] = &Device::handler_FunctionMappingResponse;
-	messageHandlerMap[Function07Request] = &Device::handler_Function07Request;
 	messageHandlerMap[PingRequest] = &Device::handler_Ping;
 	messageHandlerMap[EnableFunctionRequest] = &Device::handler_EnableFunctionRequest;
 	messageHandlerMap[DisableFunctionRequest] = &Device::handler_DisableFunctionRequest;
@@ -67,25 +67,13 @@ Device::handler_FunctionMappingResponse(AVCLanMessage messageIn)
 	isInitialized = true;
 }
 
-void
-Device::handler_Function07Request(AVCLanMessage messageIn)
-{
-	AVCLanMessage responseMsg = createResponseMessage(messageIn);
-	responseMsg.opcode = Function07Response;
-	responseMsg.setOperands({});
-	std::invoke(sendMessageCallback, responseMsg);
-}
 
 void
 Device::handler_EnableFunctionRequest(AVCLanMessage messageIn)
 {
 	AVCLanMessage responseMsg = createResponseMessage(messageIn);
 	responseMsg.opcode = EnableFunctionResponse;
-	if(messageIn.getOperands()[0] == 0x01) {
-		responseMsg.setOperands({0x01});
-	} else {
-		responseMsg.setOperands(messageIn.getOperands());
-	}
+	responseMsg.setOperands(messageIn.getOperands());
 	std::invoke(sendMessageCallback, responseMsg);
 }
 
@@ -94,7 +82,7 @@ Device::handler_DisableFunctionRequest(AVCLanMessage messageIn)
 {
 	AVCLanMessage responseMsg = createResponseMessage(messageIn);
 	responseMsg.opcode = DisableFunctionResponse;
-	responseMsg.setOperands( messageIn.getOperands() );
+	responseMsg.setOperands(messageIn.getOperands());
 	std::invoke(sendMessageCallback, responseMsg);
 }
 

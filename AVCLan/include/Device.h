@@ -38,6 +38,7 @@ public:
 	static constexpr Opcode EnableFunctionResponse	= 0x52;
 	static constexpr Opcode DisableFunctionRequest	= 0x43;
 	static constexpr Opcode DisableFunctionResponse	= 0x53;
+	static constexpr Opcode StatusB0 				= 0xB0; // TODO what is this?
 
 	Address address;
 	std::vector<Function> functions;
@@ -63,7 +64,6 @@ public:
 	void handler_FunctionMappingResponse(AVCLanMessage);
 	void handler_Ping(AVCLanMessage);
 
-	void handler_Function07Request(AVCLanMessage);
 
 	void handler_EnableFunctionRequest(AVCLanMessage);
 	void handler_DisableFunctionRequest(AVCLanMessage);
