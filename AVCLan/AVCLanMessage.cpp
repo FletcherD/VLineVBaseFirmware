@@ -7,14 +7,38 @@
 #include "AVCLanMessage.h"
 
 AVCLanMessage::AVCLanMessage(IEBusMessage m)
-: IEBusMessage(m),
-dIndex(broadcast==BROADCAST ? 0 : 1),
-srcFunction(data[dIndex++]),
-dstFunction(data[dIndex++]),
-opcode(data[dIndex++]),
-operands(data+dIndex),
-nOperands(dataLength - 3 - (broadcast==BROADCAST ? 0 : 1))
+	: IEBusMessage(m),
+	  dIndex(broadcast==BROADCAST ? 0 : 1),
+	  srcFunction(data[dIndex++]),
+	  dstFunction(data[dIndex++]),
+	  opcode(data[dIndex++]),
+	  operands(data+dIndex),
+	  nOperands(dataLength - 3 - (broadcast==BROADCAST ? 0 : 1))
 {}
+
+AVCLanMessage::AVCLanMessage(BroadcastValue broadcast,
+							 Address masterAddress,
+							 Address slaveAddress,
+							 Function srcFunctionIn,
+							 Function dstFunctionIn,
+							 Opcode opcodeIn,
+							 const std::vector<DataValue>& operandsIn
+)
+	: IEBusMessage({	.broadcast = broadcast,
+					   .masterAddress = masterAddress,
+					   .slaveAddress = slaveAddress }),
+	  dIndex(broadcast==BROADCAST ? 0 : 1),
+	  srcFunction(data[dIndex++]),
+	  dstFunction(data[dIndex++]),
+	  opcode(data[dIndex++]),
+	  operands(data+dIndex),
+	  nOperands(operandsIn.size())
+{
+	srcFunction = srcFunctionIn;
+	dstFunction = dstFunctionIn;
+	opcode = opcodeIn;
+	std::copy(operandsIn.begin(), operandsIn.end(), operands);
+}
 
 void
 AVCLanMessage::setOperands(const std::vector<DataValue>& oIn)

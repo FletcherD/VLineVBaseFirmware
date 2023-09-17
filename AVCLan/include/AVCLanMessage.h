@@ -24,6 +24,14 @@ public:
 	size_t nOperands;
 
 	AVCLanMessage(IEBusMessage m);
+	AVCLanMessage(BroadcastValue broadcast,
+				  Address masterAddress,
+				  Address slaveAddress,
+				  Function srcFunction,
+				  Function dstFunction,
+				  Opcode opcode,
+				  const std::vector<DataValue>& operands
+				  );
 
 	void setOperands(const std::vector<DataValue>& oIn);
 

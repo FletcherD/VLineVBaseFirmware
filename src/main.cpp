@@ -63,7 +63,7 @@ main (int argc, char* argv[])
 		}
 
 		if(cdChanger.isInitialized) {
-			cdChanger.sendPlayback();
+			cdChanger.sendStatusPlayback();
 			/*
 			if (!cdChanger.haveSentTOC) {
 				cdChanger.sendTOC();

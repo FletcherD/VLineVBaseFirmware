@@ -57,16 +57,13 @@ public:
 	void onMessage(AVCLanMessage);
 	std::function<void(AVCLanMessage)> sendMessageCallback;
 	AVCLanMessage createResponseMessage(AVCLanMessage messageIn);
+	void sendMessage(AVCLanMessage message);
 
 	// Message handlers -------------------
 
 	void handler_ListFunctionsRequest(AVCLanMessage);
 	void handler_FunctionMappingResponse(AVCLanMessage);
 	void handler_Ping(AVCLanMessage);
-
-
-	void handler_EnableFunctionRequest(AVCLanMessage);
-	void handler_DisableFunctionRequest(AVCLanMessage);
 
 	void sendFunctionMappingRequest();
 
