@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="aa88cb5c-8018-46c9-b385-fe3b519eb759" name="odroid">
+        <fileTransfer rootFolder="/home/odroid" accessType="SFTP" host="192.168.1.228" port="22" sshConfigId="fada1f44-e9c2-44e6-98f5-b575ff340356" sshConfig="odroid@192.168.1.228:22 agent" authAgent="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" isUseRsync="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
