@@ -57,6 +57,7 @@ main (int argc, char* argv[])
 				avcLanProtocol.onMessage(avcLanMessage);
 
 				avcLan.receiveQueue.pop();
+				power.turn_on(power::AudioAmp);
 			}
 
 			avcLan.poll();

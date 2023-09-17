@@ -29,6 +29,8 @@ void DriverRx::onTimerCallback() {
 	event.type = getRxState() ? RISING_EDGE : FALLING_EDGE;
 	lastEventTime = eventTime;
 
+	eTime[eTimeI++] = event.time;
+
 	(this->*state)(event);
 }
 

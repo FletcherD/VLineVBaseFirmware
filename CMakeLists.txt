@@ -7,7 +7,6 @@ set(CMAKE_CXX_COMPILER_FORCED 1)
 project(VLineVBaseFirmware)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_C_STANDARD 17)
 
 set(TOOLCHAIN_PREFIX arm-none-eabi-)
 find_program(BINUTILS_PATH ${TOOLCHAIN_PREFIX}gcc NO_CACHE)
@@ -34,30 +33,33 @@ set(CMAKE_RANLIB ${TOOLCHAIN_PREFIX}gcc-ranlib)
 execute_process(COMMAND ${CMAKE_C_COMPILER} -print-sysroot
         OUTPUT_VARIABLE ARM_GCC_SYSROOT OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-add_compile_options(-mcpu=cortex-m3 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections
-        -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra
-        -nostartfiles -Xlinker --gc-sections -std=gnu++17 -std=gnu17 -fabi-version=0 -fno-exceptions
-        -fno-rtti -fno-use-cxa-atexit -fno-threadsafe-statics)
-
 add_compile_definitions(LPC175x_6x _GNU_SOURCE)
 
+set(CFLAGS "-mcpu=cortex-m3 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections \
+        -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra " )
+
+set(CXXFLAGS "-mcpu=cortex-m3 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections \
+        -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra \
+        -std=gnu++17 -fabi-version=0 -fno-exceptions \
+        -fno-rtti -fno-use-cxa-atexit -fno-threadsafe-statics")
+
 # Default C compiler flags
-set(CMAKE_C_FLAGS_DEBUG_INIT "-g3 -Og -Wall -DDEBUG -DTRACE")
+set(CMAKE_C_FLAGS_DEBUG_INIT "${CFLAGS} -g3 -Og -Wall -DDEBUG ")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG_INIT}" CACHE STRING "" FORCE)
-set(CMAKE_C_FLAGS_RELEASE_INIT "-O3 -Wall")
+set(CMAKE_C_FLAGS_RELEASE_INIT "${CFLAGS} -O3 -Wall")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE_INIT}" CACHE STRING "" FORCE)
-set(CMAKE_C_FLAGS_MINSIZEREL_INIT "-Os -Wall")
+set(CMAKE_C_FLAGS_MINSIZEREL_INIT "${CFLAGS} -Os -Wall")
 set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL_INIT}" CACHE STRING "" FORCE)
-set(CMAKE_C_FLAGS_RELWITHDEBINFO_INIT "-O2 -g -Wall")
+set(CMAKE_C_FLAGS_RELWITHDEBINFO_INIT "${CFLAGS} -O2 -g -Wall")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO_INIT}" CACHE STRING "" FORCE)
 # Default C++ compiler flags
-set(CMAKE_CXX_FLAGS_DEBUG_INIT "-g3 -Og -Wall -DDEBUG -DTRACE")
+set(CMAKE_CXX_FLAGS_DEBUG_INIT "${CXXFLAGS} -g3 -Og -Wall -DDEBUG ")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG_INIT}" CACHE STRING "" FORCE)
-set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O3 -Wall")
+set(CMAKE_CXX_FLAGS_RELEASE_INIT "${CXXFLAGS} -O3 -Wall")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE_INIT}" CACHE STRING "" FORCE)
-set(CMAKE_CXX_FLAGS_MINSIZEREL_INIT "-Os -Wall")
+set(CMAKE_CXX_FLAGS_MINSIZEREL_INIT "${CXXFLAGS} -Os -Wall")
 set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL_INIT}" CACHE STRING "" FORCE)
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT "-O2 -g -Wall")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT "${CXXFLAGS} -O2 -g -Wall")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT}" CACHE STRING "" FORCE)
 
 set(CMAKE_OBJCOPY ${ARM_TOOLCHAIN_DIR}/${TOOLCHAIN_PREFIX}objcopy CACHE INTERNAL "objcopy tool")
@@ -68,6 +70,11 @@ set(CMAKE_FIND_ROOT_PATH ${BINUTILS_PATH})
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+
+set(
+        CMAKE_EXE_LINKER_FLAGS
+        "${CMAKE_EXE_LINKER_FLAGS} -nostartfiles -Wl,-Map=VLineVBaseFirmware.map"
+)
 
 include_directories(/usr/lib/arm-none-eabi/lib)
 include_directories(/usr/lib/gcc/arm-none-eabi/12.2.1/include)
@@ -211,8 +218,7 @@ add_executable(VLineVBaseFirmware.elf
 
 target_link_libraries(VLineVBaseFirmware.elf
         -L${CMAKE_SOURCE_DIR}/ldscripts
-        -Tsections.ld
         -Tmem.ld
         -Tlibs.ld
-        -mcpu=cortex-m3 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections
-        -ffreestanding -fno-move-loop-invariants -Wall -Wextra -g3 --specs=nano.specs)
+        -Tsections.ld
+        --specs=nano.specs)

@@ -5,7 +5,7 @@
       <paths name="odroid">
         <serverdata>
           <mappings>
-            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/VLineVBaseFirmware" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
