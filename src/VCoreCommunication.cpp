@@ -2,35 +2,23 @@
 
 #include "diag/trace.h"
 
-uart VCoreCommunication::uartVCore(0, 1500000);
+//uart VCoreCommunication::uartVCore(0, 1500000);
 
 uint8_t* VCoreCommunication::uartReceiveByte = uartReceiveBuf;
 uint8_t VCoreCommunication::uartReceiveBuf[uartReceiveBufSize];
 
-/*
-void VCoreCommunication::onMessageReceived(MessageRaw message) {
-	static uint32_t totalMsgs = 0;
-
-	static constexpr size_t headerLen = 2;
-	static constexpr uint8_t header = 0xff;
-	static constexpr size_t messageLen = headerLen + MessageRaw::MaxMessageLenBytes;
-
-	uart::SendData uartSendData;
-	uartSendData.size = messageLen;
-	uartSendData.data = new char[messageLen];
-	for(size_t i = 0; i < headerLen; i++) {
-		uartSendData.data[i] = header;
+void VCoreCommunication::onMessageReceived(const std::shared_ptr<IEBusMessage>& message) {
+	uartOut.printf("%c %03x %03x ",
+					 (message->broadcast==BROADCAST ? 'B' : '-'),
+					 message->masterAddress,
+					 message->slaveAddress);
+	for(size_t i = 0; i != message->dataLength; i++) {
+		uartOut.printf("%02x ", message->data[i]);
 	}
-	for(uint8_t i = 0; i != MessageRaw::MaxMessageLenBytes; i++) {
-		size_t j = i+headerLen;
-		uartSendData.data[j] = message.messageBuf[i];
-	}
-
-	uartVCore.queueSend(uartSendData);
-
-	//trace_printf("Total msgs: %d\n", totalMsgs++);
+	uartOut.printf("\r\n");
 }
 
+/*
 void VCoreCommunication::startUartReceive() {
 	int32_t errNo = uartVCore.USARTdrv->Receive(uartReceiveByte, 1);
 }

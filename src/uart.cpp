@@ -60,13 +60,7 @@ uart::uart(uint8_t uartNum, uint32_t baudRate)
 	uartInstance[uartNum] = this;
 }
 
-
-uint32_t
-uart::send(const void* data, uint32_t len)
-{
-	return USARTdrv->Send(data, len);
-}
-
+/*
 void
 uart::queueSend(SendData thisData)
 {
@@ -75,27 +69,33 @@ uart::queueSend(SendData thisData)
 		sendNextBuf();
 	}
 }
+ */
 
-int
+size_t
 uart::printf(const char *format, ...)
 {
 	va_list ap;
 	va_start (ap, format);
-	SendData thisData;
-	thisData.size = vasprintf((char**)&thisData.data, format, ap);
+	char thisString[64];
+	size_t stringLen = vsprintf(thisString, format, ap);
 	va_end (ap);
 
-	queueSend(thisData);
+	for(size_t i = 0; i != stringLen; i++) {
+		sendBuf.push(thisString[i]);
+	}
 
-	return thisData.size;
+	if(sendReady && isEnabled) {
+		sendNextByte();
+	}
+
+	return stringLen;
 }
 
 void
-uart::sendNextBuf()
+uart::sendNextByte()
 {
 	sendReady = false;
-	SendData thisData = sendBuf.front();
-	send(thisData.data, thisData.size);
+	USARTdrv->Send(&sendBuf.front(), 1);
 }
 
 void
@@ -119,13 +119,12 @@ void
 uart::signalEvent(uint32_t event)
 {
 	if(event & ARM_USART_EVENT_SEND_COMPLETE) {
-		delete sendBuf.front().data;
 		sendBuf.pop();
 
 		if(sendBuf.empty()) {
 			sendReady = true;
-		} else {
-			sendNextBuf();
+		} else if(isEnabled) {
+			sendNextByte();
 		}
 	}
 	if(event & ARM_USART_EVENT_RECEIVE_COMPLETE) {
@@ -134,4 +133,11 @@ uart::signalEvent(uint32_t event)
 	}
 }
 
-//uart uartOut(3, 1500000);
+void uart::setEnabled(bool thisIsEnabled) {
+	isEnabled = thisIsEnabled;
+	if(isEnabled && !sendBuf.empty()) {
+		sendNextByte();
+	}
+}
+
+uart uartOut(0, 1500000);

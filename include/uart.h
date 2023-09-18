@@ -14,11 +14,6 @@ extern "C" {
 class uart
 {
 public:
-	struct SendData {
-		char* data;
-		uint32_t size;
-	};
-
 	std::function<void(void)> receiveComplete;
 
 private:
@@ -29,10 +24,10 @@ private:
 	void signalEvent(uint32_t event);
 	static uart* uartInstance[4];
 
-	std::queue<SendData> sendBuf;
+	std::queue<char> sendBuf;
+	bool isEnabled = true;
 
-	uint32_t send(const void* data, uint32_t len);
-	void sendNextBuf();
+	void sendNextByte();
 
 public:
 	bool sendReady = true;
@@ -40,9 +35,11 @@ public:
 	ARM_DRIVER_USART * USARTdrv;
 	uart(uint8_t uartNum, uint32_t baudRate);
 
-	void queueSend(SendData);
+	//void queueSend(SendData);
 
-	int printf(const char* format, ...);
+	size_t printf(const char* format, ...);
+
+	void setEnabled(bool isEnabled);
 };
 
 extern uart uartOut;

@@ -53,8 +53,9 @@ main (int argc, char* argv[])
 				std::shared_ptr<IEBusMessage> ieBusMessage = avcLan.receiveQueue.front();
 
 				AVCLanMessage avcLanMessage(*ieBusMessage);
-				//VCoreCommunication::onMessageReceived(messageRaw);
 				avcLanProtocol.onMessage(avcLanMessage);
+
+				VCoreCommunication::onMessageReceived(ieBusMessage);
 
 				avcLan.receiveQueue.pop();
 				power.turn_on(power::AudioAmp);
@@ -62,6 +63,8 @@ main (int argc, char* argv[])
 
 			avcLan.poll();
 		}
+
+		//uartOut.printf("%d\r\n", timer.getTicks());
 
 		if(cdChanger.isInitialized) {
 			cdChanger.sendStatusPlayback();

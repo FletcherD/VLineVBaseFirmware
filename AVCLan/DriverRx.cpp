@@ -29,8 +29,6 @@ void DriverRx::onTimerCallback() {
 	event.type = getRxState() ? RISING_EDGE : FALLING_EDGE;
 	lastEventTime = eventTime;
 
-	eTime[eTimeI++] = event.time;
-
 	(this->*state)(event);
 }
 
@@ -177,8 +175,13 @@ void DriverRx::receiveBit(bool bitVal) {
 
 void DriverRx::checkMessageDone() {
 	if(curBit >= IEBusDataField(0).bitOffset) {
-		uint32_t thisMessageLength = IEBusDataField(0).bitOffset + (curMessage->dataLength * DataFieldLength);
-		if(curBit == thisMessageLength) {
+		if(curMessage->dataLength >= IEBusMessage::MaxDataBytes) {
+			// Invalid message, something went wrong
+			onBitError();
+			return;
+		}
+		uint32_t messageLengthBits = IEBusDataField(0).bitOffset + (curMessage->dataLength * DataFieldLength);
+		if(curBit == messageLengthBits) {
 			// Message is done
 			messageDone();
 			return;

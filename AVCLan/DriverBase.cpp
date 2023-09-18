@@ -34,6 +34,7 @@ void DriverBase::sendMessage() {
 	prepareTransmit();
 	while(operatingMode != IDLE || timer.getTicks() < canTxTime) {}
 
+	uartOut.setEnabled(false);
 	timer.setCaptureInterruptEnabled(false);
 	timer.setTimerInterruptEnabled(true);
 	operatingMode = TRANSMIT;
@@ -46,6 +47,7 @@ void DriverBase::endTransmit() {
 }
 
 void DriverBase::startReceive() {
+	uartOut.setEnabled(false);
 	timer.setCaptureInterruptEnabled(true);
 	timer.setTimerInterruptEnabled(false);
 	operatingMode = RECEIVE;
@@ -60,6 +62,7 @@ void DriverBase::startIdle() {
 	resetBuffer();
 	timer.setCaptureInterruptEnabled(true);
 	timer.setTimerInterruptEnabled(false);
+	uartOut.setEnabled(true);
 	operatingMode = IDLE;
 }
 

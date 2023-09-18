@@ -41,13 +41,14 @@ void CDChanger::handler_RequestStatusPlayback(AVCLanMessage messageIn) {
 }
 
 void CDChanger::sendStatusPlayback() {
-	sendMessage(AVCLanMessage(BROADCAST,
-							  address,
-							  0x1ff,
-							  0x43,
-							  0x31,
-							  ReportStatusPlayback,
-							  {0x01, 0x10, 0x01, 0x69, 0x00, playbackSeconds, 0x00, 0x00, 0x94, 0x00} ) );
+	sendMessage(AVCLanMessage(
+		BROADCAST,
+		address,
+		0x1ff,
+		0x43,
+		0x31,
+		ReportStatusPlayback,
+		{0x01, 0x10, 0x01, 0x69, 0x00, playbackSeconds, 0x00, 0x00, 0x94, 0x00} ) );
 	playbackSeconds++;
 }
 

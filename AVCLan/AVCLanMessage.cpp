@@ -37,6 +37,7 @@ AVCLanMessage::AVCLanMessage(BroadcastValue broadcast,
 	srcFunction = srcFunctionIn;
 	dstFunction = dstFunctionIn;
 	opcode = opcodeIn;
+	dataLength = dIndex+nOperands;
 	std::copy(operandsIn.begin(), operandsIn.end(), operands);
 }
 

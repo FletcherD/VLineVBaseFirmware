@@ -4,7 +4,13 @@
 
 class InputListener : public Device {
 
+	static constexpr Opcode TouchEvent 		= 0x78;
+	static constexpr Opcode NextTrack 		= 0x88;
+	static constexpr Opcode PreviousTrack 	= 0x89;
+
 	InputListener();
+
+	void handle_TouchEvent(AVCLanMessage);
 
 };
 
