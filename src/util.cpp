@@ -18,13 +18,10 @@ void pinConfigure(PinCfgType pinCfg) {
 			);
 }
 
-uint32_t pinMask(uint8_t pinNum) {
-	return (1UL)<<pinNum;
-}
-
 uint32_t gpioPinRead(PinCfgType pinCfg) {
 	return GPIO_PinRead(pinCfg.PortNum, pinCfg.PinNum);
 }
 void gpioPinWrite(PinCfgType pinCfg, bool value) {
+	value = (pinCfg.ActiveLow == !value);
 	GPIO_PinWrite(pinCfg.PortNum, pinCfg.PinNum, value);
 }

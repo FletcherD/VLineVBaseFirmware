@@ -24,12 +24,14 @@ int
 main (int argc, char* argv[])
 {
 	power power;
-	power.turn_on(power::Usb5V);
-	power.turn_on(power::VCore3P3V);
-	power.turn_on(power::VCore5V);
-	power.turn_on(power::VBase5V);
+	power::turnOn(power::Usb5V);
+	power::turnOn(power::VCore3P3V);
+	power::turnOn(power::VCore5V);
+	power::turnOn(power::VBase5V);
 
-	//power.turn_on(power::AudioAmp);
+	power::turnOn(power::AudioAmp);
+	power::turnOn(power::VideoSel);
+	power::turnOn(power::VideoReset);
 
 	p_timer timer(2);
 
@@ -58,7 +60,6 @@ main (int argc, char* argv[])
 				VCoreCommunication::onMessageReceived(ieBusMessage);
 
 				avcLan.receiveQueue.pop();
-				power.turn_on(power::AudioAmp);
 			}
 
 			avcLan.poll();
@@ -76,7 +77,7 @@ main (int argc, char* argv[])
 			}
 			 */
 		} else {
-			//cdChanger.sendFunctionMappingRequest();
+			cdChanger.sendFunctionMappingRequest();
 		}
 	}
 }

@@ -48,7 +48,7 @@ void CDChanger::sendStatusPlayback() {
 		0x43,
 		0x31,
 		ReportStatusPlayback,
-		{0x01, 0x10, 0x01, 0x69, 0x00, playbackSeconds, 0x00, 0x00, 0x94, 0x00} ) );
+		{0x01, 0x10, 0x01, 0x77, 0x00, playbackSeconds, 0x00, 0x00, 0x94, 0x00} ) );
 	playbackSeconds++;
 }
 
@@ -104,6 +104,8 @@ void CDChanger::handler_EnableFunctionRequest(AVCLanMessage messageIn)
 		responseMsgCd1.opcode = CdInserted;
 		responseMsgCd1.setOperands({0x0a, 0x01});
 		sendMessage(responseMsgCd1);
+
+		sendStatusTOC();
 	}
 }
 
@@ -118,7 +120,7 @@ void CDChanger::handler_DisableFunctionRequest(AVCLanMessage messageIn)
 void CDChanger::handler_RequestStatusFA(AVCLanMessage messageIn) {
 	AVCLanMessage responseMsg = createResponseMessage(messageIn);
 	responseMsg.opcode = ReportStatusFA;
-	responseMsg.setOperands({0x01, 0x00, 0x69, 0x77, 0x59, 0x00, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01});
+	responseMsg.setOperands({0x01, 0x00, 0x77, 0x77, 0x59, 0x00, 0x00, 0x01, 0x00, 0x03, 0x00, 0x01});
 	sendMessage(responseMsg);
 }
 

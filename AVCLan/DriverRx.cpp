@@ -105,7 +105,7 @@ void DriverRx::state_MeasureBit_Rising(InputEvent e) {
 	receiveBit(curBitValue);
 	nextBit();
 
-	if((curMessage->slaveAddress == 0x1d3 /* || curMessage->slaveAddress == 0x178 */) && curField->isAck) {
+	if((curMessage->slaveAddress == 0x1d3 || curMessage->slaveAddress == 0x178 ) && curField->isAck) {
 		timer.setCaptureInterruptEnabled(false);
 		timer.setTimerInterruptEnabled(true);
 

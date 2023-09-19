@@ -11,20 +11,17 @@ DriverBase::DriverBase(p_timer& timer)
 	startIdle();
 }
 
-bool DriverBase::getRxState() {
+bool DriverBase::getRxState() const {
 	return gpioPinRead(AvcRxPin);
 }
 void DriverBase::setTxState(bool isOn) {
-	// Active low
-	gpioPinWrite(AvcTxPin, !isOn);
+	gpioPinWrite(AvcTxPin, isOn);
 }
-
 void DriverBase::setStandby(bool isOn)	{
 	gpioPinWrite(AvcStandbyPin, isOn);
 }
 void DriverBase::setEnabled(bool isOn)	{
-	// Active low
-	gpioPinWrite(AvcEnablePin, !isOn);
+	gpioPinWrite(AvcEnablePin, isOn);
 }
 
 void DriverBase::sendMessage() {

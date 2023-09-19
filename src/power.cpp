@@ -7,12 +7,6 @@ extern "C" {
 }
 // ----------------------------------------------------------------------------
 
-constexpr PinCfgType power::VCore5V;
-constexpr PinCfgType power::VCore3P3V;
-constexpr PinCfgType power::VBase5V;
-constexpr PinCfgType power::Usb5V;
-constexpr PinCfgType power::AudioAmp;
-
 power::power()
 {
 	CLKPWR_ConfigPPWR(CLKPWR_PCONP_PCGPIO, ENABLE);
@@ -22,25 +16,28 @@ power::power()
 	pinConfigure(power::VBase5V);
 	pinConfigure(power::Usb5V);
 	pinConfigure(power::AudioAmp);
+	pinConfigure(power::VideoReset);
+	pinConfigure(power::VideoSel);
 
 	// Start with power turned off
-	turn_off(power::VCore5V);
-	turn_off(power::VCore3P3V);
-	turn_off(power::VBase5V);
-	turn_off(power::Usb5V);
-	turn_off(power::AudioAmp);
+	turnOff(power::VCore5V);
+	turnOff(power::VCore3P3V);
+	turnOff(power::VBase5V);
+	turnOff(power::Usb5V);
+	turnOff(power::AudioAmp);
+	turnOff(power::VideoReset);
+	turnOff(power::VideoSel);
 }
 
 void
-power::turn_on(PinCfgType powerPin)
+power::turnOn(PinCfgType powerPin)
 {
-	// Power pins are all active low
-	GPIO_PinWrite(powerPin.PortNum, powerPin.PinNum, 0);
+	gpioPinWrite(powerPin, true);
 }
 
 void
-power::turn_off(PinCfgType powerPin)
+power::turnOff(PinCfgType powerPin)
 {
-	GPIO_PinWrite(powerPin.PortNum, powerPin.PinNum, 1);
+	gpioPinWrite(powerPin, false);
 }
 // ----------------------------------------------------------------------------

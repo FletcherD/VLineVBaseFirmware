@@ -31,74 +31,50 @@
 #include "cmsis_device.h"
 #include "util.h"
 
-#define POWER_PORT_NUMBER              	(1)
-
-#define POWER_USB5V_PIN                	(27)
-#define POWER_VCORE_5V_PIN             	(15)
-#define POWER_VCORE_3P3V_PIN           	(29)
-#define POWER_VBASE_5V_PIN				(19)
-#define POWER_AUDIO_PIN					(14)
-
-// ----------------------------------------------------------------------------
-
-static constexpr int PowerPinList[] = {
-		POWER_USB5V_PIN,
-		POWER_VCORE_5V_PIN,
-		POWER_VCORE_3P3V_PIN,
-		POWER_VBASE_5V_PIN
-};
-
 class power
 {
 public:
 	static constexpr PinCfgType VCore5V = {
-		PortNum: 	1,
-		PinNum:		15,
-		FuncNum:	PIN_FUNC_0,
-		PinMode:	PIN_PINMODE_TRISTATE,
-		OpenDrain:	PIN_PINMODE_NORMAL,
-		GpioDir:	GPIO_DIR_OUTPUT
+		.PortNum =  	1,
+		.PinNum = 		15,
+		.ActiveLow	=	true
 	};
 	static constexpr PinCfgType VCore3P3V = {
-		PortNum: 	1,
-		PinNum:		29,
-		FuncNum:	PIN_FUNC_0,
-		PinMode:	PIN_PINMODE_TRISTATE,
-		OpenDrain:	PIN_PINMODE_NORMAL,
-		GpioDir:	GPIO_DIR_OUTPUT
+		.PortNum =  	1,
+		.PinNum = 		29,
+		.ActiveLow	=	true
 	};
 	static constexpr PinCfgType VBase5V = {
-		PortNum: 	1,
-		PinNum:		19,
-		FuncNum:	PIN_FUNC_0,
-		PinMode:	PIN_PINMODE_TRISTATE,
-		OpenDrain:	PIN_PINMODE_NORMAL,
-		GpioDir:	GPIO_DIR_OUTPUT
+		.PortNum =  	1,
+		.PinNum = 		19,
+		.ActiveLow	=	true
 	};
 	static constexpr PinCfgType Usb5V = {
-		PortNum: 	1,
-		PinNum:		27,
-		FuncNum:	PIN_FUNC_0,
-		PinMode:	PIN_PINMODE_TRISTATE,
-		OpenDrain:	PIN_PINMODE_NORMAL,
-		GpioDir:	GPIO_DIR_OUTPUT
+		.PortNum =  	1,
+		.PinNum = 		27,
+		.ActiveLow	=	true
 	};
 	static constexpr PinCfgType AudioAmp = {
-		PortNum: 	1,
-		PinNum:		14,
-		FuncNum:	PIN_FUNC_0,
-		PinMode:	PIN_PINMODE_TRISTATE,
-		OpenDrain:	PIN_PINMODE_NORMAL,
-		GpioDir:	GPIO_DIR_OUTPUT
+		.PortNum =  	1,
+		.PinNum = 		14,
+		.ActiveLow	=	true
+	};
+	static constexpr PinCfgType VideoSel = {
+		.PortNum =  	1,
+		.PinNum = 		1,
+	};
+	static constexpr PinCfgType VideoReset = {
+		.PortNum =  	1,
+		.PinNum = 		4,
 	};
 
 	power();
 
-	void
-	turn_on(PinCfgType powerPin);
+	static void
+	turnOn(PinCfgType powerPin);
 
-	void
-	turn_off(PinCfgType powerPin);
+	static void
+	turnOff(PinCfgType powerPin);
 };
 
 // ----------------------------------------------------------------------------

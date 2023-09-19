@@ -60,7 +60,8 @@ protected:
 		.FuncNum 	= 	PIN_FUNC_0,
 		.PinMode 	= 	PIN_PINMODE_TRISTATE,
 		.OpenDrain 	= 	PIN_PINMODE_OPENDRAIN,
-		.GpioDir 	= 	GPIO_DIR_OUTPUT
+		.GpioDir 	= 	GPIO_DIR_OUTPUT,
+		.ActiveLow	=	true
 	};
 	PinCfgType AvcStandbyPin = {
 		.PortNum 	=  	2,
@@ -76,10 +77,11 @@ protected:
 		.FuncNum 	= 	PIN_FUNC_0,
 		.PinMode 	= 	PIN_PINMODE_TRISTATE,
 		.OpenDrain 	= 	PIN_PINMODE_NORMAL,
-		.GpioDir 	= 	GPIO_DIR_OUTPUT
+		.GpioDir 	= 	GPIO_DIR_OUTPUT,
+		.ActiveLow	=	true
 	};
 
-	bool getRxState();
+	bool getRxState() const;
 	void setTxState(bool isOn);
 
 	void setStandby(bool isOn);
